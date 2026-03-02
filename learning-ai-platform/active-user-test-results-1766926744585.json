@@ -1,0 +1,239 @@
+{
+  "username": "test_active_user",
+  "email": "test_active_user@example.com",
+  "password": "Test@123456",
+  "tests": [
+    {
+      "name": "用户注册",
+      "status": "success",
+      "duration": 72,
+      "result": null
+    },
+    {
+      "name": "用户登录",
+      "status": "success",
+      "duration": 87,
+      "result": {
+        "success": true,
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NTEyNzEzZDI5ZjM4MTU5YTMzZDQwNCIsImlhdCI6MTc2NjkyNjc0NCwiZXhwIjoxNzY5NTE4NzQ0fQ.62-82Fp3HJgbrS0oPXGBQiCSghtUh8WgCEGQGTNolz8",
+        "user": {
+          "_id": "69512713d29f38159a33d404",
+          "username": "test_active_user",
+          "email": "test_active_user@example.com",
+          "learningInterests": [
+            "综合学习"
+          ]
+        }
+      }
+    },
+    {
+      "name": "获取学习进度",
+      "status": "success",
+      "duration": 22,
+      "result": {
+        "_id": "6951272bd29f38159a33d421",
+        "user": "69512713d29f38159a33d404",
+        "currentPath": null,
+        "progress": {},
+        "createdAt": "2025-12-28T12:48:43.978Z",
+        "updatedAt": "2025-12-28T12:56:34.170Z",
+        "__v": 0
+      }
+    },
+    {
+      "name": "更新学习进度",
+      "status": "success",
+      "duration": 18,
+      "result": {
+        "_id": "6951272bd29f38159a33d421",
+        "user": "69512713d29f38159a33d404",
+        "currentPath": null,
+        "progress": {},
+        "createdAt": "2025-12-28T12:48:43.978Z",
+        "updatedAt": "2025-12-28T12:59:04.413Z",
+        "__v": 0
+      }
+    },
+    {
+      "name": "获取成就列表",
+      "status": "success",
+      "duration": 8,
+      "result": {
+        "success": true,
+        "count": 0,
+        "data": []
+      }
+    },
+    {
+      "name": "获取收藏列表",
+      "status": "success",
+      "duration": 14,
+      "result": {
+        "success": true,
+        "data": []
+      }
+    },
+    {
+      "name": "发布测试推文",
+      "status": "success",
+      "duration": 78,
+      "result": {
+        "success": true,
+        "code": 201,
+        "data": {
+          "_id": "69512998f7f8747b195d80bc",
+          "user": {
+            "_id": "69512713d29f38159a33d404",
+            "username": "test_active_user"
+          },
+          "content": "这是一条测试推文，用于收藏功能测试",
+          "images": [],
+          "hashtags": [
+            "测试",
+            "收藏"
+          ],
+          "mentions": [],
+          "hasSensitiveWord": false,
+          "likes": 0,
+          "likedBy": [],
+          "reposts": 0,
+          "repostFrom": null,
+          "isDeleted": false,
+          "comments": [],
+          "createdAt": "2025-12-28T12:59:04.452Z",
+          "updatedAt": "2025-12-28T12:59:04.453Z",
+          "__v": 0
+        },
+        "message": "推文发布成功"
+      }
+    },
+    {
+      "name": "添加收藏",
+      "status": "success",
+      "duration": 26,
+      "result": {
+        "success": true,
+        "data": {
+          "_id": "695129981b0d2ad23b319c30",
+          "resource": "69512998f7f8747b195d80bc",
+          "resourceType": "Tweet",
+          "user": "69512713d29f38159a33d404",
+          "__v": 0,
+          "collectionName": "默认收藏夹",
+          "createdAt": "2025-12-28T12:59:04.529Z"
+        },
+        "message": "添加到收藏夹成功"
+      }
+    },
+    {
+      "name": "获取通知列表",
+      "status": "success",
+      "duration": 14,
+      "result": {
+        "notifications": [],
+        "unreadCount": 0
+      }
+    },
+    {
+      "name": "生成学习计划",
+      "status": "success",
+      "duration": 21,
+      "result": {
+        "success": true,
+        "plan": {
+          "title": "学习计划：学习前端开发",
+          "days": 7,
+          "certificateType": "计算机",
+          "modules": [
+            {
+              "day": 1,
+              "moduleName": "计算机基础",
+              "topics": [
+                "计算机硬件组成",
+                "操作系统基础知识",
+                "计算机网络基础"
+              ],
+              "detailedContent": "",
+              "resourceLink": ""
+            },
+            {
+              "day": 2,
+              "moduleName": "Word文字处理",
+              "topics": [
+                "文档创建与编辑",
+                "格式设置",
+                "表格与图表",
+                "文档排版"
+              ],
+              "detailedContent": "",
+              "resourceLink": ""
+            },
+            {
+              "day": 3,
+              "moduleName": "Excel电子表格",
+              "topics": [
+                "工作表操作",
+                "公式与函数",
+                "数据透视表",
+                "图表制作"
+              ],
+              "detailedContent": "",
+              "resourceLink": ""
+            },
+            {
+              "day": 4,
+              "moduleName": "PowerPoint演示文稿",
+              "topics": [
+                "幻灯片制作",
+                "动画效果",
+                "幻灯片切换",
+                "演示技巧"
+              ],
+              "detailedContent": "",
+              "resourceLink": ""
+            },
+            {
+              "day": 5,
+              "moduleName": "互联网应用基础",
+              "topics": [
+                "网络浏览与搜索",
+                "电子邮件使用",
+                "网络安全基础"
+              ],
+              "detailedContent": "",
+              "resourceLink": ""
+            },
+            {
+              "day": 6,
+              "moduleName": "综合练习与模拟考试",
+              "topics": [
+                "综合知识点练习",
+                "模拟考试",
+                "时间管理与效率"
+              ],
+              "detailedContent": "",
+              "resourceLink": ""
+            },
+            {
+              "day": 7,
+              "moduleName": "复习：考试练习与模拟",
+              "topics": [
+                "综合知识点练习",
+                "模拟考试",
+                "时间管理与效率"
+              ],
+              "detailedContent": "复习综合练习与模拟考试的核心知识点，包括： 1.综合知识点练习， 2.模拟考试， 3.时间管理与效率。 通过做相关练习题巩固所学内容，重点掌握考试高频考点和易错知识点。",
+              "resourceLink": "https://example.com/computer-review"
+            }
+          ],
+          "summary": "该计划为您制定了7天的学习前端开发学习方案，涵盖计算机领域的核心知识点和技能训练。"
+        },
+        "message": "学习计划生成成功"
+      }
+    }
+  ],
+  "errors": [],
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NTEyNzEzZDI5ZjM4MTU5YTMzZDQwNCIsImlhdCI6MTc2NjkyNjc0NCwiZXhwIjoxNzY5NTE4NzQ0fQ.62-82Fp3HJgbrS0oPXGBQiCSghtUh8WgCEGQGTNolz8",
+  "userId": "69512713d29f38159a33d404",
+  "tweetId": "69512998f7f8747b195d80bc"
+}

@@ -1,0 +1,187 @@
+syntax = "proto3";
+
+package ai_service;
+
+// AI批改服务
+service AIGradingService {
+  // OCR识别
+  rpc RecognizeText(ImageRequest) returns (TextResponse);
+  
+  // 主观题评分
+  rpc GradeSubjective(SubjectiveRequest) returns (GradingResponse);
+  
+  // AI答疑
+  rpc AnswerQuestion(QuestionRequest) returns (AnswerResponse);
+  
+  // 个性化推荐
+  rpc RecommendExercises(RecommendRequest) returns (RecommendResponse);
+  
+  // 推荐反馈（新增）
+  rpc ProcessRecommendationFeedback(FeedbackRequest) returns (FeedbackResponse);
+  
+  // 学情分析（新增）
+  rpc AnalyzeLearningStatus(LearningAnalysisRequest) returns (LearningAnalysisResponse);
+  
+  // 口语评测（新增）
+  rpc AssessSpeech(SpeechAssessmentRequest) returns (SpeechAssessmentResponse);
+  
+  // 推送文案优化（新增）
+  rpc OptimizePushContent(OptimizePushContentRequest) returns (OptimizePushContentResponse);
+}
+
+message ImageRequest {
+  bytes image_data = 1;
+  string format = 2;  // jpg, png, pdf
+}
+
+message TextResponse {
+  string text = 1;
+  float confidence = 2;
+}
+
+message SubjectiveRequest {
+  string question = 1;
+  string student_answer = 2;
+  string standard_answer = 3;
+  int32 max_score = 4;
+}
+
+message GradingResponse {
+  int32 score = 1;
+  string feedback = 2;
+  repeated string key_points = 3;
+}
+
+message QuestionRequest {
+  string question = 1;
+  string context = 2;
+}
+
+message AnswerResponse {
+  string answer = 1;
+  repeated string steps = 2;
+  repeated string related_examples = 3;
+}
+
+message RecommendRequest {
+  int32 student_id = 1;
+  repeated int32 weak_point_ids = 2;
+  int32 count = 3;
+}
+
+message RecommendResponse {
+  repeated Exercise exercises = 1;
+}
+
+message Exercise {
+  int32 id = 1;
+  string title = 2;
+  string difficulty = 3;
+  int32 knowledge_point_id = 4;
+}
+
+// 推荐反馈请求（新增）
+message FeedbackRequest {
+  int32 student_id = 1;
+  int32 exercise_id = 2;
+  string feedback_type = 3;  // interested, not_interested, helpful, not_helpful
+  int32 rating = 4;  // 1-5
+}
+
+// 推荐反馈响应（新增）
+message FeedbackResponse {
+  bool success = 1;
+  string message = 2;
+  int32 feedback_count = 3;  // 累积反馈数
+}
+
+// 学情分析请求（新增）
+message LearningAnalysisRequest {
+  int32 user_id = 1;
+  string user_type = 2;  // student, class, parent
+  repeated LearningPathData learning_paths = 3;
+  repeated ErrorBookData error_books = 4;
+  repeated AnswerSpeedData answer_speeds = 5;
+}
+
+message LearningPathData {
+  int32 knowledge_point_id = 1;
+  string knowledge_point_name = 2;
+  int32 completed_count = 3;
+  int32 total_count = 4;
+}
+
+message ErrorBookData {
+  int32 knowledge_point_id = 1;
+  string knowledge_point_name = 2;
+  int32 error_count = 3;
+  int32 total_count = 4;
+}
+
+message AnswerSpeedData {
+  int32 question_id = 1;
+  int32 time_spent_seconds = 2;
+  int32 expected_time_seconds = 3;
+}
+
+// 学情分析响应（新增）
+message LearningAnalysisResponse {
+  repeated KnowledgePointScore knowledge_point_scores = 1;
+  repeated string ai_suggestions = 2;
+  float overall_mastery_score = 3;  // 0-100
+}
+
+message KnowledgePointScore {
+  int32 knowledge_point_id = 1;
+  string knowledge_point_name = 2;
+  float mastery_score = 3;  // 0-100
+  string status = 4;  // weak, improving, mastered
+}
+
+// 口语评测请求（新增）
+message SpeechAssessmentRequest {
+  int32 student_id = 1;
+  bytes audio_data = 2;  // 音频二进制数据
+  string audio_format = 3;  // mp3, wav
+  string language = 4;  // en, zh
+  string reference_text = 5;  // 标准发音文本（可选）
+}
+
+// 口语评测响应（新增）
+message SpeechAssessmentResponse {
+  float pronunciation_accuracy = 1;  // 发音准确率 0-100
+  float intonation_score = 2;  // 语调评分 0-100
+  float fluency_score = 3;  // 流畅度评分 0-100
+  repeated SentenceCorrection sentence_corrections = 4;  // 逐句批改
+  string reference_audio_url = 5;  // 标准发音示范音频URL
+  string overall_feedback = 6;  // 总体反馈
+}
+
+// 逐句批改信息（新增）
+message SentenceCorrection {
+  int32 sentence_index = 1;
+  string sentence_text = 2;
+  float accuracy = 3;  // 该句准确率
+  repeated string error_words = 4;  // 发音错误的单词
+  repeated string suggestions = 5;  // 改进建议
+}
+
+// 推送文案优化请求（新增）
+message OptimizePushContentRequest {
+  string original_content = 1;  // 原始推送文案
+  string language = 2;  // 语言：zh, en
+  string context = 3;  // 推送上下文（学生学习状态、任务类型等）
+  int32 max_length = 4;  // 最大长度限制（字符数）
+}
+
+// 推送文案优化响应（新增）
+message OptimizePushContentResponse {
+  string optimized_content = 1;  // 优化后的推送文案
+  float appeal_score = 2;  // 吸引力评分 0-100
+  float conversion_score = 3;  // 转化率评分 0-100
+  repeated string optimization_suggestions = 4;  // 优化建议
+  bool success = 5;  // 是否成功
+  string message = 6;  // 返回消息
+}
+
+

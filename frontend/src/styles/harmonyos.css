@@ -1,0 +1,345 @@
+/**
+ * 鸿蒙设备响应式样式
+ * HarmonyOS Responsive Styles
+ * 
+ * 适配鸿蒙浏览器屏幕尺寸和触摸交互
+ */
+
+/* ========== 鸿蒙设备基础样式 ========== */
+.harmonyos-optimized {
+  /* 优化触摸滚动 */
+  -webkit-overflow-scrolling: touch;
+  touch-action: manipulation;
+}
+
+.harmonyos-device {
+  /* 鸿蒙设备特定样式 */
+}
+
+/* ========== 触摸目标优化 ========== */
+.harmonyos-optimized button,
+.harmonyos-optimized a,
+.harmonyos-optimized .clickable {
+  min-height: var(--touch-target-size, 48px);
+  min-width: var(--touch-target-size, 48px);
+  padding: var(--touch-padding, 12px);
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+}
+
+/* 触摸反馈效果 */
+.harmonyos-optimized button:active,
+.harmonyos-optimized a:active,
+.harmonyos-optimized .clickable:active {
+  transform: scale(0.98);
+  opacity: 0.9;
+  transition: all 0.1s ease;
+}
+
+/* ========== 屏幕尺寸适配 ========== */
+
+/* 小屏幕（手机竖屏）< 600px */
+.screen-small {
+  font-size: 14px;
+}
+
+.screen-small .container {
+  padding: 12px;
+}
+
+.screen-small h1 {
+  font-size: 24px;
+}
+
+.screen-small h2 {
+  font-size: 20px;
+}
+
+.screen-small h3 {
+  font-size: 18px;
+}
+
+/* 中等屏幕（手机横屏/小平板）600px - 960px */
+.screen-medium {
+  font-size: 15px;
+}
+
+.screen-medium .container {
+  padding: 16px;
+}
+
+.screen-medium h1 {
+  font-size: 28px;
+}
+
+.screen-medium h2 {
+  font-size: 24px;
+}
+
+.screen-medium h3 {
+  font-size: 20px;
+}
+
+/* 大屏幕（平板/桌面）> 960px */
+.screen-large {
+  font-size: 16px;
+}
+
+.screen-large .container {
+  padding: 24px;
+}
+
+.screen-large h1 {
+  font-size: 32px;
+}
+
+.screen-large h2 {
+  font-size: 28px;
+}
+
+.screen-large h3 {
+  font-size: 24px;
+}
+
+/* ========== 设备类型适配 ========== */
+
+/* 鸿蒙手机 */
+.harmonyos-phone {
+  /* 手机特定样式 */
+}
+
+.harmonyos-phone .sidebar {
+  display: none; /* 手机端隐藏侧边栏 */
+}
+
+.harmonyos-phone .mobile-menu {
+  display: block; /* 显示移动端菜单 */
+}
+
+/* 鸿蒙平板 */
+.harmonyos-tablet {
+  /* 平板特定样式 */
+}
+
+.harmonyos-tablet .sidebar {
+  width: 240px; /* 平板端侧边栏宽度 */
+}
+
+/* 鸿蒙电视 */
+.harmonyos-tv {
+  /* 电视特定样式 */
+  font-size: 18px;
+}
+
+.harmonyos-tv button {
+  min-height: 60px;
+  min-width: 120px;
+  font-size: 20px;
+}
+
+/* 鸿蒙手表 */
+.harmonyos-watch {
+  /* 手表特定样式 */
+  font-size: 12px;
+}
+
+.harmonyos-watch .container {
+  padding: 8px;
+}
+
+/* ========== 屏幕方向适配 ========== */
+
+/* 竖屏 */
+.portrait {
+  /* 竖屏特定样式 */
+}
+
+.portrait .layout-horizontal {
+  flex-direction: column;
+}
+
+/* 横屏 */
+.landscape {
+  /* 横屏特定样式 */
+}
+
+.landscape .layout-horizontal {
+  flex-direction: row;
+}
+
+/* ========== 表单元素优化 ========== */
+.harmonyos-optimized input,
+.harmonyos-optimized textarea,
+.harmonyos-optimized select {
+  min-height: var(--touch-target-size, 48px);
+  padding: var(--touch-padding, 12px);
+  font-size: 16px; /* 防止iOS自动缩放 */
+  border-radius: 8px;
+  border: 1px solid #dcdfe6;
+  transition: border-color 0.2s ease;
+}
+
+.harmonyos-optimized input:focus,
+.harmonyos-optimized textarea:focus,
+.harmonyos-optimized select:focus {
+  outline: none;
+  border-color: #409eff;
+  box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.2);
+}
+
+/* ========== 列表项优化 ========== */
+.harmonyos-optimized .list-item {
+  min-height: var(--touch-target-size, 48px);
+  padding: var(--touch-padding, 12px);
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #ebeef5;
+  transition: background-color 0.2s ease;
+}
+
+.harmonyos-optimized .list-item:active {
+  background-color: #f5f7fa;
+}
+
+/* ========== 卡片组件优化 ========== */
+.harmonyos-optimized .card {
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.harmonyos-optimized .card:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* ========== 导航栏优化 ========== */
+.harmonyos-optimized .navbar {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.harmonyos-optimized .navbar-item {
+  min-height: 48px;
+  min-width: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 4px;
+}
+
+/* ========== 底部导航栏（移动端）========== */
+.harmonyos-optimized .bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  display: flex;
+  background-color: #fff;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.harmonyos-optimized .bottom-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 56px;
+  font-size: 12px;
+  color: #909399;
+  transition: color 0.2s ease;
+}
+
+.harmonyos-optimized .bottom-nav-item.active {
+  color: #409eff;
+}
+
+.harmonyos-optimized .bottom-nav-item:active {
+  background-color: #f5f7fa;
+}
+
+/* ========== 滑动手势优化 ========== */
+.harmonyos-optimized .swipeable {
+  touch-action: pan-y; /* 允许垂直滚动 */
+  user-select: none;
+}
+
+.harmonyos-optimized .swipeable-horizontal {
+  touch-action: pan-x; /* 允许水平滚动 */
+  user-select: none;
+}
+
+/* ========== 加载动画优化 ========== */
+.harmonyos-optimized .loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}
+
+.harmonyos-optimized .loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #409eff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ========== 响应式图片 ========== */
+.harmonyos-optimized img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ========== 文本选择优化 ========== */
+.harmonyos-optimized .no-select {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* ========== 安全区域适配（刘海屏）========== */
+.harmonyos-optimized {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* ========== 深色模式支持 ========== */
+@media (prefers-color-scheme: dark) {
+  .harmonyos-optimized {
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+  }
+  
+  .harmonyos-optimized .card {
+    background-color: #2a2a2a;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  }
+  
+  .harmonyos-optimized input,
+  .harmonyos-optimized textarea,
+  .harmonyos-optimized select {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+    border-color: #404040;
+  }
+}

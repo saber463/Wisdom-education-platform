@@ -1,0 +1,37 @@
+{
+  "apps": [
+    {
+      "name": "smart-edu-backend",
+      "script": "./backend/dist/index.js",
+      "instances": 2,
+      "exec_mode": "cluster",
+      "max_memory_restart": "512M",
+      "autorestart": true,
+      "watch": false,
+      "env": {
+        "NODE_ENV": "production",
+        "PORT": 3000
+      },
+      "error_file": "./backend/logs/pm2-error.log",
+      "out_file": "./backend/logs/pm2-out.log",
+      "log_date_format": "YYYY-MM-DD HH:mm:ss",
+      "merge_logs": true,
+      "max_restarts": 10,
+      "min_uptime": "10s",
+      "restart_delay": 4000,
+      "kill_timeout": 5000,
+      "listen_timeout": 10000,
+      "wait_ready": false,
+      "autorestart": true,
+      "cron_restart": "0 3 * * *",
+      "env_production": {
+        "NODE_ENV": "production",
+        "PORT": 3000
+      },
+      "env_development": {
+        "NODE_ENV": "development",
+        "PORT": 3000
+      }
+    }
+  ]
+}

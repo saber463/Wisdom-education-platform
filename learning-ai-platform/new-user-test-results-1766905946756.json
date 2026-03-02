@@ -1,0 +1,272 @@
+{
+  "timestamp": "2025-12-28T07:10:34.609Z",
+  "email": "test_new_user_1766905834609@example.com",
+  "password": "Password123!",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NTBkN2VhNzI2Yjg4NTgwZTI4MDM2OSIsImlhdCI6MTc2NjkwNTgzNCwiZXhwIjoxNzY5NDk3ODM0fQ.Z_HhPnBnpmI-xxIQfGVGsnGiH6sveGgNwASV5KnR4Jc",
+  "userId": "6950d7ea726b88580e280369",
+  "tests": [
+    {
+      "name": "用户注册",
+      "status": "success",
+      "result": {
+        "success": true,
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NTBkN2VhNzI2Yjg4NTgwZTI4MDM2OSIsImlhdCI6MTc2NjkwNTgzNCwiZXhwIjoxNzY5NDk3ODM0fQ.Z_HhPnBnpmI-xxIQfGVGsnGiH6sveGgNwASV5KnR4Jc",
+        "user": {
+          "_id": "6950d7ea726b88580e280369",
+          "username": "test834609",
+          "email": "test_new_user_1766905834609@example.com",
+          "learningInterests": []
+        }
+      }
+    },
+    {
+      "name": "用户登录",
+      "status": "success",
+      "result": {
+        "success": true,
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NTBkN2VhNzI2Yjg4NTgwZTI4MDM2OSIsImlhdCI6MTc2NjkwNTgzNCwiZXhwIjoxNzY5NDk3ODM0fQ.Z_HhPnBnpmI-xxIQfGVGsnGiH6sveGgNwASV5KnR4Jc",
+        "user": {
+          "_id": "6950d7ea726b88580e280369",
+          "username": "test834609",
+          "email": "test_new_user_1766905834609@example.com",
+          "learningInterests": []
+        }
+      }
+    },
+    {
+      "name": "获取用户信息",
+      "status": "success",
+      "result": {
+        "success": true,
+        "data": {
+          "learningPreferences": {
+            "learningStyle": "mixed",
+            "preferredTime": "flexible",
+            "preferredPlatforms": []
+          },
+          "learningStats": {
+            "totalStudyTime": 0,
+            "completedCourses": 0,
+            "currentCourses": 0,
+            "generatedPaths": 0
+          },
+          "socialStats": {
+            "receivedLikes": 0,
+            "receivedComments": 0,
+            "createdTweets": 0
+          },
+          "_id": "6950d7ea726b88580e280369",
+          "username": "test834609",
+          "email": "test_new_user_1766905834609@example.com",
+          "avatar": "https://via.placeholder.com/150",
+          "likes": [],
+          "coupons": [],
+          "learningInterests": [],
+          "dailyQuizCompleted": false,
+          "__v": 0
+        }
+      }
+    },
+    {
+      "name": "生成学习路径",
+      "status": "success",
+      "result": {
+        "success": true,
+        "plan": {
+          "title": "学习计划：学习计算机基础知识",
+          "days": 7,
+          "certificateType": "计算机",
+          "modules": [
+            {
+              "day": 1,
+              "moduleName": "计算机基础",
+              "topics": [
+                "计算机硬件组成",
+                "操作系统基础知识",
+                "计算机网络基础"
+              ],
+              "detailedContent": "",
+              "resourceLink": ""
+            },
+            {
+              "day": 2,
+              "moduleName": "Word文字处理",
+              "topics": [
+                "文档创建与编辑",
+                "格式设置",
+                "表格与图表",
+                "文档排版"
+              ],
+              "detailedContent": "",
+              "resourceLink": ""
+            },
+            {
+              "day": 3,
+              "moduleName": "Excel电子表格",
+              "topics": [
+                "工作表操作",
+                "公式与函数",
+                "数据透视表",
+                "图表制作"
+              ],
+              "detailedContent": "",
+              "resourceLink": ""
+            },
+            {
+              "day": 4,
+              "moduleName": "PowerPoint演示文稿",
+              "topics": [
+                "幻灯片制作",
+                "动画效果",
+                "幻灯片切换",
+                "演示技巧"
+              ],
+              "detailedContent": "",
+              "resourceLink": ""
+            },
+            {
+              "day": 5,
+              "moduleName": "互联网应用基础",
+              "topics": [
+                "网络浏览与搜索",
+                "电子邮件使用",
+                "网络安全基础"
+              ],
+              "detailedContent": "",
+              "resourceLink": ""
+            },
+            {
+              "day": 6,
+              "moduleName": "综合练习与模拟考试",
+              "topics": [
+                "综合知识点练习",
+                "模拟考试",
+                "时间管理与效率"
+              ],
+              "detailedContent": "",
+              "resourceLink": ""
+            },
+            {
+              "day": 7,
+              "moduleName": "复习：考试练习与模拟",
+              "topics": [
+                "综合知识点练习",
+                "模拟考试",
+                "时间管理与效率"
+              ],
+              "detailedContent": "复习综合练习与模拟考试的核心知识点，包括： 1.综合知识点练习， 2.模拟考试， 3.时间管理与效率。 通过做相关练习题巩固所学内容，重点掌握考试高频考点和易错知识点。",
+              "resourceLink": "https://example.com/computer-review"
+            }
+          ],
+          "summary": "该计划为您制定了7天的学习计算机基础知识学习方案，涵盖计算机领域的核心知识点和技能训练。"
+        },
+        "message": "学习计划生成成功"
+      }
+    }
+  ],
+  "errors": [
+    {
+      "name": "使用AI聊天",
+      "error": "read ECONNRESET"
+    }
+  ],
+  "generateLearningPath": {
+    "success": true,
+    "data": {
+      "success": true,
+      "plan": {
+        "title": "学习计划：学习计算机基础知识",
+        "days": 7,
+        "certificateType": "计算机",
+        "modules": [
+          {
+            "day": 1,
+            "moduleName": "计算机基础",
+            "topics": [
+              "计算机硬件组成",
+              "操作系统基础知识",
+              "计算机网络基础"
+            ],
+            "detailedContent": "",
+            "resourceLink": ""
+          },
+          {
+            "day": 2,
+            "moduleName": "Word文字处理",
+            "topics": [
+              "文档创建与编辑",
+              "格式设置",
+              "表格与图表",
+              "文档排版"
+            ],
+            "detailedContent": "",
+            "resourceLink": ""
+          },
+          {
+            "day": 3,
+            "moduleName": "Excel电子表格",
+            "topics": [
+              "工作表操作",
+              "公式与函数",
+              "数据透视表",
+              "图表制作"
+            ],
+            "detailedContent": "",
+            "resourceLink": ""
+          },
+          {
+            "day": 4,
+            "moduleName": "PowerPoint演示文稿",
+            "topics": [
+              "幻灯片制作",
+              "动画效果",
+              "幻灯片切换",
+              "演示技巧"
+            ],
+            "detailedContent": "",
+            "resourceLink": ""
+          },
+          {
+            "day": 5,
+            "moduleName": "互联网应用基础",
+            "topics": [
+              "网络浏览与搜索",
+              "电子邮件使用",
+              "网络安全基础"
+            ],
+            "detailedContent": "",
+            "resourceLink": ""
+          },
+          {
+            "day": 6,
+            "moduleName": "综合练习与模拟考试",
+            "topics": [
+              "综合知识点练习",
+              "模拟考试",
+              "时间管理与效率"
+            ],
+            "detailedContent": "",
+            "resourceLink": ""
+          },
+          {
+            "day": 7,
+            "moduleName": "复习：考试练习与模拟",
+            "topics": [
+              "综合知识点练习",
+              "模拟考试",
+              "时间管理与效率"
+            ],
+            "detailedContent": "复习综合练习与模拟考试的核心知识点，包括： 1.综合知识点练习， 2.模拟考试， 3.时间管理与效率。 通过做相关练习题巩固所学内容，重点掌握考试高频考点和易错知识点。",
+            "resourceLink": "https://example.com/computer-review"
+          }
+        ],
+        "summary": "该计划为您制定了7天的学习计算机基础知识学习方案，涵盖计算机领域的核心知识点和技能训练。"
+      },
+      "message": "学习计划生成成功"
+    }
+  },
+  "chatWithAI": {
+    "success": false,
+    "error": "read ECONNRESET"
+  }
+}

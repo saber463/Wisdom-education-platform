@@ -1,0 +1,32 @@
+{
+  "username": "test_new_user",
+  "email": "test_new_user@example.com",
+  "password": "Test@123456",
+  "tests": [],
+  "errors": [
+    {
+      "name": "用户注册",
+      "error": "接口 /api/users/register 不存在"
+    },
+    {
+      "name": "用户登录",
+      "error": "接口 /api/users/login 不存在"
+    },
+    {
+      "name": "获取用户信息",
+      "error": "接口 /api/users/me 不存在"
+    },
+    {
+      "name": "获取课程列表",
+      "error": "接口 /api/courses 不存在"
+    },
+    {
+      "name": "生成学习路径",
+      "error": "接口 /api/learning-paths/generate 不存在"
+    },
+    {
+      "name": "使用AI聊天",
+      "error": "认证失败"
+    }
+  ]
+}

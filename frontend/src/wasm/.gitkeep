@@ -1,0 +1,21 @@
+# WASM模块目录
+
+此目录用于存放编译后的Rust-WASM模块。
+
+## 生成WASM模块
+
+在 `rust-wasm` 目录下运行：
+
+```batch
+build-and-deploy.bat
+```
+
+这将编译WASM模块并自动复制到此目录。
+
+## 预期文件
+
+编译完成后，此目录应包含：
+- edu_wasm.js
+- edu_wasm_bg.wasm
+- edu_wasm.d.ts
+- package.json

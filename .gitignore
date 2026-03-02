@@ -1,0 +1,65 @@
+# 依赖目录
+node_modules/
+venv/
+__pycache__/
+target/
+pkg/
+
+# 构建输出
+dist/
+build/
+*.pyc
+*.pyo
+*.so
+*.dll
+*.exe
+
+# 环境变量
+.env
+.env.local
+.env.*.local
+
+# IDE配置
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 日志文件
+*.log
+logs/
+
+# 操作系统文件
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 数据库文件
+*.db
+*.sqlite
+*.sqlite3
+
+# 临时文件
+tmp/
+temp/
+*.tmp
+
+# 备份文件
+*.bak
+*.backup
+
+# Python虚拟环境
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Rust
+Cargo.lock
+**/*.rs.bk
+
+# WASM
+rust-wasm/pkg/
+
+# 上传文件
+uploads/

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+</head>
+<body>
+    <h1>API Test</h1>
+    <button onclick="testApi()">Test API</button>
+    <div id="result"></div>
+
+    <script>
+        function testApi() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Loading...';
+
+            fetch('http://localhost:4001/api/users/preset-avatars')
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    console.log('Response headers:', response.headers);
+                    return response.json();
+                })
+                .then(data => {
+                    resultDiv.innerHTML = '<h2>Success!</h2><pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                })
+                .catch(error => {
+                    resultDiv.innerHTML = '<h2>Error!</h2><pre>' + JSON.stringify(error, null, 2) + '</pre>';
+                    console.error('Error:', error);
+                });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+{
+  "timestamp": "2025-12-28T07:02:03.484Z",
+  "email": "",
+  "password": "Password123!",
+  "token": "",
+  "userId": "",
+  "tests": [],
+  "errors": [
+    {
+      "name": "用户注册",
+      "error": "接口 /auth/register 不存在"
+    },
+    {
+      "name": "用户登录",
+      "error": "接口 /auth/login 不存在"
+    },
+    {
+      "name": "获取用户信息",
+      "error": "接口 /users/info 不存在"
+    },
+    {
+      "name": "生成学习路径",
+      "error": "接口 /ai/generate-plan 不存在"
+    },
+    {
+      "name": "使用AI聊天",
+      "error": "接口 /ai/chat 不存在"
+    }
+  ]
+}

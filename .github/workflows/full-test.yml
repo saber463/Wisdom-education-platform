@@ -1,0 +1,256 @@
+name: 完整测试套件
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_backend:
+        description: '运行后端测试'
+        required: false
+        default: 'true'
+        type: boolean
+      run_frontend:
+        description: '运行前端测试'
+        required: false
+        default: 'true'
+        type: boolean
+      run_python:
+        description: '运行Python测试'
+        required: false
+        default: 'true'
+        type: boolean
+      run_rust:
+        description: '运行Rust测试'
+        required: false
+        default: 'false'
+        type: boolean
+  schedule:
+    # 每天凌晨2点运行完整测试
+    - cron: '0 2 * * *'
+
+env:
+  NODE_VERSION: '18'
+  PYTHON_VERSION: '3.10'
+  RUST_VERSION: '1.70'
+
+jobs:
+  backend-full-test:
+    name: 后端完整测试
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.run_backend != 'false' }}
+    
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: test_password
+          MYSQL_DATABASE: edu_education_platform_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+      
+      redis:
+        image: redis:6-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 3
+    
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+      
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+      
+      - name: 安装依赖
+        working-directory: ./backend
+        run: npm ci
+      
+      - name: 运行所有测试
+        working-directory: ./backend
+        env:
+          NODE_ENV: test
+          DB_HOST: localhost
+          DB_PORT: 3306
+          DB_USER: root
+          DB_PASSWORD: test_password
+          DB_NAME: edu_education_platform_test
+          REDIS_URL: redis://localhost:6379
+          JWT_SECRET: test_jwt_secret_key_for_full_test
+        run: npm test
+      
+      - name: 生成覆盖率报告
+        working-directory: ./backend
+        env:
+          NODE_ENV: test
+          DB_HOST: localhost
+          DB_PORT: 3306
+          DB_USER: root
+          DB_PASSWORD: test_password
+          DB_NAME: edu_education_platform_test
+          REDIS_URL: redis://localhost:6379
+          JWT_SECRET: test_jwt_secret_key_for_full_test
+        run: npm run test:coverage
+      
+      - name: 上传覆盖率报告
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-full-coverage
+          path: backend/coverage
+          retention-days: 90
+
+  frontend-full-test:
+    name: 前端完整测试
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.run_frontend != 'false' }}
+    
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+      
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+      
+      - name: 安装依赖
+        working-directory: ./frontend
+        run: npm ci
+      
+      - name: 运行所有测试
+        working-directory: ./frontend
+        run: npm run test
+      
+      - name: 生成覆盖率报告
+        working-directory: ./frontend
+        run: npm run test:coverage
+      
+      - name: 上传覆盖率报告
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-full-coverage
+          path: frontend/coverage
+          retention-days: 90
+
+  python-full-test:
+    name: Python 完整测试
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.run_python != 'false' }}
+    
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+      
+      - name: 设置 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+          cache-dependency-path: python-ai/requirements.txt
+      
+      - name: 安装依赖
+        working-directory: ./python-ai
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      - name: 运行完整测试套件
+        working-directory: ./python-ai
+        run: |
+          if [ -d "tests" ] && [ "$(ls -A tests)" ]; then
+            pytest tests/ -v --cov=. --cov-report=html --cov-report=xml
+          else
+            echo "测试目录不存在或为空"
+          fi
+      
+      - name: 上传覆盖率报告
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-full-coverage
+          path: python-ai/coverage.xml
+          retention-days: 90
+          if-no-files-found: ignore
+
+  rust-full-test:
+    name: Rust 完整测试
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.run_rust != 'false' }}
+    continue-on-error: true
+    
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+      
+      - name: 设置 Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: ${{ env.RUST_VERSION }}
+      
+      - name: 缓存 Cargo 依赖
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            rust-service/target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('rust-service/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+      
+      - name: 运行完整测试套件
+        working-directory: ./rust-service
+        run: |
+          cargo test --release --verbose --all-features
+      
+      - name: 生成测试报告
+        working-directory: ./rust-service
+        run: |
+          cargo test --release -- --nocapture || echo "测试完成"
+
+  test-summary:
+    name: 测试总结报告
+    runs-on: ubuntu-latest
+    needs: [backend-full-test, frontend-full-test, python-full-test, rust-full-test]
+    if: always()
+    
+    steps:
+      - name: 生成测试总结
+        run: |
+          echo "# 📊 完整测试套件结果" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| 模块 | 状态 | 说明 |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|------|------|" >> $GITHUB_STEP_SUMMARY
+          echo "| 🔵 后端 (Node.js) | ${{ needs.backend-full-test.result }} | TypeScript + Jest |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🟢 前端 (Vue3) | ${{ needs.frontend-full-test.result }} | Vue3 + Vitest |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🐍 Python AI | ${{ needs.python-full-test.result }} | Flask + pytest |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🦀 Rust 服务 | ${{ needs.rust-full-test.result }} | Actix + Cargo |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**测试时间**: $(date)" >> $GITHUB_STEP_SUMMARY
+          
+          # 检查核心模块
+          if [ "${{ needs.backend-full-test.result }}" != "success" ] || \
+             [ "${{ needs.frontend-full-test.result }}" != "success" ]; then
+            echo "❌ **核心模块测试失败，请立即检查！**" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          else
+            echo "✅ **核心模块测试通过！**" >> $GITHUB_STEP_SUMMARY
+          fi
+

@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>路由测试</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      h1 {
+        color: #333;
+        text-align: center;
+      }
+      .route-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 30px;
+      }
+      .route-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+      .route-link {
+        color: #4285f4;
+        text-decoration: none;
+        font-weight: bold;
+      }
+      .route-link:hover {
+        text-decoration: underline;
+      }
+      .status {
+        padding: 5px 10px;
+        border-radius: 3px;
+        font-size: 12px;
+        font-weight: bold;
+      }
+      .status.pending {
+        background-color: #f0f0f0;
+        color: #666;
+      }
+      .status.success {
+        background-color: #d4edda;
+        color: #155724;
+      }
+      .status.error {
+        background-color: #f8d7da;
+        color: #721c24;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>路由测试页面</h1>
+    <p>点击以下链接测试各页面是否能正常访问：</p>
+
+    <div class="route-list">
+      <!-- 主要页面 -->
+      <div class="route-item">
+        <a href="http://localhost:3000/" class="route-link" target="_blank">首页</a>
+        <span class="status pending">未测试</span>
+      </div>
+      <div class="route-item">
+        <a href="http://localhost:3000/home" class="route-link" target="_blank">首页（/home）</a>
+        <span class="status pending">未测试</span>
+      </div>
+      <div class="route-item">
+        <a href="http://localhost:3000/courses" class="route-link" target="_blank">课程</a>
+        <span class="status pending">未测试</span>
+      </div>
+      <div class="route-item">
+        <a href="http://localhost:3000/knowledge-base" class="route-link" target="_blank">知识库</a>
+        <span class="status pending">未测试</span>
+      </div>
+
+      <!-- AI学习路径 -->
+      <div class="route-item">
+        <a href="http://localhost:3000/learning-path/generate" class="route-link" target="_blank"
+          >AI学习路径生成</a
+        >
+        <span class="status pending">未测试</span>
+      </div>
+
+      <!-- 学习社区 -->
+      <div class="route-item">
+        <a href="http://localhost:3000/tweets" class="route-link" target="_blank">学习社区</a>
+        <span class="status pending">未测试</span>
+      </div>
+
+      <!-- 学习评估 -->
+      <div class="route-item">
+        <a href="http://localhost:3000/assessment/tests" class="route-link" target="_blank"
+          >学习评估</a
+        >
+        <span class="status pending">未测试</span>
+      </div>
+
+      <!-- 个人中心 -->
+      <div class="route-item">
+        <a href="http://localhost:3000/user/center" class="route-link" target="_blank">个人中心</a>
+        <span class="status pending">未测试</span>
+      </div>
+
+      <!-- 认证页面 -->
+      <div class="route-item">
+        <a href="http://localhost:3000/login" class="route-link" target="_blank">登录</a>
+        <span class="status pending">未测试</span>
+      </div>
+      <div class="route-item">
+        <a href="http://localhost:3000/register" class="route-link" target="_blank">注册</a>
+        <span class="status pending">未测试</span>
+      </div>
+
+      <!-- 404测试 -->
+      <div class="route-item">
+        <a href="http://localhost:3000/nonexistent-page" class="route-link" target="_blank"
+          >404错误页面</a
+        >
+        <span class="status pending">未测试</span>
+      </div>
+    </div>
+  </body>
+</html>

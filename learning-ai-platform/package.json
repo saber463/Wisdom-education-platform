@@ -1,0 +1,37 @@
+{
+  "name": "learning-ai-platform",
+  "version": "1.0.0",
+  "description": "AI-powered Learning Platform",
+  "main": "index.js",
+  "scripts": {
+    "start": "powershell -ExecutionPolicy Bypass -File timeout-npm.ps1 -Command \"run start:server\"",
+    "start:server": "powershell -ExecutionPolicy Bypass -File timeout-npm.ps1 -Command \"run dev\" -WorkingDirectory server",
+    "start:client": "powershell -ExecutionPolicy Bypass -File timeout-npm.ps1 -Command \"run dev\" -WorkingDirectory client",
+    "install:all": "powershell -ExecutionPolicy Bypass -File timeout-npm.ps1 -Command \"install\" && powershell -ExecutionPolicy Bypass -File timeout-npm.ps1 -Command \"install\" -WorkingDirectory server && powershell -ExecutionPolicy Bypass -File timeout-npm.ps1 -Command \"install\" -WorkingDirectory client",
+    "test": "powershell -ExecutionPolicy Bypass -File timeout-npm.ps1 -Command \"test\" -WorkingDirectory server",
+    "prepare": "husky"
+  },
+  "keywords": [
+    "ai",
+    "learning",
+    "education",
+    "vue",
+    "express"
+  ],
+  "author": "",
+  "license": "MIT",
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "dependencies": {
+    "axios": "^1.13.2",
+    "dotenv": "^17.2.3"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^20.2.0",
+    "@commitlint/config-conventional": "^20.2.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7"
+  }
+}

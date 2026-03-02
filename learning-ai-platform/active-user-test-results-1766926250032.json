@@ -1,0 +1,94 @@
+{
+  "username": "test_active_user",
+  "email": "test_active_user@example.com",
+  "password": "Test@123456",
+  "tests": [
+    {
+      "name": "用户登录",
+      "status": "success",
+      "duration": 81,
+      "result": {
+        "success": true,
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NTEyNzEzZDI5ZjM4MTU5YTMzZDQwNCIsImlhdCI6MTc2NjkyNjI0OSwiZXhwIjoxNzY5NTE4MjQ5fQ.3I7uVp7kRouUbPVZHlf2rqCYjC5_hsMJWLvkz5V26mc",
+        "user": {
+          "_id": "69512713d29f38159a33d404",
+          "username": "test_active_user",
+          "email": "test_active_user@example.com",
+          "learningInterests": []
+        }
+      }
+    },
+    {
+      "name": "获取学习进度",
+      "status": "success",
+      "duration": 5,
+      "result": {
+        "user": "69512713d29f38159a33d404",
+        "currentPath": null,
+        "progress": {},
+        "_id": "6951272bd29f38159a33d421",
+        "createdAt": "2025-12-28T12:48:43.978Z",
+        "updatedAt": "2025-12-28T12:48:43.978Z",
+        "__v": 0
+      }
+    },
+    {
+      "name": "更新学习进度",
+      "status": "success",
+      "duration": 10,
+      "result": {
+        "_id": "6951272bd29f38159a33d421",
+        "user": "69512713d29f38159a33d404",
+        "currentPath": null,
+        "progress": {},
+        "createdAt": "2025-12-28T12:48:43.978Z",
+        "updatedAt": "2025-12-28T12:50:49.991Z",
+        "__v": 0
+      }
+    },
+    {
+      "name": "获取成就列表",
+      "status": "success",
+      "duration": 4,
+      "result": {
+        "success": true,
+        "count": 0,
+        "data": []
+      }
+    },
+    {
+      "name": "获取收藏列表",
+      "status": "success",
+      "duration": 9,
+      "result": {
+        "success": true,
+        "data": []
+      }
+    },
+    {
+      "name": "获取通知列表",
+      "status": "success",
+      "duration": 6,
+      "result": {
+        "notifications": [],
+        "unreadCount": 0
+      }
+    }
+  ],
+  "errors": [
+    {
+      "name": "用户注册",
+      "error": "邮箱已被注册"
+    },
+    {
+      "name": "添加收藏",
+      "error": "Request failed with status code 400"
+    },
+    {
+      "name": "生成学习计划",
+      "error": "authHeader is not defined"
+    }
+  ],
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NTEyNzEzZDI5ZjM4MTU5YTMzZDQwNCIsImlhdCI6MTc2NjkyNjI0OSwiZXhwIjoxNzY5NTE4MjQ5fQ.3I7uVp7kRouUbPVZHlf2rqCYjC5_hsMJWLvkz5V26mc",
+  "userId": "69512713d29f38159a33d404"
+}

@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LocalStorage调试工具</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      .container {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #333;
+        text-align: center;
+      }
+      button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        display: block;
+        margin: 20px auto;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      #result {
+        margin-top: 20px;
+        padding: 15px;
+        background-color: #f8f9fa;
+        border-radius: 4px;
+        border: 1px solid #dee2e6;
+      }
+      .token-info {
+        background-color: #d4edda;
+        border: 1px solid #c3e6cb;
+        padding: 10px;
+        border-radius: 4px;
+        margin: 10px 0;
+      }
+      .error {
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        padding: 10px;
+        border-radius: 4px;
+        margin: 10px 0;
+      }
+      pre {
+        background: #f8f9fa;
+        padding: 10px;
+        border-radius: 4px;
+        overflow-x: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>LocalStorage调试工具</h1>
+      <button id="checkBtn">检查LocalStorage内容</button>
+      <div id="result"></div>
+    </div>
+
+    <script>
+      document.getElementById('checkBtn').addEventListener('click', function () {
+        const resultDiv = document.getElementById('result');
+
+        try {
+          // 显示所有localStorage内容
+          let html = '<h3>LocalStorage内容:</h3>';
+
+          if (localStorage.length === 0) {
+            html += '<p>LocalStorage为空</p>';
+          } else {
+            html += '<ul>';
+            const keys = [];
+            for (let i = 0; i < localStorage.length; i++) {
+              keys.push(localStorage.key(i));
+            }
+
+            // 按字母顺序排序
+            keys.sort();
+
+            keys.forEach(key => {
+              const value = localStorage.getItem(key);
+              html += `<li><strong>${key}:</strong> <pre>${value ? value.substring(0, 100) + (value.length > 100 ? '...' : '') : 'null'}</pre></li>`;
+            });
+            html += '</ul>';
+          }
+
+          // 特别检查token相关项
+          html += '<h3>Token相关检查:</h3>';
+
+          // 检查常见的token键名
+          const commonTokenKeys = [
+            'token',
+            'authToken',
+            'accessToken',
+            'learning_ai_token',
+            'learning-ai-platform_token',
+          ];
+
+          let foundTokens = false;
+          commonTokenKeys.forEach(key => {
+            const value = localStorage.getItem(key);
+            if (value) {
+              foundTokens = true;
+              html += `<div class="token-info"><strong>找到Token (${key}):</strong> <pre>${value.substring(0, 50)}${value.length > 50 ? '...' : ''}</pre></div>`;
+            }
+          });
+
+          if (!foundTokens) {
+            html += '<p>未找到常见的Token键名</p>';
+          }
+
+          // 检查配置中的storagePrefix
+          html += '<h3>配置检查:</h3>';
+          html += '<p>请检查应用配置中的storagePrefix设置</p>';
+
+          resultDiv.innerHTML = html;
+        } catch (error) {
+          resultDiv.innerHTML = `<div class="error"><p style="color: red;">读取localStorage时出错: ${error.message}</p><p>错误堆栈: ${error.stack}</p></div>`;
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="智慧教育学习平台 - AI驱动的个性化学习系统" />
+    <meta name="keywords" content="在线教育,AI学习,个性化学习,智慧教育" />
+    
+    <!-- 性能优化：DNS预解析 -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="//cdn.jsdelivr.net" />
+    
+    <!-- 性能优化：预连接（关键API服务器） -->
+    <link rel="preconnect" href="http://localhost:3000" crossorigin />
+    
+    <!-- 性能优化：预加载关键资源 -->
+    <link rel="preload" href="/src/main.ts" as="script" />
+    <link rel="preload" href="/src/router/index.ts" as="script" />
+    
+    <!-- 性能优化：关键CSS内联（可选） -->
+    <style>
+      /* 首屏关键CSS */
+      #app { min-height: 100vh; }
+      body { margin: 0; font-family: 'Microsoft YaHei', Arial, sans-serif; }
+    </style>
+    
+    <title>智慧教育学习平台</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

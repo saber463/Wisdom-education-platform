@@ -1,0 +1,18 @@
+[package]
+name = "edu-wasm"
+version = "1.0.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+wasm-bindgen = "0.2"
+serde = { version = "1.0", features = ["derive"] }
+serde-wasm-bindgen = "0.6"
+js-sys = "0.3"
+
+[profile.release]
+opt-level = "z"     # 优化文件大小
+lto = true          # 链接时优化
+codegen-units = 1   # 单核编译（防蓝屏）

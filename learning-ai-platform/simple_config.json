@@ -1,0 +1,14 @@
+{
+  "qwen3": {
+    "timeout": 30000,
+    "retryAttempts": 2,
+    "retryDelay": 1000
+  },
+  "contentCategories": [
+    "计算机",
+    "英语",
+    "会计",
+    "教师",
+    "设计"
+  ]
+}

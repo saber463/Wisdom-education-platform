@@ -1,0 +1,71 @@
+{
+  "timestamp": "2025-12-28T07:03:34.052Z",
+  "email": "",
+  "password": "Password123!",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NTBkNjQ2NjVlNzhiNTQwMDg0NDM2ZiIsImlhdCI6MTc2NjkwNTQxNCwiZXhwIjoxNzY5NDk3NDE0fQ.EtSrMv_yGEtN0XzLQSSEzbq8MrIiod2nkKTzM0NwRhc",
+  "userId": "",
+  "tests": [
+    {
+      "name": "用户登录",
+      "status": "success",
+      "result": {
+        "success": true,
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NTBkNjQ2NjVlNzhiNTQwMDg0NDM2ZiIsImlhdCI6MTc2NjkwNTQxNCwiZXhwIjoxNzY5NDk3NDE0fQ.EtSrMv_yGEtN0XzLQSSEzbq8MrIiod2nkKTzM0NwRhc",
+        "user": {
+          "_id": "6950d64665e78b540084436f",
+          "username": "test414052",
+          "email": "test_new_user_1766905414052@example.com",
+          "learningInterests": []
+        }
+      }
+    },
+    {
+      "name": "获取用户信息",
+      "status": "success",
+      "result": {
+        "success": true,
+        "data": {
+          "learningPreferences": {
+            "learningStyle": "mixed",
+            "preferredTime": "flexible",
+            "preferredPlatforms": []
+          },
+          "learningStats": {
+            "totalStudyTime": 0,
+            "completedCourses": 0,
+            "currentCourses": 0,
+            "generatedPaths": 0
+          },
+          "socialStats": {
+            "receivedLikes": 0,
+            "receivedComments": 0,
+            "createdTweets": 0
+          },
+          "_id": "6950d64665e78b540084436f",
+          "username": "test414052",
+          "email": "test_new_user_1766905414052@example.com",
+          "avatar": "https://via.placeholder.com/150",
+          "likes": [],
+          "coupons": [],
+          "learningInterests": [],
+          "dailyQuizCompleted": false,
+          "__v": 0
+        }
+      }
+    }
+  ],
+  "errors": [
+    {
+      "name": "用户注册",
+      "error": "Cannot read properties of undefined (reading 'user')"
+    },
+    {
+      "name": "生成学习路径",
+      "error": "缺少必要参数"
+    },
+    {
+      "name": "使用AI聊天",
+      "error": "缺少必要参数"
+    }
+  ]
+}

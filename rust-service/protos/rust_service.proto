@@ -1,0 +1,93 @@
+syntax = "proto3";
+
+package rust_service;
+
+// Rust高性能服务
+service RustService {
+  // 数据加密
+  rpc EncryptData(EncryptRequest) returns (EncryptResponse);
+  
+  // 数据解密
+  rpc DecryptData(DecryptRequest) returns (DecryptResponse);
+  
+  // 密码哈希
+  rpc HashPassword(HashRequest) returns (HashResponse);
+  
+  // 相似度计算
+  rpc CalculateSimilarity(SimilarityRequest) returns (SimilarityResponse);
+  
+  // 分析学生学习状态
+  rpc AnalyzeStudentStatus(AnalyzeStudentStatusRequest) returns (AnalyzeStudentStatusResponse);
+  
+  // 生成推送文案
+  rpc GeneratePushContent(GeneratePushContentRequest) returns (GeneratePushContentResponse);
+}
+
+message EncryptRequest {
+  bytes data = 1;
+  string key = 2;
+}
+
+message EncryptResponse {
+  bytes encrypted_data = 1;
+}
+
+message DecryptRequest {
+  bytes encrypted_data = 1;
+  string key = 2;
+}
+
+message DecryptResponse {
+  bytes data = 1;
+}
+
+message HashRequest {
+  string password = 1;
+}
+
+message HashResponse {
+  string hash = 1;
+}
+
+message SimilarityRequest {
+  string text1 = 1;
+  string text2 = 2;
+}
+
+message SimilarityResponse {
+  float similarity = 1;
+}
+
+// 学生学习状态分析请求
+message AnalyzeStudentStatusRequest {
+  int32 student_id = 1;
+  int32 check_in_count = 2;
+  int32 completed_tasks = 3;
+  int32 total_tasks = 4;
+}
+
+// 学生学习状态分析响应
+message AnalyzeStudentStatusResponse {
+  bool success = 1;
+  float learning_score = 2;
+  string status_level = 3;  // "excellent", "good", "fair", "poor"
+  string message = 4;
+}
+
+// 推送文案生成请求
+message GeneratePushContentRequest {
+  int32 student_id = 1;
+  string push_type = 2;  // "check_in_reminder", "task_reminder", "class_notification"
+  float learning_score = 3;
+  int32 check_in_count = 4;
+  int32 completed_tasks = 5;
+  int32 total_tasks = 6;
+}
+
+// 推送文案生成响应
+message GeneratePushContentResponse {
+  bool success = 1;
+  string title = 2;
+  string content = 3;
+  string message = 4;
+}

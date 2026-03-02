@@ -1,0 +1,62 @@
+{
+  "username": "test_active_user",
+  "email": "test_active_user@example.com",
+  "password": "Test@123456",
+  "tests": [
+    {
+      "name": "用户注册",
+      "status": "success",
+      "duration": 100,
+      "result": {
+        "success": true,
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NTEyNzEzZDI5ZjM4MTU5YTMzZDQwNCIsImlhdCI6MTc2NjkyNjA5OSwiZXhwIjoxNzY5NTE4MDk5fQ.LBs1lFC2Oq9M07ErhZoQCfM5swWfLXCDe9pFgHdM_tU",
+        "user": {
+          "_id": "69512713d29f38159a33d404",
+          "username": "test_active_user",
+          "email": "test_active_user@example.com",
+          "learningInterests": []
+        }
+      }
+    },
+    {
+      "name": "获取成就列表",
+      "status": "success",
+      "duration": 5,
+      "result": {
+        "success": true,
+        "count": 0,
+        "data": []
+      }
+    }
+  ],
+  "errors": [
+    {
+      "name": "用户登录",
+      "error": "Cannot read properties of undefined (reading 'token')"
+    },
+    {
+      "name": "获取学习进度",
+      "error": "认证失败"
+    },
+    {
+      "name": "更新学习进度",
+      "error": "认证失败"
+    },
+    {
+      "name": "获取收藏列表",
+      "error": "认证失败"
+    },
+    {
+      "name": "添加收藏",
+      "error": "认证失败"
+    },
+    {
+      "name": "获取通知列表",
+      "error": "认证失败"
+    },
+    {
+      "name": "生成学习计划",
+      "error": "认证失败"
+    }
+  ]
+}

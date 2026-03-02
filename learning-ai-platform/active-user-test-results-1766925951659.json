@@ -1,0 +1,51 @@
+{
+  "username": "test_active_user",
+  "email": "test_active_user@example.com",
+  "password": "Test@123456",
+  "tests": [
+    {
+      "name": "获取成就列表",
+      "status": "success",
+      "duration": 6,
+      "result": {
+        "success": true,
+        "count": 0,
+        "data": []
+      }
+    }
+  ],
+  "errors": [
+    {
+      "name": "用户注册",
+      "error": "输入验证失败"
+    },
+    {
+      "name": "用户登录",
+      "error": "邮箱或密码错误"
+    },
+    {
+      "name": "获取学习进度",
+      "error": "认证失败"
+    },
+    {
+      "name": "更新学习进度",
+      "error": "认证失败"
+    },
+    {
+      "name": "获取收藏列表",
+      "error": "认证失败"
+    },
+    {
+      "name": "添加收藏",
+      "error": "认证失败"
+    },
+    {
+      "name": "获取通知列表",
+      "error": "认证失败"
+    },
+    {
+      "name": "生成学习计划",
+      "error": "接口 /api/ai/learning-paths 不存在"
+    }
+  ]
+}

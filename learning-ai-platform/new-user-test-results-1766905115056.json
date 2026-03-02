@@ -1,0 +1,28 @@
+{
+  "username": "test_new_user",
+  "email": "test_new_user@example.com",
+  "password": "Password123!",
+  "tests": [],
+  "errors": [
+    {
+      "name": "用户注册",
+      "error": "输入验证失败"
+    },
+    {
+      "name": "用户登录",
+      "error": "邮箱或密码错误"
+    },
+    {
+      "name": "获取用户信息",
+      "error": "认证失败"
+    },
+    {
+      "name": "生成学习路径",
+      "error": "认证失败"
+    },
+    {
+      "name": "使用AI聊天",
+      "error": "认证失败"
+    }
+  ]
+}

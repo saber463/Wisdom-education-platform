@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>测试所有API端点</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      h1 {
+        color: #333;
+        text-align: center;
+      }
+      .category {
+        margin-bottom: 30px;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .category h2 {
+        color: #4a90e2;
+        margin-top: 0;
+      }
+      .api-list {
+        list-style: none;
+        padding: 0;
+      }
+      .api-list li {
+        margin-bottom: 15px;
+        padding: 15px;
+        background-color: #f9f9f9;
+        border-radius: 4px;
+      }
+      .api-url {
+        font-weight: bold;
+        color: #333;
+        display: block;
+        margin-bottom: 5px;
+      }
+      .api-method {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: bold;
+        margin-right: 10px;
+      }
+      .method-get {
+        background-color: #2ecc71;
+        color: white;
+      }
+      .method-post {
+        background-color: #3498db;
+        color: white;
+      }
+      .method-put {
+        background-color: #f39c12;
+        color: white;
+      }
+      .method-delete {
+        background-color: #e74c3c;
+        color: white;
+      }
+      .api-desc {
+        color: #666;
+        margin-bottom: 10px;
+      }
+      .test-button {
+        background-color: #4a90e2;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      .test-button:hover {
+        background-color: #357abd;
+      }
+      .test-result {
+        margin-top: 10px;
+        padding: 10px;
+        background-color: #e8f4f8;
+        border-radius: 4px;
+        font-family: monospace;
+        font-size: 13px;
+        display: none;
+      }
+      .test-result.success {
+        background-color: #e8f8e8;
+        border-left: 4px solid #2ecc71;
+      }
+      .test-result.error {
+        background-color: #f8e8e8;
+        border-left: 4px solid #e74c3c;
+      }
+      .loading {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: #fff;
+        animation: spin 1s ease-in-out infinite;
+        margin-right: 5px;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>学习AI平台 - 所有API端点测试</h1>
+
+    <div class="category">
+      <h2>认证相关API</h2>
+      <ul class="api-list">
+        <li>
+          <div>
+            <span class="api-method method-post">POST</span>
+            <span class="api-url">/api/auth/login</span>
+          </div>
+          <div class="api-desc">用户登录</div>
+          <button
+            class="test-button"
+            onclick="
+              testApi('POST', '/api/auth/login', { username: 'testuser', password: 'password123' })
+            "
+            data-api="/api/auth/login"
+          >
+            测试登录API
+          </button>
+          <div class="test-result" id="result-api-auth-login"></div>
+        </li>
+
+        <li>
+          <div>
+            <span class="api-method method-post">POST</span>
+            <span class="api-url">/api/auth/register</span>
+          </div>
+          <div class="api-desc">用户注册</div>
+          <button
+            class="test-button"
+            onclick="
+              testApi('POST', '/api/auth/register', {
+                username: 'testuser_new',
+                email: 'test_new@example.com',
+                password: 'password123',
+              })
+            "
+            data-api="/api/auth/register"
+          >
+            测试注册API
+          </button>
+          <div class="test-result" id="result-api-auth-register"></div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="category">
+      <h2>AI学习路径API</h2>
+      <ul class="api-list">
+        <li>
+          <div>
+            <span class="api-method method-post">POST</span>
+            <span class="api-url">/api/ai/generate-plan</span>
+          </div>
+          <div class="api-desc">生成学习计划</div>
+          <button
+            class="test-button"
+            onclick="
+              testApi('POST', '/api/ai/generate-plan', {
+                userId: '1',
+                target: '学习Python',
+                days: 30,
+              })
+            "
+            data-api="/api/ai/generate-plan"
+          >
+            测试生成学习计划API
+          </button>
+          <div class="test-result" id="result-api-ai-generate-plan"></div>
+        </li>
+
+        <li>
+          <div>
+            <span class="api-method method-post">POST</span>
+            <span class="api-url">/api/ai/chat</span>
+          </div>
+          <div class="api-desc">学习助手聊天</div>
+          <button
+            class="test-button"
+            onclick="testApi('POST', '/api/ai/chat', { userId: '1', message: '什么是机器学习？' })"
+            data-api="/api/ai/chat"
+          >
+            测试学习助手聊天API
+          </button>
+          <div class="test-result" id="result-api-ai-chat"></div>
+        </li>
+
+        <li>
+          <div>
+            <span class="api-method method-post">POST</span>
+            <span class="api-url">/api/ai/recommend</span>
+          </div>
+          <div class="api-desc">内容推荐</div>
+          <button
+            class="test-button"
+            onclick="testApi('POST', '/api/ai/recommend', { userId: '1', type: 'course' })"
+            data-api="/api/ai/recommend"
+          >
+            测试内容推荐API
+          </button>
+          <div class="test-result" id="result-api-ai-recommend"></div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="category">
+      <h2>健康检查API</h2>
+      <ul class="api-list">
+        <li>
+          <div>
+            <span class="api-method method-get">GET</span>
+            <span class="api-url">/health</span>
+          </div>
+          <div class="api-desc">服务健康检查</div>
+          <button class="test-button" onclick="testApi('GET', '/health', null)" data-api="/health">
+            测试健康检查API
+          </button>
+          <div class="test-result" id="result-api-health"></div>
+        </li>
+      </ul>
+    </div>
+
+    <script>
+      // API测试函数
+      async function testApi(method, endpoint, data) {
+        const apiUrl = endpoint.startsWith('/health')
+          ? `http://localhost:4001${endpoint}`
+          : `http://localhost:4001${endpoint}`;
+        const button = event.target;
+        const resultDiv = document.getElementById(
+          `result-${endpoint.replace(/[\/\-]/g, '-').substring(1)}`
+        );
+
+        // 显示加载状态
+        button.innerHTML = '<span class="loading"></span>测试中...';
+        button.disabled = true;
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = '测试中...';
+        resultDiv.className = 'test-result';
+
+        try {
+          const response = await fetch(apiUrl, {
+            method: method,
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: data ? JSON.stringify(data) : null,
+          });
+
+          const responseData = await response.json();
+
+          if (response.ok) {
+            resultDiv.className = 'test-result success';
+            resultDiv.innerHTML = `
+                        <strong>成功!</strong><br>
+                        状态码: ${response.status}<br>
+                        响应数据: ${JSON.stringify(responseData, null, 2)}
+                    `;
+          } else {
+            resultDiv.className = 'test-result error';
+            resultDiv.innerHTML = `
+                        <strong>失败!</strong><br>
+                        状态码: ${response.status}<br>
+                        错误信息: ${JSON.stringify(responseData, null, 2)}
+                    `;
+          }
+        } catch (error) {
+          resultDiv.className = 'test-result error';
+          resultDiv.innerHTML = `
+                    <strong>错误!</strong><br>
+                    网络错误: ${error.message}
+                `;
+        } finally {
+          // 恢复按钮状态
+          button.innerHTML = '测试API';
+          button.disabled = false;
+        }
+      }
+
+      console.log('API测试页面加载完成');
+    </script>
+  </body>
+</html>

@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>获取Token工具</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      .container {
+        background-color: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #333;
+        text-align: center;
+      }
+      .instructions {
+        background-color: #e3f2fd;
+        padding: 20px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+      }
+      .instructions ol {
+        margin: 10px 0;
+      }
+      .instructions li {
+        margin-bottom: 10px;
+      }
+      .token-display {
+        background-color: #f1f8e9;
+        padding: 20px;
+        border-radius: 5px;
+        margin-top: 20px;
+        display: none;
+      }
+      .token-value {
+        font-family: monospace;
+        background-color: #e8f5e9;
+        padding: 10px;
+        border-radius: 4px;
+        word-break: break-all;
+        margin: 10px 0;
+      }
+      button {
+        background-color: #4caf50;
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        display: block;
+        margin: 20px auto;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+      .error {
+        background-color: #ffebee;
+        color: #c62828;
+        padding: 15px;
+        border-radius: 4px;
+        margin-top: 20px;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>获取认证Token工具</h1>
+
+      <div class="instructions">
+        <h2>使用说明：</h2>
+        <ol>
+          <li>确保您已经在系统中登录</li>
+          <li>点击下方的"获取Token"按钮</li>
+          <li>如果找到Token，会显示在下方</li>
+          <li>复制Token并在测试脚本中使用</li>
+        </ol>
+      </div>
+
+      <button onclick="getToken()">获取Token</button>
+
+      <div id="error" class="error">
+        <h3>错误信息：</h3>
+        <p id="errorMessage"></p>
+      </div>
+
+      <div id="tokenDisplay" class="token-display">
+        <h3>找到的Token：</h3>
+        <div class="token-value" id="tokenValue"></div>
+        <p><strong>使用方法：</strong>将此Token复制到测试脚本中，替换TEST_TOKEN变量的值。</p>
+      </div>
+    </div>
+
+    <script>
+      function getToken() {
+        try {
+          // 隐藏之前的显示
+          document.getElementById('tokenDisplay').style.display = 'none';
+          document.getElementById('error').style.display = 'none';
+
+          // 配置信息
+          const config = {
+            storagePrefix: 'learning_ai_',
+          };
+
+          // 构造token键名
+          const tokenKey = `${config.storagePrefix}token`;
+
+          // 从localStorage获取token
+          const token = localStorage.getItem(tokenKey);
+
+          if (token) {
+            // 显示token
+            document.getElementById('tokenValue').textContent = token;
+            document.getElementById('tokenDisplay').style.display = 'block';
+          } else {
+            // 尝试查找其他可能的token键名
+            let foundToken = false;
+            const commonTokenKeys = [
+              'token',
+              'authToken',
+              'accessToken',
+              'learning_ai_token',
+              'learning-ai-platform_token',
+            ];
+
+            for (const key of commonTokenKeys) {
+              const value = localStorage.getItem(key);
+              if (value) {
+                document.getElementById('tokenValue').textContent = value;
+                document.getElementById('tokenDisplay').style.display = 'block';
+                foundToken = true;
+                break;
+              }
+            }
+
+            if (!foundToken) {
+              // 显示错误信息
+              document.getElementById('errorMessage').textContent =
+                `未找到认证Token。请确保您已经登录系统，并且Token存储在localStorage中。` +
+                `检查的键名包括: ${tokenKey}, ${commonTokenKeys.join(', ')}`;
+              document.getElementById('error').style.display = 'block';
+            }
+          }
+        } catch (error) {
+          // 显示错误信息
+          document.getElementById('errorMessage').textContent =
+            `获取Token时发生错误: ${error.message}`;
+          document.getElementById('error').style.display = 'block';
+        }
+      }
+    </script>
+  </body>
+</html>

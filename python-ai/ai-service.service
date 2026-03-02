@@ -1,0 +1,64 @@
+# Systemd服务配置文件 - Python AI服务
+# 功能：进程守护、自动重启、开机自启
+# 需求：5.4, 5.5
+#
+# 安装说明：
+# 1. 修改此文件中的路径配置（WorkingDirectory, ExecStart, User）
+# 2. 复制此文件到: /etc/systemd/system/ai-service.service
+# 3. 重新加载systemd配置: sudo systemctl daemon-reload
+# 4. 启动服务: sudo systemctl start ai-service
+# 5. 设置开机自启: sudo systemctl enable ai-service
+# 6. 查看状态: sudo systemctl status ai-service
+#
+# 常用命令：
+# - 启动服务: sudo systemctl start ai-service
+# - 停止服务: sudo systemctl stop ai-service
+# - 重启服务: sudo systemctl restart ai-service
+# - 查看日志: sudo journalctl -u ai-service -f
+# - 查看状态: sudo systemctl status ai-service
+
+[Unit]
+# 服务描述
+Description=Python AI Service for Smart Education Platform
+# 服务文档
+Documentation=https://github.com/your-repo/python-ai
+# 依赖服务（在网络服务启动后启动）
+After=network.target
+
+[Service]
+# 服务类型（simple表示主进程不会fork）
+Type=simple
+# 运行用户（建议使用非root用户）
+User=www-data
+# 运行组
+Group=www-data
+# 工作目录（需要修改为实际路径）
+WorkingDirectory=/path/to/python-ai
+# 启动命令（需要修改为实际路径）
+ExecStart=/usr/bin/python3 /path/to/python-ai/app.py
+# 停止命令
+ExecStop=/bin/kill -TERM $MAINPID
+# 重启策略（always表示总是重启）
+Restart=always
+# 重启延迟（秒）
+RestartSec=10
+# 启动超时时间
+TimeoutStartSec=30
+# 停止超时时间
+TimeoutStopSec=10
+# 环境变量
+Environment="PORT=5000"
+Environment="GRPC_PORT=50051"
+Environment="PYTHONUNBUFFERED=1"
+# 标准输出日志（需要修改为实际路径）
+StandardOutput=append:/path/to/python-ai/logs/ai-service.log
+# 标准错误日志（需要修改为实际路径）
+StandardError=append:/path/to/python-ai/logs/ai-service-error.log
+# 进程限制
+LimitNOFILE=65536
+# 私有临时目录
+PrivateTmp=true
+
+[Install]
+# 安装目标（多用户模式）
+WantedBy=multi-user.target

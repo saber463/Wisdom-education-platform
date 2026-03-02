@@ -1,0 +1,344 @@
+/* 导入 Tailwind CSS */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 全局样式 */
+:root {
+  --primary-color: #4361ee;
+  --secondary-color: #3f37c9;
+  --accent-color: #7209b7;
+  --success-color: #00f2ff;
+  --warning-color: #f72585;
+  --danger-color: #f56c6c;
+  --info-color: #909399;
+  --text-color: #334155;
+  --text-color-secondary: #64748b;
+  --border-color: #e2e8f0;
+  --background-color: #f8fafc;
+  --background-color-light: #ffffff;
+  --tech-blue: #00f2ff;
+  --tech-purple: #7209b7;
+  --tech-pink: #f72585;
+  --tech-green: #00ff88;
+}
+
+/* 深色主题样式 - Cyber/Tech Mode */
+.dark {
+  --text-color: #e2e8f0;
+  --text-color-secondary: #94a3b8;
+  --border-color: #1e293b;
+  --background-color: #050b14;
+  --background-color-light: #0f172a;
+  --primary-color: #4361ee;
+  --success-color: #00f2ff;
+  --warning-color: #bd00ff;
+}
+
+@layer utilities {
+  .glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .dark .glass {
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .dark .glass-card {
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+  }
+
+  .glass-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
+  }
+
+  .dark .glass-card:hover {
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+  }
+
+  .text-gradient {
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-image: linear-gradient(to right, #4361ee, #3f37c9);
+  }
+
+  .dark .text-gradient {
+    background-image: linear-gradient(to right, #00f2ff, #4361ee);
+  }
+
+  .shadow-neon-blue {
+    box-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
+  }
+
+  .shadow-neon-purple {
+    box-shadow: 0 0 20px rgba(114, 9, 183, 0.3);
+  }
+
+  .shadow-neon-pink {
+    box-shadow: 0 0 20px rgba(247, 37, 133, 0.3);
+  }
+
+  .shadow-glass {
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+  }
+
+  .animate-pulse-slow {
+    animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background-color);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #050b14;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* 深色主题下的Tailwind颜色类覆盖 */
+.dark .text-gray-900,
+.dark .text-gray-800,
+.dark .text-gray-700 {
+  color: var(--text-color);
+}
+
+.dark .text-gray-600,
+.dark .text-gray-500,
+.dark .text-gray-400 {
+  color: var(--text-color-secondary);
+}
+
+.dark .text-gray-300,
+.dark .text-gray-200,
+.dark .text-gray-100 {
+  color: var(--text-color);
+}
+
+/* 确保卡片和容器在深色模式下的文字可读性 */
+.dark .bg-white,
+.dark .bg-gray-100,
+.dark .bg-gray-50,
+.dark .bg-gray-200 {
+  background-color: var(--background-color-light);
+  color: var(--text-color);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* 深色主题下的链接颜色 */
+.dark a {
+  color: var(--primary-color);
+}
+
+/* 深色主题下的表单元素 */
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: var(--background-color-light);
+  color: var(--text-color);
+  border-color: var(--border-color);
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: var(--text-color-secondary);
+  opacity: 0.7;
+}
+
+/* 蜡笔小新主题样式 */
+.crayon-shinchan {
+  --text-color: #333333;
+  --text-color-secondary: #666666;
+  --border-color: #ffd93d;
+  --background-color: #fffbeb;
+  --background-color-light: #fff3cd;
+  --background-color-dark: #ffeaa7;
+  --primary-color: #ff6b6b;
+  background-color: #fffbeb;
+}
+
+/* 乌萨奇主题样式 */
+.usagi {
+  --text-color: #333333;
+  --text-color-secondary: #666666;
+  --border-color: #a8e6cf;
+  --background-color: #f0fff4;
+  --background-color-light: #c6f6d5;
+  --background-color-dark: #9ae6b4;
+  --primary-color: #66bb6a;
+  background-color: #f0fff4;
+}
+
+/* 基础样式重置 */
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+/* 主题应用到容器和卡片 */
+.custom-container {
+  background-color: var(--background-color-light);
+  transition: background-color 0.3s ease;
+}
+
+.text-dark-custom {
+  color: var(--text-color);
+}
+
+.text-gray-700-custom,
+.text-gray-500-custom {
+  color: var(--text-color-secondary);
+}
+
+/* 自定义输入框样式 */
+.input-primary {
+  @apply w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-300 bg-white shadow-sm focus:shadow-md;
+  border-color: var(--border-color);
+  color: var(--text-color);
+}
+
+/* 带图标的输入框容器 */
+.input-group {
+  @apply relative;
+}
+
+.input-group .input-primary {
+  @apply pl-10;
+}
+
+.input-group-icon {
+  @apply absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5;
+  color: var(--text-color-secondary);
+}
+
+/* 输入框聚焦时的额外效果 */
+.input-primary:focus {
+  @apply border-primary;
+  box-shadow: 0 0 0 3px rgba(64, 158, 255, 0.1);
+  /* 添加下划线效果 */
+  border-bottom-width: 2px;
+}
+
+/* 全局链接样式 */
+a {
+  @apply text-primary hover:text-accent transition-colors duration-300 no-underline;
+}
+
+/* 导航栏链接样式 */
+.nav-link {
+  @apply text-gray-700 hover:text-primary transition-colors duration-300;
+}
+
+/* 自定义按钮样式 */
+.btn-primary {
+  @apply bg-gradient-to-r from-primary to-secondary text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:shadow-neon-blue hover:scale-105 active:scale-95;
+}
+
+.btn-secondary {
+  @apply bg-white text-primary border-2 border-primary px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:bg-primary hover:text-white hover:shadow-neon-blue active:scale-95;
+}
+
+.btn-success {
+  @apply bg-gradient-to-r from-emerald-400 to-emerald-500 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:shadow-neon-blue hover:scale-105 active:scale-95;
+}
+
+.btn-danger {
+  @apply bg-gradient-to-r from-red-500 to-pink-500 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:shadow-neon-pink hover:scale-105 active:scale-95;
+}
+
+.btn-ghost {
+  @apply text-gray-600 dark:text-gray-300 px-4 py-2 rounded-lg font-medium transition-all duration-300 hover:bg-gray-100 dark:hover:bg-white/10 active:scale-95;
+}
+
+/* 星空背景样式 */
+.star-bg {
+  background-color: #0a0a1a;
+  background-image:
+    radial-gradient(white, rgba(255, 255, 255, 0.2) 2px, transparent 40px),
+    radial-gradient(white, rgba(255, 255, 255, 0.15) 1px, transparent 30px),
+    radial-gradient(white, rgba(255, 255, 255, 0.1) 2px, transparent 40px),
+    radial-gradient(rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.1) 2px, transparent 30px);
+  background-size:
+    550px 550px,
+    350px 350px,
+    250px 250px,
+    150px 150px;
+  background-position:
+    0 0,
+    40px 60px,
+    130px 270px,
+    70px 100px;
+}
+
+/* 登录和注册页面容器样式 */
+.auth-container {
+  @apply min-h-screen flex items-center justify-center p-4;
+}
+
+/* 登录和注册卡片样式 */
+.auth-card {
+  @apply max-w-md w-full bg-white/95 backdrop-blur-sm rounded-xl shadow-xl p-8 border border-white/20;
+}
+
+/* 链接样式 */
+.router-link-active {
+  @apply text-primary;
+}
+
+/* 主要内容区域的链接 */
+.content-link {
+  @apply text-primary hover:underline transition-colors duration-300;
+}

@@ -1,0 +1,231 @@
+name: 部署到生产服务器
+
+on:
+  push:
+    branches: [ main, master ]
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: '部署环境'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+
+env:
+  NODE_VERSION: '18'
+  PYTHON_VERSION: '3.10'
+
+jobs:
+  # 构建阶段
+  build:
+    name: 构建所有模块
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+      
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      # 构建后端
+      - name: 安装后端依赖
+        working-directory: ./backend
+        run: npm ci
+      
+      - name: 构建后端
+        working-directory: ./backend
+        run: npm run build
+      
+      # 构建前端
+      - name: 安装前端依赖
+        working-directory: ./frontend
+        run: npm ci
+      
+      - name: 构建前端
+        working-directory: ./frontend
+        env:
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL || 'http://localhost:3000' }}
+          VITE_AI_SERVICE_URL: ${{ secrets.VITE_AI_SERVICE_URL || 'http://localhost:5000' }}
+        run: npm run build
+      
+      # 上传构建产物
+      - name: 上传后端构建产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-dist
+          path: backend/dist
+          retention-days: 7
+      
+      - name: 上传前端构建产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist
+          retention-days: 7
+      
+      - name: 上传后端依赖
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-node-modules
+          path: backend/node_modules
+          retention-days: 1
+          if-no-files-found: ignore
+
+  # 部署阶段
+  deploy:
+    name: 部署到服务器
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
+    
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+      
+      # 下载构建产物
+      - name: 下载后端构建产物
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-dist
+          path: ./artifacts/backend-dist
+      
+      - name: 下载前端构建产物
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: ./artifacts/frontend-dist
+      
+      # 配置SSH
+      - name: 配置SSH密钥
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      
+      # 部署到服务器
+      - name: 部署到服务器
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH || '/var/www/edu-platform' }}
+          DEPLOY_PORT: ${{ secrets.DEPLOY_PORT || '22' }}
+        run: |
+          # 创建部署脚本
+          cat > deploy.sh << 'EOF'
+          #!/bin/bash
+          set -e
+          
+          DEPLOY_PATH="${DEPLOY_PATH:-/var/www/edu-platform}"
+          BACKUP_PATH="${DEPLOY_PATH}_backup_$(date +%Y%m%d_%H%M%S)"
+          
+          echo "开始部署到: $DEPLOY_PATH"
+          
+          # 创建备份
+          if [ -d "$DEPLOY_PATH" ]; then
+            echo "创建备份: $BACKUP_PATH"
+            sudo cp -r "$DEPLOY_PATH" "$BACKUP_PATH" || true
+          fi
+          
+          # 创建部署目录
+          sudo mkdir -p "$DEPLOY_PATH"/{backend,frontend}
+          
+          # 部署后端
+          echo "部署后端..."
+          sudo rsync -avz --delete ./artifacts/backend-dist/ "$DEPLOY_PATH/backend/dist/"
+          sudo rsync -avz backend/package.json "$DEPLOY_PATH/backend/"
+          sudo rsync -avz backend/package-lock.json "$DEPLOY_PATH/backend/"
+          
+          # 部署前端
+          echo "部署前端..."
+          sudo rsync -avz --delete ./artifacts/frontend-dist/ "$DEPLOY_PATH/frontend/dist/"
+          
+          # 设置权限
+          sudo chown -R www-data:www-data "$DEPLOY_PATH" || sudo chown -R $USER:$USER "$DEPLOY_PATH"
+          sudo chmod -R 755 "$DEPLOY_PATH"
+          
+          echo "部署完成！"
+          echo "备份位置: $BACKUP_PATH"
+          EOF
+          
+          chmod +x deploy.sh
+          
+          # 使用SSH部署
+          ssh -o StrictHostKeyChecking=no -p $DEPLOY_PORT $DEPLOY_USER@$DEPLOY_HOST << 'ENDSSH'
+            # 在服务器上执行的命令
+            DEPLOY_PATH="${DEPLOY_PATH:-/var/www/edu-platform}"
+            
+            # 安装后端依赖（如果需要）
+            if [ -f "$DEPLOY_PATH/backend/package.json" ]; then
+              cd "$DEPLOY_PATH/backend"
+              npm ci --production || npm install --production
+            fi
+            
+            # 重启服务（根据实际部署方式调整）
+            # 如果使用PM2
+            if command -v pm2 &> /dev/null; then
+              pm2 restart edu-platform-backend || pm2 start "$DEPLOY_PATH/backend/dist/index.js" --name edu-platform-backend
+            fi
+            
+            # 如果使用systemd
+            if systemctl list-units --type=service | grep -q "edu-platform"; then
+              sudo systemctl restart edu-platform-backend || true
+            fi
+            
+            # 如果使用Nginx，重新加载配置
+            if command -v nginx &> /dev/null; then
+              sudo nginx -t && sudo nginx -s reload || true
+            fi
+          ENDSSH
+          
+          # 上传文件到服务器
+          scp -o StrictHostKeyChecking=no -P $DEPLOY_PORT -r ./artifacts/* $DEPLOY_USER@$DEPLOY_HOST:/tmp/deploy/
+          scp -o StrictHostKeyChecking=no -P $DEPLOY_PORT ./deploy.sh $DEPLOY_USER@$DEPLOY_HOST:/tmp/deploy.sh
+          
+          # 在服务器上执行部署脚本
+          ssh -o StrictHostKeyChecking=no -p $DEPLOY_PORT $DEPLOY_USER@$DEPLOY_HOST "bash /tmp/deploy.sh"
+      
+      # 健康检查
+      - name: 健康检查
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_PORT: ${{ secrets.DEPLOY_PORT || '22' }}
+        run: |
+          # 等待服务启动
+          sleep 10
+          
+          # 检查后端健康接口
+          BACKEND_URL="${BACKEND_URL:-http://${{ secrets.DEPLOY_HOST }}/api/health}"
+          if curl -f -s "$BACKEND_URL" > /dev/null; then
+            echo "✅ 后端服务健康检查通过"
+          else
+            echo "⚠️ 后端服务健康检查失败，请手动检查"
+          fi
+          
+          # 检查前端
+          FRONTEND_URL="${FRONTEND_URL:-http://${{ secrets.DEPLOY_HOST }}}"
+          if curl -f -s "$FRONTEND_URL" > /dev/null; then
+            echo "✅ 前端服务可访问"
+          else
+            echo "⚠️ 前端服务不可访问，请手动检查"
+          fi
+      
+      # 发送通知（可选）
+      - name: 发送部署通知
+        if: always()
+        run: |
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "✅ 部署成功！"
+          else
+            echo "❌ 部署失败，请检查日志"
+          fi
+          # 可以在这里添加邮件、Slack等通知
+
+
