@@ -143,7 +143,7 @@ cargo test --release
 工作流中使用的环境变量：
 
 ```yaml
-NODE_VERSION: '18'
+NODE_VERSION: '20'
 PYTHON_VERSION: '3.10'
 RUST_VERSION: '1.70'
 ```
