@@ -488,16 +488,12 @@ CREATE TABLE IF NOT EXISTS video_quiz_records (
 -- 第七部分：扩展现有通知表
 -- ========================================
 
--- 扩展现有通知表 (notifications)（兼容 MySQL 5.7+，不使用 ADD COLUMN IF NOT EXISTS）
+-- 扩展现有通知表 (notifications)（兼容 MySQL 5.7+，COMMENT 须在 AFTER 前）
 ALTER TABLE notifications 
-  ADD COLUMN priority ENUM('low', 'medium', 'high', 'urgent') DEFAULT 'medium' 
-    AFTER type COMMENT '优先级',
-  ADD COLUMN action_url VARCHAR(500) 
-    AFTER content COMMENT '操作链接',
-  ADD COLUMN expires_at TIMESTAMP NULL 
-    AFTER action_url COMMENT '过期时间',
-  ADD COLUMN metadata JSON 
-    AFTER expires_at COMMENT '元数据';
+  ADD COLUMN priority ENUM('low', 'medium', 'high', 'urgent') DEFAULT 'medium' COMMENT '优先级' AFTER type,
+  ADD COLUMN action_url VARCHAR(500) COMMENT '操作链接' AFTER content,
+  ADD COLUMN expires_at TIMESTAMP NULL COMMENT '过期时间' AFTER action_url,
+  ADD COLUMN metadata JSON COMMENT '元数据' AFTER expires_at;
 
 ALTER TABLE notifications 
   ADD INDEX idx_priority (priority),
@@ -525,8 +521,7 @@ ALTER TABLE notifications
 
 -- 扩展作业表 (assignments)（兼容 MySQL 5.7+）
 ALTER TABLE assignments
-  ADD COLUMN learning_path_id INT NULL COMMENT '所属学习路径ID'
-    AFTER teacher_id;
+  ADD COLUMN learning_path_id INT NULL COMMENT '所属学习路径ID' AFTER teacher_id;
 
 ALTER TABLE assignments
   ADD CONSTRAINT fk_assignments_learning_path
