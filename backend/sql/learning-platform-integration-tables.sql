@@ -488,21 +488,20 @@ CREATE TABLE IF NOT EXISTS video_quiz_records (
 -- 第七部分：扩展现有通知表
 -- ========================================
 
--- 扩展现有通知表 (notifications)
+-- 扩展现有通知表 (notifications)（兼容 MySQL 5.7+，不使用 ADD COLUMN IF NOT EXISTS）
 ALTER TABLE notifications 
-  ADD COLUMN IF NOT EXISTS priority ENUM('low', 'medium', 'high', 'urgent') DEFAULT 'medium' 
+  ADD COLUMN priority ENUM('low', 'medium', 'high', 'urgent') DEFAULT 'medium' 
     AFTER type COMMENT '优先级',
-  ADD COLUMN IF NOT EXISTS action_url VARCHAR(500) 
+  ADD COLUMN action_url VARCHAR(500) 
     AFTER content COMMENT '操作链接',
-  ADD COLUMN IF NOT EXISTS expires_at TIMESTAMP NULL 
+  ADD COLUMN expires_at TIMESTAMP NULL 
     AFTER action_url COMMENT '过期时间',
-  ADD COLUMN IF NOT EXISTS metadata JSON 
+  ADD COLUMN metadata JSON 
     AFTER expires_at COMMENT '元数据';
 
--- 添加索引（如果不存在）
 ALTER TABLE notifications 
-  ADD INDEX IF NOT EXISTS idx_priority (priority),
-  ADD INDEX IF NOT EXISTS idx_expires (expires_at);
+  ADD INDEX idx_priority (priority),
+  ADD INDEX idx_expires (expires_at);
 
 -- 修改通知类型枚举（添加新类型）
 ALTER TABLE notifications 
@@ -524,14 +523,13 @@ ALTER TABLE notifications
 -- 第八部分：扩展作业表（关联学习路径）
 -- ========================================
 
--- 扩展作业表 (assignments)
+-- 扩展作业表 (assignments)（兼容 MySQL 5.7+）
 ALTER TABLE assignments
-  ADD COLUMN IF NOT EXISTS learning_path_id INT NULL COMMENT '所属学习路径ID'
+  ADD COLUMN learning_path_id INT NULL COMMENT '所属学习路径ID'
     AFTER teacher_id;
 
--- 添加外键约束（如果不存在）
 ALTER TABLE assignments
-  ADD CONSTRAINT IF NOT EXISTS fk_assignments_learning_path
+  ADD CONSTRAINT fk_assignments_learning_path
   FOREIGN KEY (learning_path_id) REFERENCES learning_paths(id) ON DELETE SET NULL;
 
 -- ========================================

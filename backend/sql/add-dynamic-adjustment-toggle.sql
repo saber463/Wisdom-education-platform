@@ -6,15 +6,15 @@
 
 USE edu_education_platform;
 
--- 为 learning_progress 表添加 dynamic_adjustment_enabled 字段
+-- 为 learning_progress 表添加 dynamic_adjustment_enabled 字段（兼容 MySQL 5.7+，不使用 IF NOT EXISTS）
 ALTER TABLE learning_progress
-  ADD COLUMN IF NOT EXISTS dynamic_adjustment_enabled BOOLEAN DEFAULT TRUE 
+  ADD COLUMN dynamic_adjustment_enabled BOOLEAN DEFAULT TRUE 
     COMMENT '是否启用动态调整（默认启用）'
     AFTER status;
 
 -- 添加索引以优化查询
 ALTER TABLE learning_progress
-  ADD INDEX IF NOT EXISTS idx_dynamic_adjustment (dynamic_adjustment_enabled);
+  ADD INDEX idx_dynamic_adjustment (dynamic_adjustment_enabled);
 
 -- 验证字段添加成功
 SELECT 

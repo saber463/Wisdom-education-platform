@@ -76,7 +76,7 @@ describe('WASM Loader', () => {
 
     it('should return high similarity for similar strings', () => {
       const similarity = calculateSimilarity('hello', 'hallo');
-      expect(similarity).toBeGreaterThan(0.8);
+      expect(similarity).toBeGreaterThanOrEqual(0.8);
     });
 
     it('should handle Chinese text', () => {

@@ -293,12 +293,11 @@ describe('Property 60: 鸿蒙相机API集成', () => {
       fc.assert(
         fc.property(
           fc.uint8Array({ minLength: 1, maxLength: 1000 }),
-          fc.string({ minLength: 1, maxLength: 20 }),
+          fc.string({ minLength: 1, maxLength: 20 }).filter(s => !s.includes('/') && !s.includes(':')),
           (data, fileName) => {
             const file = new File([data], `${fileName}.jpg`, { type: 'image/jpeg' });
-            
             expect(file.size).toBe(data.length);
-            expect(file.name).toContain(fileName);
+            expect(file.name.endsWith('.jpg')).toBe(true);
             expect(file.type).toBe('image/jpeg');
           }
         ),

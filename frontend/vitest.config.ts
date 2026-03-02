@@ -11,8 +11,9 @@ export default defineConfig({
   },
   test: {
     globals: true,
-    environment: 'jsdom',
+    environment: 'happy-dom',
     pool: 'threads',
+    exclude: ['**/node_modules/**', '**/*.manual.test.{js,ts}', '**/learning-analytics.manual.test.js'],
     setupFiles: ['./src/utils/__tests__/setup.ts'],
     coverage: {
       provider: 'v8',

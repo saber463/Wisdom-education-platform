@@ -19,13 +19,14 @@
 为 `learning_progress` 表添加了新字段：
 
 ```sql
+-- 兼容 MySQL 5.7+（不使用 ADD COLUMN/INDEX IF NOT EXISTS）
 ALTER TABLE learning_progress
-  ADD COLUMN IF NOT EXISTS dynamic_adjustment_enabled BOOLEAN DEFAULT TRUE 
+  ADD COLUMN dynamic_adjustment_enabled BOOLEAN DEFAULT TRUE 
     COMMENT '是否启用动态调整（默认启用）'
     AFTER status;
 
 ALTER TABLE learning_progress
-  ADD INDEX IF NOT EXISTS idx_dynamic_adjustment (dynamic_adjustment_enabled);
+  ADD INDEX idx_dynamic_adjustment (dynamic_adjustment_enabled);
 ```
 
 **字段说明**:
