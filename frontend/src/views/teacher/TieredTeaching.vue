@@ -4,21 +4,39 @@
       <div class="page-header">
         <h2>分层教学</h2>
         <div class="header-actions">
-          <el-select v-model="selectedClassId" placeholder="选择班级" @change="handleClassChange" style="width: 200px">
-            <el-option v-for="cls in classList" :key="cls.id" :label="cls.name" :value="cls.id" />
+          <el-select
+            v-model="selectedClassId"
+            placeholder="选择班级"
+            style="width: 200px"
+            @change="handleClassChange"
+          >
+            <el-option
+              v-for="cls in classList"
+              :key="cls.id"
+              :label="cls.name"
+              :value="cls.id"
+            />
           </el-select>
         </div>
       </div>
 
       <!-- 层次分布统计 -->
-      <el-row :gutter="20" class="tier-stats">
+      <el-row
+        :gutter="20"
+        class="tier-stats"
+      >
         <el-col :span="8">
-          <el-card shadow="hover" class="tier-card basic">
+          <el-card
+            shadow="hover"
+            class="tier-card basic"
+          >
             <div class="tier-header">
               <el-icon><Star /></el-icon>
               <span>基础层</span>
             </div>
-            <div class="tier-count">{{ tierStats.basic.count }}</div>
+            <div class="tier-count">
+              {{ tierStats.basic.count }}
+            </div>
             <div class="tier-info">
               <span>平均分: {{ tierStats.basic.averageScore?.toFixed(1) || '-' }}</span>
               <span>进步率: {{ tierStats.basic.progressRate?.toFixed(1) || '-' }}%</span>
@@ -26,12 +44,17 @@
           </el-card>
         </el-col>
         <el-col :span="8">
-          <el-card shadow="hover" class="tier-card medium">
+          <el-card
+            shadow="hover"
+            class="tier-card medium"
+          >
             <div class="tier-header">
               <el-icon><StarFilled /></el-icon>
               <span>中等层</span>
             </div>
-            <div class="tier-count">{{ tierStats.medium.count }}</div>
+            <div class="tier-count">
+              {{ tierStats.medium.count }}
+            </div>
             <div class="tier-info">
               <span>平均分: {{ tierStats.medium.averageScore?.toFixed(1) || '-' }}</span>
               <span>进步率: {{ tierStats.medium.progressRate?.toFixed(1) || '-' }}%</span>
@@ -39,12 +62,17 @@
           </el-card>
         </el-col>
         <el-col :span="8">
-          <el-card shadow="hover" class="tier-card advanced">
+          <el-card
+            shadow="hover"
+            class="tier-card advanced"
+          >
             <div class="tier-header">
               <el-icon><Trophy /></el-icon>
               <span>提高层</span>
             </div>
-            <div class="tier-count">{{ tierStats.advanced.count }}</div>
+            <div class="tier-count">
+              {{ tierStats.advanced.count }}
+            </div>
             <div class="tier-info">
               <span>平均分: {{ tierStats.advanced.averageScore?.toFixed(1) || '-' }}</span>
               <span>进步率: {{ tierStats.advanced.progressRate?.toFixed(1) || '-' }}%</span>
@@ -60,31 +88,74 @@
             <template #header>
               <div class="card-header">
                 <span>分层作业</span>
-                <el-button type="primary" size="small" @click="showAssignDialog = true">
+                <el-button
+                  type="primary"
+                  size="small"
+                  @click="showAssignDialog = true"
+                >
                   <el-icon><Plus /></el-icon>分配作业
                 </el-button>
               </div>
             </template>
-            <el-table :data="tieredAssignments" v-loading="loading" style="width: 100%">
-              <el-table-column prop="title" label="作业名称" min-width="150" />
-              <el-table-column prop="difficulty" label="难度" width="100">
+            <el-table
+              v-loading="loading"
+              :data="tieredAssignments"
+              style="width: 100%"
+            >
+              <el-table-column
+                prop="title"
+                label="作业名称"
+                min-width="150"
+              />
+              <el-table-column
+                prop="difficulty"
+                label="难度"
+                width="100"
+              >
                 <template #default="{ row }">
-                  <el-tag :type="getDifficultyType(row.difficulty)">{{ getDifficultyLabel(row.difficulty) }}</el-tag>
+                  <el-tag :type="getDifficultyType(row.difficulty)">
+                    {{ getDifficultyLabel(row.difficulty) }}
+                  </el-tag>
                 </template>
               </el-table-column>
-              <el-table-column label="分配层次" width="120">
+              <el-table-column
+                label="分配层次"
+                width="120"
+              >
                 <template #default="{ row }">
-                  <el-tag v-for="tier in row.assignedTiers" :key="tier" :type="getTierType(tier)" size="small" style="margin-right: 4px">
+                  <el-tag
+                    v-for="tier in row.assignedTiers"
+                    :key="tier"
+                    :type="getTierType(tier)"
+                    size="small"
+                    style="margin-right: 4px"
+                  >
                     {{ getTierLabel(tier) }}
                   </el-tag>
                 </template>
               </el-table-column>
-              <el-table-column prop="completionRate" label="完成率" width="100">
-                <template #default="{ row }">{{ row.completionRate?.toFixed(1) || 0 }}%</template>
-              </el-table-column>
-              <el-table-column label="操作" width="100">
+              <el-table-column
+                prop="completionRate"
+                label="完成率"
+                width="100"
+              >
                 <template #default="{ row }">
-                  <el-button type="primary" size="small" link @click="viewAssignmentDetail(row.id)">详情</el-button>
+                  {{ row.completionRate?.toFixed(1) || 0 }}%
+                </template>
+              </el-table-column>
+              <el-table-column
+                label="操作"
+                width="100"
+              >
+                <template #default="{ row }">
+                  <el-button
+                    type="primary"
+                    size="small"
+                    link
+                    @click="viewAssignmentDetail(row.id)"
+                  >
+                    详情
+                  </el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -97,19 +168,44 @@
             <template #header>
               <div class="card-header">
                 <span>学生层次分布</span>
-                <el-button type="primary" size="small" @click="recalculateTiers" :loading="recalculating">
+                <el-button
+                  type="primary"
+                  size="small"
+                  :loading="recalculating"
+                  @click="recalculateTiers"
+                >
                   重新分层
                 </el-button>
               </div>
             </template>
             <el-tabs v-model="activeTierTab">
-              <el-tab-pane label="基础层" name="basic">
-                <el-table :data="studentsByTier.basic" size="small" max-height="300">
-                  <el-table-column prop="studentName" label="姓名" />
-                  <el-table-column prop="averageScore" label="平均分" width="80">
-                    <template #default="{ row }">{{ row.averageScore?.toFixed(1) }}</template>
+              <el-tab-pane
+                label="基础层"
+                name="basic"
+              >
+                <el-table
+                  :data="studentsByTier.basic"
+                  size="small"
+                  max-height="300"
+                >
+                  <el-table-column
+                    prop="studentName"
+                    label="姓名"
+                  />
+                  <el-table-column
+                    prop="averageScore"
+                    label="平均分"
+                    width="80"
+                  >
+                    <template #default="{ row }">
+                      {{ row.averageScore?.toFixed(1) }}
+                    </template>
                   </el-table-column>
-                  <el-table-column prop="trend" label="趋势" width="80">
+                  <el-table-column
+                    prop="trend"
+                    label="趋势"
+                    width="80"
+                  >
                     <template #default="{ row }">
                       <span :class="row.trend >= 0 ? 'text-success' : 'text-danger'">
                         {{ row.trend >= 0 ? '↑' : '↓' }}{{ Math.abs(row.trend)?.toFixed(1) }}
@@ -118,13 +214,33 @@
                   </el-table-column>
                 </el-table>
               </el-tab-pane>
-              <el-tab-pane label="中等层" name="medium">
-                <el-table :data="studentsByTier.medium" size="small" max-height="300">
-                  <el-table-column prop="studentName" label="姓名" />
-                  <el-table-column prop="averageScore" label="平均分" width="80">
-                    <template #default="{ row }">{{ row.averageScore?.toFixed(1) }}</template>
+              <el-tab-pane
+                label="中等层"
+                name="medium"
+              >
+                <el-table
+                  :data="studentsByTier.medium"
+                  size="small"
+                  max-height="300"
+                >
+                  <el-table-column
+                    prop="studentName"
+                    label="姓名"
+                  />
+                  <el-table-column
+                    prop="averageScore"
+                    label="平均分"
+                    width="80"
+                  >
+                    <template #default="{ row }">
+                      {{ row.averageScore?.toFixed(1) }}
+                    </template>
                   </el-table-column>
-                  <el-table-column prop="trend" label="趋势" width="80">
+                  <el-table-column
+                    prop="trend"
+                    label="趋势"
+                    width="80"
+                  >
                     <template #default="{ row }">
                       <span :class="row.trend >= 0 ? 'text-success' : 'text-danger'">
                         {{ row.trend >= 0 ? '↑' : '↓' }}{{ Math.abs(row.trend)?.toFixed(1) }}
@@ -133,13 +249,33 @@
                   </el-table-column>
                 </el-table>
               </el-tab-pane>
-              <el-tab-pane label="提高层" name="advanced">
-                <el-table :data="studentsByTier.advanced" size="small" max-height="300">
-                  <el-table-column prop="studentName" label="姓名" />
-                  <el-table-column prop="averageScore" label="平均分" width="80">
-                    <template #default="{ row }">{{ row.averageScore?.toFixed(1) }}</template>
+              <el-tab-pane
+                label="提高层"
+                name="advanced"
+              >
+                <el-table
+                  :data="studentsByTier.advanced"
+                  size="small"
+                  max-height="300"
+                >
+                  <el-table-column
+                    prop="studentName"
+                    label="姓名"
+                  />
+                  <el-table-column
+                    prop="averageScore"
+                    label="平均分"
+                    width="80"
+                  >
+                    <template #default="{ row }">
+                      {{ row.averageScore?.toFixed(1) }}
+                    </template>
                   </el-table-column>
-                  <el-table-column prop="trend" label="趋势" width="80">
+                  <el-table-column
+                    prop="trend"
+                    label="趋势"
+                    width="80"
+                  >
                     <template #default="{ row }">
                       <span :class="row.trend >= 0 ? 'text-success' : 'text-danger'">
                         {{ row.trend >= 0 ? '↑' : '↓' }}{{ Math.abs(row.trend)?.toFixed(1) }}
@@ -153,31 +289,66 @@
 
           <!-- 分层效果统计 -->
           <el-card class="effect-card">
-            <template #header><span>分层效果统计</span></template>
-            <div ref="effectChartRef" class="chart-container"></div>
+            <template #header>
+              <span>分层效果统计</span>
+            </template>
+            <div
+              ref="effectChartRef"
+              class="chart-container"
+            />
           </el-card>
         </el-col>
       </el-row>
 
       <!-- 分配作业对话框 -->
-      <el-dialog v-model="showAssignDialog" title="分配分层作业" width="500px">
-        <el-form :model="assignForm" label-width="100px">
+      <el-dialog
+        v-model="showAssignDialog"
+        title="分配分层作业"
+        width="500px"
+      >
+        <el-form
+          :model="assignForm"
+          label-width="100px"
+        >
           <el-form-item label="选择作业">
-            <el-select v-model="assignForm.assignmentId" placeholder="请选择作业" style="width: 100%">
-              <el-option v-for="a in availableAssignments" :key="a.id" :label="a.title" :value="a.id" />
+            <el-select
+              v-model="assignForm.assignmentId"
+              placeholder="请选择作业"
+              style="width: 100%"
+            >
+              <el-option
+                v-for="a in availableAssignments"
+                :key="a.id"
+                :label="a.title"
+                :value="a.id"
+              />
             </el-select>
           </el-form-item>
           <el-form-item label="分配层次">
             <el-checkbox-group v-model="assignForm.tiers">
-              <el-checkbox label="basic">基础层</el-checkbox>
-              <el-checkbox label="medium">中等层</el-checkbox>
-              <el-checkbox label="advanced">提高层</el-checkbox>
+              <el-checkbox label="basic">
+                基础层
+              </el-checkbox>
+              <el-checkbox label="medium">
+                中等层
+              </el-checkbox>
+              <el-checkbox label="advanced">
+                提高层
+              </el-checkbox>
             </el-checkbox-group>
           </el-form-item>
         </el-form>
         <template #footer>
-          <el-button @click="showAssignDialog = false">取消</el-button>
-          <el-button type="primary" @click="handleAssign" :loading="assigning">确定分配</el-button>
+          <el-button @click="showAssignDialog = false">
+            取消
+          </el-button>
+          <el-button
+            type="primary"
+            :loading="assigning"
+            @click="handleAssign"
+          >
+            确定分配
+          </el-button>
         </template>
       </el-dialog>
     </div>
@@ -294,9 +465,10 @@ async function handleAssign() {
     assignForm.assignmentId = null
     assignForm.tiers = []
     fetchTieredData()
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('[分层教学] 分配作业失败:', error)
-    ElMessage.error(error.response?.data?.message || '分配失败')
+    const msg = (error as { response?: { data?: { message?: string } } })?.response?.data?.message
+    ElMessage.error(msg || '分配失败')
   } finally { assigning.value = false }
 }
 
@@ -309,7 +481,7 @@ function initEffectChart() {
   }
 }
 
-function updateEffectChart(data: any) {
+function updateEffectChart(data: { basic?: unknown[]; medium?: unknown[]; advanced?: unknown[]; dates?: unknown[] }) {
   if (!effectChart) return
   const effectData = data || { basic: [], medium: [], advanced: [], dates: [] }
   effectChart.setOption({

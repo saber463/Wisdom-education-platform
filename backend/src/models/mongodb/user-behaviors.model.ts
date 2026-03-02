@@ -7,7 +7,7 @@ interface IMetadata {
   tags?: string[];
   duration?: number;
   source?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 // 用户行为文档接口

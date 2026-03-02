@@ -7,26 +7,46 @@
             <div class="header-content">
               <h2>路径调整历史</h2>
               <div class="filters">
-                <el-select v-model="filters.adjustmentType" placeholder="调整类型" clearable @change="loadLogs">
-                  <el-option label="知识点评估" value="knowledge_evaluation" />
-                  <el-option label="能力适配" value="ability_adaptation" />
-                  <el-option label="进度优化" value="progress_optimization" />
+                <el-select
+                  v-model="filters.adjustmentType"
+                  placeholder="调整类型"
+                  clearable
+                  @change="loadLogs"
+                >
+                  <el-option
+                    label="知识点评估"
+                    value="knowledge_evaluation"
+                  />
+                  <el-option
+                    label="能力适配"
+                    value="ability_adaptation"
+                  />
+                  <el-option
+                    label="进度优化"
+                    value="progress_optimization"
+                  />
                 </el-select>
                 <el-input-number
                   v-model="filters.limit"
                   :min="10"
                   :max="100"
                   :step="10"
-                  @change="loadLogs"
                   style="width: 120px; margin-left: 10px;"
+                  @change="loadLogs"
                 />
               </div>
             </div>
           </template>
 
           <div v-loading="loading">
-            <PathAdjustmentLog v-if="logs.length > 0" :logs="logs" />
-            <el-empty v-else description="暂无调整记录" />
+            <PathAdjustmentLog
+              v-if="logs.length > 0"
+              :logs="logs"
+            />
+            <el-empty
+              v-else
+              description="暂无调整记录"
+            />
           </div>
         </el-card>
       </div>
@@ -45,7 +65,7 @@ import PathAdjustmentLog from '@/components/PathAdjustmentLog.vue'
 const route = useRoute()
 
 const loading = ref(false)
-const logs = ref<any[]>([])
+const logs = ref<Record<string, unknown>[]>([])
 
 const filters = ref({
   adjustmentType: '',
@@ -55,7 +75,7 @@ const filters = ref({
 async function loadLogs() {
   loading.value = true
   try {
-    const params: any = {
+    const params: Record<string, unknown> = {
       limit: filters.value.limit
     }
 

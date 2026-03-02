@@ -54,7 +54,7 @@ export function preloadFonts(fonts: Array<{ href: string; type: string }>): void
 /**
  * 预加载API数据（关键数据）
  */
-export async function preloadCriticalData(apiUrl: string): Promise<any> {
+export async function preloadCriticalData(apiUrl: string): Promise<unknown> {
   try {
     const response = await fetch(apiUrl, {
       headers: {

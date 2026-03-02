@@ -8,20 +8,45 @@
         </div>
 
         <!-- 统计信息 -->
-        <el-row :gutter="20" class="mb-4">
-          <el-col :xs="24" :sm="8">
-            <el-statistic title="错题总数" :value="statistics.total" />
+        <el-row
+          :gutter="20"
+          class="mb-4"
+        >
+          <el-col
+            :xs="24"
+            :sm="8"
+          >
+            <el-statistic
+              title="错题总数"
+              :value="statistics.total"
+            />
           </el-col>
-          <el-col :xs="24" :sm="8">
-            <el-statistic title="正确率" :value="statistics.correct_rate" suffix="%" />
+          <el-col
+            :xs="24"
+            :sm="8"
+          >
+            <el-statistic
+              title="正确率"
+              :value="statistics.correct_rate"
+              suffix="%"
+            />
           </el-col>
-          <el-col :xs="24" :sm="8">
-            <el-statistic title="待巩固" :value="statistics.pending_count" />
+          <el-col
+            :xs="24"
+            :sm="8"
+          >
+            <el-statistic
+              title="待巩固"
+              :value="statistics.pending_count"
+            />
           </el-col>
         </el-row>
 
         <!-- 薄弱知识点图表 -->
-        <el-card v-if="weakPoints.length > 0" class="mb-4">
+        <el-card
+          v-if="weakPoints.length > 0"
+          class="mb-4"
+        >
           <template #header>
             <h3>薄弱知识点TOP5</h3>
           </template>
@@ -41,7 +66,10 @@
             @retry="retryQuestion(question.id)"
             @mark-mastered="markMastered(question.id)"
           />
-          <el-empty v-if="!loading && wrongQuestions.length === 0" description="暂无错题" />
+          <el-empty
+            v-if="!loading && wrongQuestions.length === 0"
+            description="暂无错题"
+          />
         </div>
       </div>
     </template>
@@ -61,19 +89,19 @@ import WeakPointsChart from '@/components/WeakPointsChart.vue'
 const router = useRouter()
 
 const loading = ref(false)
-const wrongQuestions = ref<any[]>([])
+const wrongQuestions = ref<Record<string, unknown>[]>([])
 const statistics = ref({
   total: 0,
   correct_rate: 0,
   pending_count: 0
 })
-const weakPoints = ref<any[]>([])
-const filters = ref<any>({})
+const weakPoints = ref<Record<string, unknown>[]>([])
+const filters = ref<{ lesson_id?: number; knowledge_point_id?: number; start_date?: string; end_date?: string }>({})
 
 async function loadWrongQuestions() {
   loading.value = true
   try {
-    const params: any = {}
+    const params: Record<string, unknown> = {}
     if (filters.value.lesson_id) params.lesson_id = filters.value.lesson_id
     if (filters.value.knowledge_point_id) params.knowledge_point_id = filters.value.knowledge_point_id
     if (filters.value.start_date) params.start_date = filters.value.start_date
@@ -113,7 +141,7 @@ async function loadWeakPoints() {
   }
 }
 
-function handleFilterChange(newFilters: any) {
+function handleFilterChange(newFilters: { lesson_id?: number; knowledge_point_id?: number; start_date?: string; end_date?: string }) {
   filters.value = newFilters
   loadWrongQuestions()
 }
@@ -131,9 +159,10 @@ async function retryQuestion(questionId: number) {
     } else {
       ElMessage.error(response.msg || '操作失败')
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('重做错题失败:', error)
-    ElMessage.error(error.response?.data?.msg || '操作失败')
+    const msg = (error as { response?: { data?: { msg?: string } } })?.response?.data?.msg
+    ElMessage.error(msg || '操作失败')
   }
 }
 
@@ -147,9 +176,10 @@ async function markMastered(questionId: number) {
     } else {
       ElMessage.error(response.msg || '操作失败')
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('标记已掌握失败:', error)
-    ElMessage.error(error.response?.data?.msg || '操作失败')
+    const msg = (error as { response?: { data?: { msg?: string } } })?.response?.data?.msg
+    ElMessage.error(msg || '操作失败')
   }
 }
 

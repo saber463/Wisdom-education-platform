@@ -1,9 +1,16 @@
 <template>
   <StudentLayout>
-    <div v-if="assessment" class="assessment-detail-page">
+    <div
+      v-if="assessment"
+      class="assessment-detail-page"
+    >
       <!-- 返回按钮 -->
       <div class="back-button">
-        <el-button type="primary" link @click="goBack">
+        <el-button
+          type="primary"
+          link
+          @click="goBack"
+        >
           <el-icon><ArrowLeft /></el-icon> 返回
         </el-button>
       </div>
@@ -20,25 +27,39 @@
         <el-row :gutter="20">
           <el-col :span="6">
             <div class="info-item">
-              <div class="info-label">评测状态</div>
-              <el-tag type="success">已完成</el-tag>
+              <div class="info-label">
+                评测状态
+              </div>
+              <el-tag type="success">
+                已完成
+              </el-tag>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="info-item">
-              <div class="info-label">音频时长</div>
-              <div class="info-value">{{ assessment.duration }}秒</div>
+              <div class="info-label">
+                音频时长
+              </div>
+              <div class="info-value">
+                {{ assessment.duration }}秒
+              </div>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="info-item">
-              <div class="info-label">处理时间</div>
-              <div class="info-value">{{ assessment.processing_time }}ms</div>
+              <div class="info-label">
+                处理时间
+              </div>
+              <div class="info-value">
+                {{ assessment.processing_time }}ms
+              </div>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="info-item">
-              <div class="info-label">会员等级</div>
+              <div class="info-label">
+                会员等级
+              </div>
               <el-tag>{{ assessment.member_level || '普通用户' }}</el-tag>
             </div>
           </el-col>
@@ -46,12 +67,19 @@
       </el-card>
 
       <!-- 评分卡片 -->
-      <el-row :gutter="20" class="score-row">
+      <el-row
+        :gutter="20"
+        class="score-row"
+      >
         <el-col :span="8">
           <el-card class="score-card">
             <div class="score-content">
-              <div class="score-value">{{ assessment.accuracy_score }}</div>
-              <div class="score-label">发音准确率</div>
+              <div class="score-value">
+                {{ assessment.accuracy_score }}
+              </div>
+              <div class="score-label">
+                发音准确率
+              </div>
               <div class="score-bar">
                 <el-progress 
                   :percentage="assessment.accuracy_score" 
@@ -64,8 +92,12 @@
         <el-col :span="8">
           <el-card class="score-card">
             <div class="score-content">
-              <div class="score-value">{{ assessment.tone_score }}</div>
-              <div class="score-label">语调评分</div>
+              <div class="score-value">
+                {{ assessment.tone_score }}
+              </div>
+              <div class="score-label">
+                语调评分
+              </div>
               <div class="score-bar">
                 <el-progress 
                   :percentage="assessment.tone_score" 
@@ -78,8 +110,12 @@
         <el-col :span="8">
           <el-card class="score-card">
             <div class="score-content">
-              <div class="score-value">{{ assessment.fluency_score }}</div>
-              <div class="score-label">流畅度评分</div>
+              <div class="score-value">
+                {{ assessment.fluency_score }}
+              </div>
+              <div class="score-label">
+                流畅度评分
+              </div>
               <div class="score-bar">
                 <el-progress 
                   :percentage="assessment.fluency_score" 
@@ -102,19 +138,32 @@
         <div class="overall-content">
           <div class="overall-score">
             <div class="score-circle">
-              <div class="score-number">{{ overallScore }}</div>
-              <div class="score-text">分</div>
+              <div class="score-number">
+                {{ overallScore }}
+              </div>
+              <div class="score-text">
+                分
+              </div>
             </div>
           </div>
           <div class="overall-level">
-            <div class="level-label">评级</div>
-            <el-tag :type="getScoreLevelType(overallScore)" size="large">
+            <div class="level-label">
+              评级
+            </div>
+            <el-tag
+              :type="getScoreLevelType(overallScore)"
+              size="large"
+            >
               {{ getScoreLevel(overallScore) }}
             </el-tag>
           </div>
           <div class="overall-feedback">
-            <div class="feedback-label">评价</div>
-            <div class="feedback-text">{{ getScoreFeedback(overallScore) }}</div>
+            <div class="feedback-label">
+              评价
+            </div>
+            <div class="feedback-text">
+              {{ getScoreFeedback(overallScore) }}
+            </div>
           </div>
         </div>
       </el-card>
@@ -128,38 +177,69 @@
           </div>
         </template>
 
-        <div v-if="assessment.sentence_reports && assessment.sentence_reports.length > 0" 
-             class="sentence-reports">
-          <div v-for="(report, index) in assessment.sentence_reports" :key="index" 
-               class="sentence-item">
+        <div
+          v-if="assessment.sentence_reports && assessment.sentence_reports.length > 0" 
+          class="sentence-reports"
+        >
+          <div
+            v-for="(report, index) in assessment.sentence_reports"
+            :key="index" 
+            class="sentence-item"
+          >
             <div class="sentence-header">
               <span class="sentence-number">第{{ index + 1 }}句</span>
-              <el-tag v-if="!report.issues || report.issues.length === 0" type="success" size="small">
+              <el-tag
+                v-if="!report.issues || report.issues.length === 0"
+                type="success"
+                size="small"
+              >
                 完美
               </el-tag>
-              <el-tag v-else type="warning" size="small">
+              <el-tag
+                v-else
+                type="warning"
+                size="small"
+              >
                 {{ report.issues.length }}个问题
               </el-tag>
             </div>
             
-            <div class="sentence-text">{{ report.text }}</div>
+            <div class="sentence-text">
+              {{ report.text }}
+            </div>
             
-            <div v-if="report.issues && report.issues.length > 0" class="sentence-issues">
-              <div class="issues-label">问题标注：</div>
+            <div
+              v-if="report.issues && report.issues.length > 0"
+              class="sentence-issues"
+            >
+              <div class="issues-label">
+                问题标注：
+              </div>
               <div class="issues-list">
-                <el-tag v-for="(issue, i) in report.issues" :key="i" type="warning" effect="plain">
+                <el-tag
+                  v-for="(issue, i) in report.issues"
+                  :key="i"
+                  type="warning"
+                  effect="plain"
+                >
                   {{ issue }}
                 </el-tag>
               </div>
             </div>
 
-            <div v-if="report.score !== undefined" class="sentence-score">
+            <div
+              v-if="report.score !== undefined"
+              class="sentence-score"
+            >
               <span class="score-label">句子评分：</span>
               <span class="score-value">{{ report.score }}/100</span>
             </div>
           </div>
         </div>
-        <el-empty v-else description="暂无批改报告" />
+        <el-empty
+          v-else
+          description="暂无批改报告"
+        />
       </el-card>
 
       <!-- 标准发音示范 -->
@@ -171,9 +251,17 @@
         </template>
 
         <div class="reference-content">
-          <div class="reference-label">点击下方按钮播放标准发音：</div>
-          <audio controls class="reference-audio">
-            <source :src="assessment.reference_audio_url" type="audio/mpeg">
+          <div class="reference-label">
+            点击下方按钮播放标准发音：
+          </div>
+          <audio
+            controls
+            class="reference-audio"
+          >
+            <source
+              :src="assessment.reference_audio_url"
+              type="audio/mpeg"
+            >
             您的浏览器不支持音频播放
           </audio>
           <div class="reference-tips">
@@ -207,9 +295,21 @@
 
       <!-- 操作按钮 -->
       <div class="action-buttons">
-        <el-button @click="goBack">返回列表</el-button>
-        <el-button type="primary" @click="retakeAssessment">重新评测</el-button>
-        <el-button type="success" @click="downloadReport">下载报告</el-button>
+        <el-button @click="goBack">
+          返回列表
+        </el-button>
+        <el-button
+          type="primary"
+          @click="retakeAssessment"
+        >
+          重新评测
+        </el-button>
+        <el-button
+          type="success"
+          @click="downloadReport"
+        >
+          下载报告
+        </el-button>
       </div>
     </div>
   </StudentLayout>
@@ -280,7 +380,7 @@ async function fetchAssessmentDetail() {
     } else {
       ElMessage.error('获取评测详情失败')
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('[口语评测] 获取详情失败:', error)
     ElMessage.error('获取评测详情失败，请稍后重试')
   } finally {

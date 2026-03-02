@@ -3,66 +3,164 @@
     <!-- 页面标题 -->
     <div class="page-header">
       <h1>学习小组</h1>
-      <el-button type="primary" @click="showCreateDialog = true">
+      <el-button
+        type="primary"
+        @click="showCreateDialog = true"
+      >
         <el-icon><Plus /></el-icon>
         创建小组
       </el-button>
     </div>
 
     <!-- 创建小组对话框 -->
-    <el-dialog v-model="showCreateDialog" title="创建学习小组" width="500px">
-      <el-form :model="createForm" :rules="createRules" ref="createFormRef" label-width="100px">
-        <el-form-item label="小组名称" prop="name">
-          <el-input v-model="createForm.name" placeholder="请输入小组名称" />
+    <el-dialog
+      v-model="showCreateDialog"
+      title="创建学习小组"
+      width="500px"
+    >
+      <el-form
+        ref="createFormRef"
+        :model="createForm"
+        :rules="createRules"
+        label-width="100px"
+      >
+        <el-form-item
+          label="小组名称"
+          prop="name"
+        >
+          <el-input
+            v-model="createForm.name"
+            placeholder="请输入小组名称"
+          />
         </el-form-item>
-        <el-form-item label="学习目标" prop="goal">
-          <el-input v-model="createForm.goal" type="textarea" rows="3" placeholder="请输入学习目标" />
+        <el-form-item
+          label="学习目标"
+          prop="goal"
+        >
+          <el-input
+            v-model="createForm.goal"
+            type="textarea"
+            rows="3"
+            placeholder="请输入学习目标"
+          />
         </el-form-item>
-        <el-form-item label="成员上限" prop="memberLimit">
-          <el-input-number v-model="createForm.memberLimit" :min="2" :max="10" />
+        <el-form-item
+          label="成员上限"
+          prop="memberLimit"
+        >
+          <el-input-number
+            v-model="createForm.memberLimit"
+            :min="2"
+            :max="10"
+          />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="showCreateDialog = false">取消</el-button>
-        <el-button type="primary" @click="handleCreateTeam">创建</el-button>
+        <el-button @click="showCreateDialog = false">
+          取消
+        </el-button>
+        <el-button
+          type="primary"
+          @click="handleCreateTeam"
+        >
+          创建
+        </el-button>
       </template>
     </el-dialog>
 
     <!-- 加入小组对话框 -->
-    <el-dialog v-model="showJoinDialog" title="加入学习小组" width="500px">
-      <el-form :model="joinForm" :rules="joinRules" ref="joinFormRef" label-width="100px">
-        <el-form-item label="邀请码" prop="inviteCode">
-          <el-input v-model="joinForm.inviteCode" placeholder="请输入邀请码" />
+    <el-dialog
+      v-model="showJoinDialog"
+      title="加入学习小组"
+      width="500px"
+    >
+      <el-form
+        ref="joinFormRef"
+        :model="joinForm"
+        :rules="joinRules"
+        label-width="100px"
+      >
+        <el-form-item
+          label="邀请码"
+          prop="inviteCode"
+        >
+          <el-input
+            v-model="joinForm.inviteCode"
+            placeholder="请输入邀请码"
+          />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="showJoinDialog = false">取消</el-button>
-        <el-button type="primary" @click="handleJoinTeam">加入</el-button>
+        <el-button @click="showJoinDialog = false">
+          取消
+        </el-button>
+        <el-button
+          type="primary"
+          @click="handleJoinTeam"
+        >
+          加入
+        </el-button>
       </template>
     </el-dialog>
 
     <!-- 小组列表 -->
     <div class="teams-list">
-      <el-empty v-if="teams.length === 0" description="暂无小组，创建或加入一个小组开始协作学习吧" />
+      <el-empty
+        v-if="teams.length === 0"
+        description="暂无小组，创建或加入一个小组开始协作学习吧"
+      />
       
-      <div v-else class="teams-grid">
-        <div v-for="team in teams" :key="team.team_id" class="team-card">
+      <div
+        v-else
+        class="teams-grid"
+      >
+        <div
+          v-for="team in teams"
+          :key="team.team_id"
+          class="team-card"
+        >
           <!-- 小组卡片头部 -->
           <div class="team-header">
             <div class="team-title">
               <h3>{{ team.name }}</h3>
-              <el-tag v-if="team.is_creator" type="success" size="small">创建者</el-tag>
+              <el-tag
+                v-if="team.is_creator"
+                type="success"
+                size="small"
+              >
+                创建者
+              </el-tag>
             </div>
             <el-dropdown @command="handleTeamCommand($event, team)">
-              <el-button link type="primary">
+              <el-button
+                link
+                type="primary"
+              >
                 <el-icon><MoreFilled /></el-icon>
               </el-button>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item command="view">查看详情</el-dropdown-item>
-                  <el-dropdown-item command="share" v-if="team.is_creator">分享邀请码</el-dropdown-item>
-                  <el-dropdown-item command="leave" v-if="!team.is_creator">退出小组</el-dropdown-item>
-                  <el-dropdown-item command="delete" v-if="team.is_creator">解散小组</el-dropdown-item>
+                  <el-dropdown-item command="view">
+                    查看详情
+                  </el-dropdown-item>
+                  <el-dropdown-item
+                    v-if="team.is_creator"
+                    command="share"
+                  >
+                    分享邀请码
+                  </el-dropdown-item>
+                  <el-dropdown-item
+                    v-if="!team.is_creator"
+                    command="leave"
+                  >
+                    退出小组
+                  </el-dropdown-item>
+                  <el-dropdown-item
+                    v-if="team.is_creator"
+                    command="delete"
+                  >
+                    解散小组
+                  </el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
@@ -70,7 +168,9 @@
 
           <!-- 小组信息 -->
           <div class="team-info">
-            <p class="goal">{{ team.goal }}</p>
+            <p class="goal">
+              {{ team.goal }}
+            </p>
             <div class="stats">
               <span class="stat">
                 <el-icon><User /></el-icon>
@@ -93,14 +193,21 @@
               size="small"
               :style="{ marginLeft: index > 0 ? '-8px' : '0' }"
             />
-            <span v-if="team.members.length > 5" class="more-members">
+            <span
+              v-if="team.members.length > 5"
+              class="more-members"
+            >
               +{{ team.members.length - 5 }}
             </span>
           </div>
 
           <!-- 操作按钮 -->
           <div class="team-actions">
-            <el-button type="primary" link @click="goToTeamDetail(team.team_id)">
+            <el-button
+              type="primary"
+              link
+              @click="goToTeamDetail(team.team_id)"
+            >
               进入小组
             </el-button>
           </div>
@@ -117,14 +224,26 @@
     </div>
 
     <!-- 分享邀请码对话框 -->
-    <el-dialog v-model="showShareDialog" title="分享邀请码" width="400px">
+    <el-dialog
+      v-model="showShareDialog"
+      title="分享邀请码"
+      width="400px"
+    >
       <div class="share-content">
         <p>邀请码：</p>
         <div class="invite-code-display">
           <span class="code">{{ selectedTeam?.invite_code }}</span>
-          <el-button type="primary" size="small" @click="copyInviteCode">复制</el-button>
+          <el-button
+            type="primary"
+            size="small"
+            @click="copyInviteCode"
+          >
+            复制
+          </el-button>
         </div>
-        <p class="tip">将邀请码分享给同学，他们可以使用邀请码加入小组</p>
+        <p class="tip">
+          将邀请码分享给同学，他们可以使用邀请码加入小组
+        </p>
       </div>
     </el-dialog>
   </div>
@@ -147,7 +266,7 @@ interface Team {
   current_members: number
   invite_code: string
   created_at: string
-  members: any[]
+  members: Record<string, unknown>[]
   is_creator: boolean
   is_member: boolean
 }

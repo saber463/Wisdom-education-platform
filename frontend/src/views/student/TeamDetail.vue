@@ -2,7 +2,11 @@
   <div class="team-detail-container">
     <!-- 页面标题 -->
     <div class="page-header">
-      <el-button @click="goBack" link type="primary">
+      <el-button
+        link
+        type="primary"
+        @click="goBack"
+      >
         <el-icon><ArrowLeft /></el-icon>
         返回
       </el-button>
@@ -10,9 +14,15 @@
     </div>
 
     <!-- 标签页 -->
-    <el-tabs v-model="activeTab" class="team-tabs">
+    <el-tabs
+      v-model="activeTab"
+      class="team-tabs"
+    >
       <!-- 小组信息标签页 -->
-      <el-tab-pane label="小组信息" name="info">
+      <el-tab-pane
+        label="小组信息"
+        name="info"
+      >
         <div class="tab-content">
           <div class="team-overview">
             <div class="overview-item">
@@ -37,12 +47,26 @@
           <div class="members-section">
             <h3>小组成员</h3>
             <div class="members-list">
-              <div v-for="member in teamMembers" :key="member.student_id" class="member-item">
-                <el-avatar :src="member.avatar_url" :alt="member.real_name" size="large" />
+              <div
+                v-for="member in teamMembers"
+                :key="member.student_id"
+                class="member-item"
+              >
+                <el-avatar
+                  :src="member.avatar_url"
+                  :alt="member.real_name"
+                  size="large"
+                />
                 <div class="member-info">
                   <div class="member-name">
                     {{ member.real_name }}
-                    <el-tag v-if="member.is_creator" type="success" size="small">创建者</el-tag>
+                    <el-tag
+                      v-if="member.is_creator"
+                      type="success"
+                      size="small"
+                    >
+                      创建者
+                    </el-tag>
                   </div>
                   <div class="member-stats">
                     <span>打卡: {{ member.statistics?.check_in_count || 0 }}次</span>
@@ -56,12 +80,18 @@
       </el-tab-pane>
 
       <!-- 打卡功能标签页 -->
-      <el-tab-pane label="每日打卡" name="checkin">
+      <el-tab-pane
+        label="每日打卡"
+        name="checkin"
+      >
         <div class="tab-content">
           <!-- 打卡表单 -->
           <div class="checkin-form">
             <h3>今日打卡</h3>
-            <el-form :model="checkInForm" label-width="100px">
+            <el-form
+              :model="checkInForm"
+              label-width="100px"
+            >
               <el-form-item label="学习时长">
                 <el-input-number
                   v-model="checkInForm.study_duration"
@@ -78,7 +108,11 @@
                 />
               </el-form-item>
               <el-form-item>
-                <el-button type="primary" @click="handleCheckIn" :loading="checkInLoading">
+                <el-button
+                  type="primary"
+                  :loading="checkInLoading"
+                  @click="handleCheckIn"
+                >
                   提交打卡
                 </el-button>
               </el-form-item>
@@ -88,19 +122,38 @@
           <!-- 打卡记录 -->
           <div class="checkin-records">
             <h3>打卡记录</h3>
-            <el-table :data="checkInRecords" stripe>
-              <el-table-column prop="student_name" label="学生" width="120" />
-              <el-table-column prop="check_in_time" label="打卡时间" width="150">
+            <el-table
+              :data="checkInRecords"
+              stripe
+            >
+              <el-table-column
+                prop="student_name"
+                label="学生"
+                width="120"
+              />
+              <el-table-column
+                prop="check_in_time"
+                label="打卡时间"
+                width="150"
+              >
                 <template #default="{ row }">
                   {{ formatDate(row.check_in_time) }}
                 </template>
               </el-table-column>
-              <el-table-column prop="study_duration" label="学习时长" width="100">
+              <el-table-column
+                prop="study_duration"
+                label="学习时长"
+                width="100"
+              >
                 <template #default="{ row }">
                   {{ row.study_duration }}分钟
                 </template>
               </el-table-column>
-              <el-table-column prop="completed_tasks" label="完成任务数" width="120" />
+              <el-table-column
+                prop="completed_tasks"
+                label="完成任务数"
+                width="120"
+              />
             </el-table>
           </div>
 
@@ -109,20 +162,36 @@
             <h3>打卡统计</h3>
             <div class="stats-grid">
               <div class="stat-card">
-                <div class="stat-value">{{ checkInStats?.total_check_ins || 0 }}</div>
-                <div class="stat-label">总打卡次数</div>
+                <div class="stat-value">
+                  {{ checkInStats?.total_check_ins || 0 }}
+                </div>
+                <div class="stat-label">
+                  总打卡次数
+                </div>
               </div>
               <div class="stat-card">
-                <div class="stat-value">{{ checkInStats?.active_members || 0 }}</div>
-                <div class="stat-label">活跃成员</div>
+                <div class="stat-value">
+                  {{ checkInStats?.active_members || 0 }}
+                </div>
+                <div class="stat-label">
+                  活跃成员
+                </div>
               </div>
               <div class="stat-card">
-                <div class="stat-value">{{ checkInStats?.check_in_rate || 0 }}%</div>
-                <div class="stat-label">打卡率</div>
+                <div class="stat-value">
+                  {{ checkInStats?.check_in_rate || 0 }}%
+                </div>
+                <div class="stat-label">
+                  打卡率
+                </div>
               </div>
               <div class="stat-card">
-                <div class="stat-value">{{ checkInStats?.total_study_duration || 0 }}</div>
-                <div class="stat-label">总学习时长(分)</div>
+                <div class="stat-value">
+                  {{ checkInStats?.total_study_duration || 0 }}
+                </div>
+                <div class="stat-label">
+                  总学习时长(分)
+                </div>
               </div>
             </div>
           </div>
@@ -130,14 +199,28 @@
       </el-tab-pane>
 
       <!-- 互评功能标签页 -->
-      <el-tab-pane label="互评" name="review">
+      <el-tab-pane
+        label="互评"
+        name="review"
+      >
         <div class="tab-content">
           <!-- 互评表单 -->
           <div class="peer-review-form">
             <h3>提交互评</h3>
-            <el-form :model="peerReviewForm" :rules="peerReviewRules" ref="peerReviewFormRef" label-width="100px">
-              <el-form-item label="被评价人" prop="reviewee_id">
-                <el-select v-model="peerReviewForm.reviewee_id" placeholder="选择被评价人">
+            <el-form
+              ref="peerReviewFormRef"
+              :model="peerReviewForm"
+              :rules="peerReviewRules"
+              label-width="100px"
+            >
+              <el-form-item
+                label="被评价人"
+                prop="reviewee_id"
+              >
+                <el-select
+                  v-model="peerReviewForm.reviewee_id"
+                  placeholder="选择被评价人"
+                >
                   <el-option
                     v-for="member in teamMembers.filter(m => m.student_id !== currentUserId)"
                     :key="member.student_id"
@@ -146,8 +229,14 @@
                   />
                 </el-select>
               </el-form-item>
-              <el-form-item label="作业" prop="assignment_id">
-                <el-select v-model="peerReviewForm.assignment_id" placeholder="选择作业">
+              <el-form-item
+                label="作业"
+                prop="assignment_id"
+              >
+                <el-select
+                  v-model="peerReviewForm.assignment_id"
+                  placeholder="选择作业"
+                >
                   <el-option
                     v-for="assignment in assignments"
                     :key="assignment.id"
@@ -156,11 +245,21 @@
                   />
                 </el-select>
               </el-form-item>
-              <el-form-item label="评分" prop="score">
-                <el-rate v-model="peerReviewForm.score" :max="10" allow-half />
+              <el-form-item
+                label="评分"
+                prop="score"
+              >
+                <el-rate
+                  v-model="peerReviewForm.score"
+                  :max="10"
+                  allow-half
+                />
                 <span class="score-display">{{ peerReviewForm.score * 10 }}分</span>
               </el-form-item>
-              <el-form-item label="评语" prop="comment">
+              <el-form-item
+                label="评语"
+                prop="comment"
+              >
                 <el-input
                   v-model="peerReviewForm.comment"
                   type="textarea"
@@ -171,7 +270,11 @@
                 />
               </el-form-item>
               <el-form-item>
-                <el-button type="primary" @click="handleSubmitReview" :loading="reviewLoading">
+                <el-button
+                  type="primary"
+                  :loading="reviewLoading"
+                  @click="handleSubmitReview"
+                >
                   提交互评
                 </el-button>
               </el-form-item>
@@ -181,17 +284,49 @@
           <!-- 互评记录 -->
           <div class="peer-review-records">
             <h3>互评记录</h3>
-            <el-table :data="peerReviews" stripe>
-              <el-table-column prop="reviewer_name" label="评价人" width="120" />
-              <el-table-column prop="reviewee_name" label="被评价人" width="120" />
-              <el-table-column prop="assignment_title" label="作业" width="150" />
-              <el-table-column prop="score" label="评分" width="80">
+            <el-table
+              :data="peerReviews"
+              stripe
+            >
+              <el-table-column
+                prop="reviewer_name"
+                label="评价人"
+                width="120"
+              />
+              <el-table-column
+                prop="reviewee_name"
+                label="被评价人"
+                width="120"
+              />
+              <el-table-column
+                prop="assignment_title"
+                label="作业"
+                width="150"
+              />
+              <el-table-column
+                prop="score"
+                label="评分"
+                width="80"
+              >
                 <template #default="{ row }">
-                  <el-rate v-model="row.score" :max="10" disabled allow-half />
+                  <el-rate
+                    v-model="row.score"
+                    :max="10"
+                    disabled
+                    allow-half
+                  />
                 </template>
               </el-table-column>
-              <el-table-column prop="comment" label="评语" min-width="200" />
-              <el-table-column prop="created_at" label="时间" width="150">
+              <el-table-column
+                prop="comment"
+                label="评语"
+                min-width="200"
+              />
+              <el-table-column
+                prop="created_at"
+                label="时间"
+                width="150"
+              >
                 <template #default="{ row }">
                   {{ formatDate(row.created_at) }}
                 </template>
@@ -204,16 +339,28 @@
             <h3>互评统计</h3>
             <div class="stats-grid">
               <div class="stat-card">
-                <div class="stat-value">{{ reviewStats?.total_reviews || 0 }}</div>
-                <div class="stat-label">总互评数</div>
+                <div class="stat-value">
+                  {{ reviewStats?.total_reviews || 0 }}
+                </div>
+                <div class="stat-label">
+                  总互评数
+                </div>
               </div>
               <div class="stat-card">
-                <div class="stat-value">{{ reviewStats?.active_reviewers || 0 }}</div>
-                <div class="stat-label">参与互评人数</div>
+                <div class="stat-value">
+                  {{ reviewStats?.active_reviewers || 0 }}
+                </div>
+                <div class="stat-label">
+                  参与互评人数
+                </div>
               </div>
               <div class="stat-card">
-                <div class="stat-value">{{ reviewStats?.avg_score || 0 }}</div>
-                <div class="stat-label">平均评分</div>
+                <div class="stat-value">
+                  {{ reviewStats?.avg_score || 0 }}
+                </div>
+                <div class="stat-label">
+                  平均评分
+                </div>
               </div>
             </div>
           </div>
@@ -221,7 +368,10 @@
       </el-tab-pane>
 
       <!-- 小组学情报告标签页 -->
-      <el-tab-pane label="学情报告" name="report">
+      <el-tab-pane
+        label="学情报告"
+        name="report"
+      >
         <div class="tab-content">
           <TeamReport :team-id="teamId" />
         </div>
@@ -247,7 +397,7 @@ interface TeamInfo {
   max_members: number
   current_members: number
   created_at: string
-  members: any[]
+  members: Record<string, unknown>[]
 }
 
 const router = useRouter()
@@ -259,12 +409,12 @@ const currentUserId = ref(0)
 // 状态
 const activeTab = ref('info')
 const teamInfo = ref<TeamInfo | null>(null)
-const teamMembers = ref<any[]>([])
-const checkInRecords = ref<any[]>([])
-const checkInStats = ref<any>(null)
-const peerReviews = ref<any[]>([])
-const reviewStats = ref<any>(null)
-const assignments = ref<any[]>([])
+const teamMembers = ref<Record<string, unknown>[]>([])
+const checkInRecords = ref<Record<string, unknown>[]>([])
+const checkInStats = ref<Record<string, unknown> | null>(null)
+const peerReviews = ref<Record<string, unknown>[]>([])
+const reviewStats = ref<Record<string, unknown> | null>(null)
+const assignments = ref<Record<string, unknown>[]>([])
 
 // 打卡表单
 const checkInForm = ref({
@@ -331,9 +481,10 @@ const handleCheckIn = async () => {
       checkInForm.value = { study_duration: 0, completed_tasks: 0 }
       await fetchCheckInRecords()
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('打卡失败:', error)
-    ElMessage.error(error.response?.data?.message || '打卡失败')
+    const msg = (error as { response?: { data?: { message?: string } } })?.response?.data?.message
+    ElMessage.error(msg || '打卡失败')
   } finally {
     checkInLoading.value = false
   }
@@ -372,9 +523,10 @@ const handleSubmitReview = async () => {
       peerReviewForm.value = { reviewee_id: '', assignment_id: '', score: 0, comment: '' }
       await fetchPeerReviews()
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('提交互评失败:', error)
-    ElMessage.error(error.response?.data?.message || '提交互评失败')
+    const msg = (error as { response?: { data?: { message?: string } } })?.response?.data?.message
+    ElMessage.error(msg || '提交互评失败')
   } finally {
     reviewLoading.value = false
   }

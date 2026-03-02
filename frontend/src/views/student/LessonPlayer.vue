@@ -1,8 +1,15 @@
 <template>
+  <!-- eslint-disable vue/no-v-html -- 课节/练习题内容来自受信任后端，已通过 formatContent 处理 -->
   <StudentLayout>
     <template #content>
-      <div class="lesson-player" v-loading="loading">
-        <div v-if="lesson" class="player-container">
+      <div
+        v-loading="loading"
+        class="lesson-player"
+      >
+        <div
+          v-if="lesson"
+          class="player-container"
+        >
           <!-- 视频播放器 -->
           <el-card class="video-card">
             <div class="video-wrapper">
@@ -13,12 +20,17 @@
                 preload="auto"
                 :poster="lesson.video_poster"
               >
-                <source :src="lesson.video_url" type="video/mp4" />
+                <source
+                  :src="lesson.video_url"
+                  type="video/mp4"
+                >
               </video>
             </div>
             <div class="video-info">
               <h2>{{ lesson.title }}</h2>
-              <p v-if="lesson.description">{{ lesson.description }}</p>
+              <p v-if="lesson.description">
+                {{ lesson.description }}
+              </p>
             </div>
           </el-card>
 
@@ -36,20 +48,30 @@
             <template #header>
               <h3>课节内容</h3>
             </template>
-            <div class="lesson-content" v-html="formatContent(lesson.content)"></div>
+            <div
+              class="lesson-content"
+              v-html="formatContent(lesson.content)"
+            />
             
             <!-- 代码示例 -->
-            <div v-if="lesson.code_example" class="code-example">
+            <div
+              v-if="lesson.code_example"
+              class="code-example"
+            >
               <h4>代码示例</h4>
               <pre><code>{{ lesson.code_example }}</code></pre>
             </div>
 
             <!-- 练习题 -->
-            <div v-if="lesson.exercise_content" class="exercise-content">
+            <div
+              v-if="lesson.exercise_content"
+              class="exercise-content"
+            >
               <h4>练习题</h4>
-              <div v-html="formatContent(lesson.exercise_content)"></div>
+              <div v-html="formatContent(lesson.exercise_content)" />
             </div>
           </el-card>
+          <!-- eslint-enable vue/no-v-html -->
         </div>
       </div>
     </template>
@@ -70,16 +92,16 @@ import VideoQuizModal from '@/components/VideoQuizModal.vue'
 const route = useRoute()
 
 const loading = ref(false)
-const lesson = ref<any>(null)
+const lesson = ref<Record<string, unknown> | null>(null)
 const videoPlayer = ref<HTMLVideoElement | null>(null)
-let player: any = null
+let player: ReturnType<typeof videojs> | null = null
 
 let progressTimer: number | null = null
 let quizCheckTimer: number | null = null
 
 const showQuizModal = ref(false)
 const quizTriggerTime = ref(0)
-const quizQuestion = ref<any>(null)
+const quizQuestion = ref<Record<string, unknown> | null>(null)
 const lastQuizCheckTime = ref(0)
 
 async function loadLesson() {
@@ -209,7 +231,7 @@ async function checkQuizTrigger() {
   }
 }
 
-function handleQuizSubmitted(result: any) {
+function handleQuizSubmitted(result: { is_correct: boolean; reward?: number }) {
   if (result.is_correct) {
     ElMessage.success(`回答正确！获得${result.reward}积分`)
   } else {

@@ -1,5 +1,9 @@
 <template>
-  <el-tag :type="badgeType" :size="size" :effect="effect">
+  <el-tag
+    :type="badgeType"
+    :size="size"
+    :effect="effect"
+  >
     {{ badgeText }}
   </el-tag>
 </template>

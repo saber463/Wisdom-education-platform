@@ -12,13 +12,20 @@
   >
     <template #header>
       <div class="modal-header">
-        <h2 class="modal-title">完善您的学习档案</h2>
-        <p class="modal-subtitle">只需几分钟，帮助我们为您推荐最合适的学习内容</p>
+        <h2 class="modal-title">
+          完善您的学习档案
+        </h2>
+        <p class="modal-subtitle">
+          只需几分钟，帮助我们为您推荐最合适的学习内容
+        </p>
       </div>
     </template>
 
     <div class="survey-content">
-      <SurveyProgress :current-step="currentStep" :total-steps="6" />
+      <SurveyProgress
+        :current-step="currentStep"
+        :total-steps="6"
+      />
       
       <div class="step-container">
         <!-- Step 1: 学习目标 -->
@@ -63,26 +70,26 @@
       <div class="modal-footer">
         <el-button
           v-if="currentStep > 1"
-          @click="prevStep"
           :disabled="isSubmitting"
+          @click="prevStep"
         >
           上一步
         </el-button>
-        <div class="spacer"></div>
+        <div class="spacer" />
         <el-button
           v-if="currentStep < 6"
           type="primary"
-          @click="nextStep"
           :disabled="!canProceed || isSubmitting"
+          @click="nextStep"
         >
           下一步
         </el-button>
         <el-button
           v-else
           type="primary"
-          @click="submitSurvey"
           :loading="isSubmitting"
           :disabled="!canProceed"
+          @click="submitSurvey"
         >
           完成
         </el-button>
@@ -162,7 +169,7 @@ const canProceed = computed(() => {
 })
 
 // 阻止关闭弹窗
-function handleBeforeClose(done: () => void) {
+function handleBeforeClose(_done: () => void) {
   ElMessage.warning('请完成问卷后才能继续使用')
   // 不调用done()，阻止关闭
 }
@@ -220,9 +227,10 @@ async function submitSurvey() {
     } else {
       ElMessage.error(response.message || '提交失败，请重试')
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('问卷提交失败:', error)
-    ElMessage.error(error.response?.data?.message || '提交失败，请重试')
+    const msg = (error as { response?: { data?: { message?: string } } })?.response?.data?.message
+    ElMessage.error(msg || '提交失败，请重试')
   } finally {
     isSubmitting.value = false
   }

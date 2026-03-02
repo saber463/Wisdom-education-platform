@@ -1,6 +1,9 @@
 <template>
   <div class="partner-chat-panel">
-    <div class="chat-messages" ref="messagesContainer">
+    <div
+      ref="messagesContainer"
+      class="chat-messages"
+    >
       <div
         v-for="(message, index) in messages"
         :key="index"
@@ -13,8 +16,12 @@
           class="message-avatar"
         />
         <div class="message-content">
-          <div class="message-text">{{ message.content }}</div>
-          <div class="message-time">{{ formatTime(message.timestamp) }}</div>
+          <div class="message-text">
+            {{ message.content }}
+          </div>
+          <div class="message-time">
+            {{ formatTime(message.timestamp) }}
+          </div>
         </div>
         <el-avatar
           v-if="message.sender === 'user'"
@@ -32,7 +39,12 @@
         @keyup.enter="sendMessage"
       >
         <template #append>
-          <el-button @click="sendMessage" :loading="sending">发送</el-button>
+          <el-button
+            :loading="sending"
+            @click="sendMessage"
+          >
+            发送
+          </el-button>
         </template>
       </el-input>
     </div>
@@ -55,7 +67,7 @@ interface Props {
   partnerAvatar: string
 }
 
-const props = defineProps<Props>()
+defineProps<Props>()
 
 const messages = ref<Message[]>([])
 const inputMessage = ref('')
@@ -91,9 +103,10 @@ async function sendMessage() {
     } else {
       ElMessage.error(response.msg || '发送失败')
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('发送消息失败:', error)
-    ElMessage.error(error.response?.data?.msg || '发送失败')
+    const msg = (error as { response?: { data?: { msg?: string } } })?.response?.data?.msg
+    ElMessage.error(msg || '发送失败')
   } finally {
     sending.value = false
   }

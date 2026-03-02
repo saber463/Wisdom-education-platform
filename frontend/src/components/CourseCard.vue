@@ -1,5 +1,8 @@
 <template>
-  <div class="course-card" @click="$emit('click')">
+  <div
+    class="course-card"
+    @click="$emit('click')"
+  >
     <div class="course-image">
       <img 
         v-if="course.icon_url" 
@@ -8,30 +11,59 @@
         loading="lazy"
         decoding="async"
         @error="handleImageError"
-      />
-      <div v-else class="course-icon-placeholder">
+      >
+      <div
+        v-else
+        class="course-icon-placeholder"
+      >
         {{ course.language_name.charAt(0) }}
       </div>
-      <div v-if="course.is_hot" class="hot-badge">🔥 热门</div>
+      <div
+        v-if="course.is_hot"
+        class="hot-badge"
+      >
+        🔥 热门
+      </div>
     </div>
     <div class="course-content">
-      <h3 class="course-title">{{ course.display_name }}</h3>
-      <p class="course-description">{{ course.description || '暂无描述' }}</p>
+      <h3 class="course-title">
+        {{ course.display_name }}
+      </h3>
+      <p class="course-description">
+        {{ course.description || '暂无描述' }}
+      </p>
       <div class="course-meta">
-        <span class="difficulty-badge" :class="`difficulty-${course.difficulty}`">
+        <span
+          class="difficulty-badge"
+          :class="`difficulty-${course.difficulty}`"
+        >
           {{ difficultyText[course.difficulty] }}
         </span>
         <span class="students-count">👥 {{ course.total_students || 0 }}</span>
         <span class="lessons-count">📚 {{ course.total_lessons || 0 }} 课节</span>
       </div>
       <div class="course-footer">
-        <div class="course-rating" v-if="course.rating_count > 0">
-          <el-rate v-model="course.avg_rating" disabled show-score :max="5" />
+        <div
+          v-if="course.rating_count > 0"
+          class="course-rating"
+        >
+          <el-rate
+            :model-value="course.avg_rating"
+            disabled
+            show-score
+            :max="5"
+          />
           <span class="rating-text">({{ course.rating_count }})</span>
         </div>
         <div class="course-price">
-          <span v-if="course.price === 0" class="price-free">免费</span>
-          <span v-else class="price-paid">¥{{ course.price }}</span>
+          <span
+            v-if="course.price === 0"
+            class="price-free"
+          >免费</span>
+          <span
+            v-else
+            class="price-paid"
+          >¥{{ course.price }}</span>
         </div>
       </div>
     </div>

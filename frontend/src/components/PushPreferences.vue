@@ -40,10 +40,16 @@
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" @click="savePreferences" :loading="saving">
+          <el-button
+            type="primary"
+            :loading="saving"
+            @click="savePreferences"
+          >
             保存设置
           </el-button>
-          <el-button @click="resetPreferences">重置</el-button>
+          <el-button @click="resetPreferences">
+            重置
+          </el-button>
         </el-form-item>
       </el-form>
 
@@ -53,16 +59,41 @@
       <div class="stats-section">
         <h3>📊 推送统计</h3>
         <el-row :gutter="20">
-          <el-col :xs="24" :sm="12" :md="6">
-            <el-statistic title="总推送数" :value="stats.total" />
+          <el-col
+            :xs="24"
+            :sm="12"
+            :md="6"
+          >
+            <el-statistic
+              title="总推送数"
+              :value="stats.total"
+            />
           </el-col>
-          <el-col :xs="24" :sm="12" :md="6">
-            <el-statistic title="成功数" :value="stats.success" />
+          <el-col
+            :xs="24"
+            :sm="12"
+            :md="6"
+          >
+            <el-statistic
+              title="成功数"
+              :value="stats.success"
+            />
           </el-col>
-          <el-col :xs="24" :sm="12" :md="6">
-            <el-statistic title="失败数" :value="stats.failed" />
+          <el-col
+            :xs="24"
+            :sm="12"
+            :md="6"
+          >
+            <el-statistic
+              title="失败数"
+              :value="stats.failed"
+            />
           </el-col>
-          <el-col :xs="24" :sm="12" :md="6">
+          <el-col
+            :xs="24"
+            :sm="12"
+            :md="6"
+          >
             <el-statistic
               title="成功率"
               :value="stats.successRate"

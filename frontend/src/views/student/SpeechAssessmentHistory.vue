@@ -12,32 +12,51 @@
         <el-row :gutter="20">
           <el-col :span="6">
             <div class="stat-item">
-              <div class="stat-label">总评测次数</div>
-              <div class="stat-value">{{ statistics.totalCount }}</div>
+              <div class="stat-label">
+                总评测次数
+              </div>
+              <div class="stat-value">
+                {{ statistics.totalCount }}
+              </div>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="stat-item">
-              <div class="stat-label">平均发音准确率</div>
-              <div class="stat-value">{{ statistics.avgAccuracy }}%</div>
+              <div class="stat-label">
+                平均发音准确率
+              </div>
+              <div class="stat-value">
+                {{ statistics.avgAccuracy }}%
+              </div>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="stat-item">
-              <div class="stat-label">平均语调评分</div>
-              <div class="stat-value">{{ statistics.avgTone }}</div>
+              <div class="stat-label">
+                平均语调评分
+              </div>
+              <div class="stat-value">
+                {{ statistics.avgTone }}
+              </div>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="stat-item">
-              <div class="stat-label">平均流畅度评分</div>
-              <div class="stat-value">{{ statistics.avgFluency }}</div>
+              <div class="stat-label">
+                平均流畅度评分
+              </div>
+              <div class="stat-value">
+                {{ statistics.avgFluency }}
+              </div>
             </div>
           </el-col>
         </el-row>
 
         <!-- 时间范围筛选 -->
-        <el-row :gutter="20" style="margin-top: 20px;">
+        <el-row
+          :gutter="20"
+          style="margin-top: 20px;"
+        >
           <el-col :span="12">
             <el-date-picker
               v-model="dateRange"
@@ -45,12 +64,15 @@
               range-separator="至"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
-              @change="onDateRangeChange"
               style="width: 100%"
+              @change="onDateRangeChange"
             />
           </el-col>
           <el-col :span="12">
-            <el-button type="primary" @click="refreshData">
+            <el-button
+              type="primary"
+              @click="refreshData"
+            >
               <el-icon><Refresh /></el-icon> 刷新数据
             </el-button>
             <el-button @click="exportData">
@@ -61,7 +83,10 @@
       </el-card>
 
       <!-- 进度曲线图 -->
-      <el-row :gutter="20" style="margin-top: 20px;">
+      <el-row
+        :gutter="20"
+        style="margin-top: 20px;"
+      >
         <el-col :span="24">
           <el-card class="chart-card">
             <template #header>
@@ -70,13 +95,19 @@
               </div>
             </template>
 
-            <div ref="progressChartContainer" class="chart-container"></div>
+            <div
+              ref="progressChartContainer"
+              class="chart-container"
+            />
           </el-card>
         </el-col>
       </el-row>
 
       <!-- 评分分布图 -->
-      <el-row :gutter="20" style="margin-top: 20px;">
+      <el-row
+        :gutter="20"
+        style="margin-top: 20px;"
+      >
         <el-col :span="12">
           <el-card class="chart-card">
             <template #header>
@@ -85,7 +116,10 @@
               </div>
             </template>
 
-            <div ref="accuracyChartContainer" class="chart-container"></div>
+            <div
+              ref="accuracyChartContainer"
+              class="chart-container"
+            />
           </el-card>
         </el-col>
         <el-col :span="12">
@@ -96,13 +130,19 @@
               </div>
             </template>
 
-            <div ref="scoresChartContainer" class="chart-container"></div>
+            <div
+              ref="scoresChartContainer"
+              class="chart-container"
+            />
           </el-card>
         </el-col>
       </el-row>
 
       <!-- 历史记录表格 -->
-      <el-card class="table-card" style="margin-top: 20px;">
+      <el-card
+        class="table-card"
+        style="margin-top: 20px;"
+      >
         <template #header>
           <div class="card-header">
             <span><el-icon><List /></el-icon> 评测历史记录</span>
@@ -110,14 +150,30 @@
           </div>
         </template>
 
-        <el-table :data="assessments" stripe style="width: 100%">
-          <el-table-column prop="id" label="ID" width="80" />
-          <el-table-column prop="created_at" label="评测时间" width="180">
+        <el-table
+          :data="assessments"
+          stripe
+          style="width: 100%"
+        >
+          <el-table-column
+            prop="id"
+            label="ID"
+            width="80"
+          />
+          <el-table-column
+            prop="created_at"
+            label="评测时间"
+            width="180"
+          >
             <template #default="{ row }">
               {{ formatDate(row.created_at) }}
             </template>
           </el-table-column>
-          <el-table-column prop="accuracy_score" label="发音准确率" width="120">
+          <el-table-column
+            prop="accuracy_score"
+            label="发音准确率"
+            width="120"
+          >
             <template #default="{ row }">
               <el-progress 
                 :percentage="row.accuracy_score" 
@@ -127,27 +183,62 @@
               <span style="margin-left: 8px;">{{ row.accuracy_score }}%</span>
             </template>
           </el-table-column>
-          <el-table-column prop="tone_score" label="语调评分" width="100">
+          <el-table-column
+            prop="tone_score"
+            label="语调评分"
+            width="100"
+          >
             <template #default="{ row }">
-              <el-tag :type="getScoreType(row.tone_score)">{{ row.tone_score }}</el-tag>
+              <el-tag :type="getScoreType(row.tone_score)">
+                {{ row.tone_score }}
+              </el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="fluency_score" label="流畅度评分" width="100">
+          <el-table-column
+            prop="fluency_score"
+            label="流畅度评分"
+            width="100"
+          >
             <template #default="{ row }">
-              <el-tag :type="getScoreType(row.fluency_score)">{{ row.fluency_score }}</el-tag>
+              <el-tag :type="getScoreType(row.fluency_score)">
+                {{ row.fluency_score }}
+              </el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="overall_score" label="总体评分" width="100">
+          <el-table-column
+            prop="overall_score"
+            label="总体评分"
+            width="100"
+          >
             <template #default="{ row }">
-              <el-tag :type="getScoreType(row.overall_score)" effect="dark">
+              <el-tag
+                :type="getScoreType(row.overall_score)"
+                effect="dark"
+              >
                 {{ row.overall_score }}
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="150" fixed="right">
+          <el-table-column
+            label="操作"
+            width="150"
+            fixed="right"
+          >
             <template #default="{ row }">
-              <el-button type="primary" link @click="viewDetail(row)">查看详情</el-button>
-              <el-button type="danger" link @click="deleteRecord(row)">删除</el-button>
+              <el-button
+                type="primary"
+                link
+                @click="viewDetail(row)"
+              >
+                查看详情
+              </el-button>
+              <el-button
+                type="danger"
+                link
+                @click="deleteRecord(row)"
+              >
+                删除
+              </el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -225,7 +316,7 @@ let scoresChart: echarts.ECharts | null = null
 
 async function fetchAssessments() {
   try {
-    const params: any = {
+    const params: Record<string, unknown> = {
       page: pagination.value.page,
       pageSize: pagination.value.pageSize
     }
@@ -253,7 +344,7 @@ async function fetchAssessments() {
       await nextTick()
       updateCharts()
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('[口语评测] 获取历史记录失败:', error)
     ElMessage.error('获取历史记录失败')
   }
@@ -495,7 +586,7 @@ function deleteRecord(assessment: Assessment) {
       await request.delete(`/speech/assess/${assessment.id}`)
       ElMessage.success('删除成功')
       fetchAssessments()
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('[口语评测] 删除失败:', error)
       ElMessage.error('删除失败')
     }

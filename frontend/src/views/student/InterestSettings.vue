@@ -6,12 +6,17 @@
           <template #header>
             <div class="card-header">
               <h2>学习兴趣设置</h2>
-              <p class="subtitle">修改您的学习兴趣，系统将重新为您推荐内容</p>
+              <p class="subtitle">
+                修改您的学习兴趣，系统将重新为您推荐内容
+              </p>
             </div>
           </template>
 
           <div class="settings-content">
-            <SurveyProgress :current-step="currentStep" :total-steps="6" />
+            <SurveyProgress
+              :current-step="currentStep"
+              :total-steps="6"
+            />
             
             <div class="step-container">
               <!-- Step 1: 学习目标 -->
@@ -54,26 +59,26 @@
             <div class="actions">
               <el-button
                 v-if="currentStep > 1"
-                @click="prevStep"
                 :disabled="isSubmitting"
+                @click="prevStep"
               >
                 上一步
               </el-button>
-              <div class="spacer"></div>
+              <div class="spacer" />
               <el-button
                 v-if="currentStep < 6"
                 type="primary"
-                @click="nextStep"
                 :disabled="!canProceed || isSubmitting"
+                @click="nextStep"
               >
                 下一步
               </el-button>
               <el-button
                 v-else
                 type="primary"
-                @click="updateInterests"
                 :loading="isSubmitting"
                 :disabled="!canProceed"
+                @click="updateInterests"
               >
                 保存设置
               </el-button>
@@ -210,9 +215,10 @@ async function updateInterests() {
     } else {
       ElMessage.error(response.message || '更新失败，请重试')
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('更新兴趣设置失败:', error)
-    ElMessage.error(error.response?.data?.message || '更新失败，请重试')
+    const msg = (error as { response?: { data?: { message?: string } } })?.response?.data?.message
+    ElMessage.error(msg || '更新失败，请重试')
   } finally {
     isSubmitting.value = false
   }

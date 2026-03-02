@@ -1,11 +1,22 @@
 <template>
-  <el-card class="partner-card" shadow="hover">
+  <el-card
+    class="partner-card"
+    shadow="hover"
+  >
     <div class="partner-header">
-      <el-avatar :src="partner.partner_avatar" :size="80" />
+      <el-avatar
+        :src="partner.partner_avatar"
+        :size="80"
+      />
       <div class="partner-info">
         <h3>{{ partner.partner_name }}</h3>
-        <p class="signature">{{ partner.partner_signature }}</p>
-        <el-tag :type="getAbilityTagType(partner.learning_ability_tag)" size="small">
+        <p class="signature">
+          {{ partner.partner_signature }}
+        </p>
+        <el-tag
+          :type="getAbilityTagType(partner.learning_ability_tag)"
+          size="small"
+        >
           {{ getAbilityTagText(partner.learning_ability_tag) }}
         </el-tag>
         <div class="partner-level">

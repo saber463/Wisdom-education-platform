@@ -7,7 +7,10 @@
           <p>继续您的学习之旅</p>
         </div>
 
-        <el-row :gutter="20" v-loading="loading">
+        <el-row
+          v-loading="loading"
+          :gutter="20"
+        >
           <el-col
             v-for="item in myCourses"
             :key="item.purchase.id"
@@ -16,7 +19,10 @@
             :md="8"
             :lg="6"
           >
-            <el-card class="course-card" shadow="hover">
+            <el-card
+              class="course-card"
+              shadow="hover"
+            >
               <div class="course-image">
                 <img 
                   v-if="item.course.icon_url" 
@@ -24,19 +30,30 @@
                   :alt="item.course.display_name"
                   loading="lazy"
                   decoding="async"
-                />
-                <div v-else class="course-icon-placeholder">
+                >
+                <div
+                  v-else
+                  class="course-icon-placeholder"
+                >
                   {{ item.course.language_name.charAt(0) }}
                 </div>
               </div>
               <div class="course-content">
                 <h3>{{ item.course.display_name }}</h3>
-                <p v-if="item.branch">{{ item.branch.branch_name }}</p>
+                <p v-if="item.branch">
+                  {{ item.branch.branch_name }}
+                </p>
                 <div class="course-progress">
-                  <el-progress :percentage="getProgress(item)" :status="getProgressStatus(item)" />
+                  <el-progress
+                    :percentage="getProgress(item)"
+                    :status="getProgressStatus(item)"
+                  />
                 </div>
                 <div class="course-actions">
-                  <el-button type="primary" @click="goToCourse(item.course.id)">
+                  <el-button
+                    type="primary"
+                    @click="goToCourse(item.course.id)"
+                  >
                     继续学习
                   </el-button>
                 </div>
@@ -45,7 +62,10 @@
           </el-col>
         </el-row>
 
-        <el-empty v-if="!loading && myCourses.length === 0" description="暂无课程" />
+        <el-empty
+          v-if="!loading && myCourses.length === 0"
+          description="暂无课程"
+        />
 
         <!-- 分页 -->
         <el-pagination
@@ -55,9 +75,9 @@
           :total="pagination.total"
           :page-sizes="[12, 24, 48]"
           layout="total, sizes, prev, pager, next, jumper"
+          class="pagination"
           @size-change="loadMyCourses"
           @current-change="loadMyCourses"
-          class="pagination"
         />
       </div>
     </template>
@@ -74,7 +94,7 @@ import StudentLayout from '@/components/StudentLayout.vue'
 const router = useRouter()
 
 const loading = ref(false)
-const myCourses = ref<any[]>([])
+const myCourses = ref<Record<string, unknown>[]>([])
 
 const pagination = ref({
   page: 1,
@@ -103,12 +123,12 @@ async function loadMyCourses() {
   }
 }
 
-function getProgress(item: any): number {
+function getProgress(_item: Record<string, unknown>): number {
   // 这里应该从API获取实际进度，暂时返回0
   return 0
 }
 
-function getProgressStatus(item: any): string {
+function getProgressStatus(item: Record<string, unknown>): string {
   const progress = getProgress(item)
   if (progress === 0) return ''
   if (progress === 100) return 'success'

@@ -19,7 +19,10 @@
     </el-button>
     
     <!-- 预览图片 -->
-    <div v-if="previewUrl" class="preview-container">
+    <div
+      v-if="previewUrl"
+      class="preview-container"
+    >
       <el-image
         :src="previewUrl"
         fit="contain"

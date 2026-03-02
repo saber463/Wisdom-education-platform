@@ -159,9 +159,9 @@ export async function getPool(): Promise<mysql.Pool> {
 }
 
 // 执行查询（带自动重试和性能监控）
-export async function executeQuery<T = any>(
+export async function executeQuery<T = unknown>(
   sql: string,
-  params?: any[]
+  params?: unknown[]
 ): Promise<T> {
   const startTime = Date.now();
   const connection = await connectWithRetry();
@@ -199,8 +199,8 @@ export async function closePool(): Promise<void> {
 }
 
 // 性能优化：批量查询
-export async function executeBatchQueries<T = any>(
-  queries: Array<{ sql: string; params?: any[] }>
+export async function executeBatchQueries<T = unknown>(
+  queries: Array<{ sql: string; params?: unknown[] }>
 ): Promise<T[]> {
   const connection = await connectWithRetry();
   const results: T[] = [];

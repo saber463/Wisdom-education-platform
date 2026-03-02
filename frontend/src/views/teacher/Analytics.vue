@@ -4,48 +4,115 @@
       <div class="page-header">
         <h2>学情分析</h2>
         <div class="header-actions">
-          <el-select v-model="selectedClassId" placeholder="选择班级" @change="handleClassChange" style="width: 200px">
-            <el-option v-for="cls in classList" :key="cls.id" :label="cls.name" :value="cls.id" />
+          <el-select
+            v-model="selectedClassId"
+            placeholder="选择班级"
+            style="width: 200px"
+            @change="handleClassChange"
+          >
+            <el-option
+              v-for="cls in classList"
+              :key="cls.id"
+              :label="cls.name"
+              :value="cls.id"
+            />
           </el-select>
           <div class="date-filter">
             <el-button-group>
-              <el-button @click="setDateRange(7)" :type="dateRangeType === 7 ? 'primary' : 'default'">最近7天</el-button>
-              <el-button @click="setDateRange(30)" :type="dateRangeType === 30 ? 'primary' : 'default'">最近30天</el-button>
-              <el-button @click="setDateRange(90)" :type="dateRangeType === 90 ? 'primary' : 'default'">最近90天</el-button>
+              <el-button
+                :type="dateRangeType === 7 ? 'primary' : 'default'"
+                @click="setDateRange(7)"
+              >
+                最近7天
+              </el-button>
+              <el-button
+                :type="dateRangeType === 30 ? 'primary' : 'default'"
+                @click="setDateRange(30)"
+              >
+                最近30天
+              </el-button>
+              <el-button
+                :type="dateRangeType === 90 ? 'primary' : 'default'"
+                @click="setDateRange(90)"
+              >
+                最近90天
+              </el-button>
             </el-button-group>
           </div>
-          <el-date-picker v-model="dateRange" type="daterange" range-separator="至" start-placeholder="开始日期"
-            end-placeholder="结束日期" @change="handleDateChange" style="width: 260px" />
-          <el-button type="primary" @click="exportReport" :loading="exporting">
+          <el-date-picker
+            v-model="dateRange"
+            type="daterange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            style="width: 260px"
+            @change="handleDateChange"
+          />
+          <el-button
+            type="primary"
+            :loading="exporting"
+            @click="exportReport"
+          >
             <el-icon><Download /></el-icon>导出报告
           </el-button>
         </div>
       </div>
 
       <!-- 统计卡片 -->
-      <el-row :gutter="20" class="stat-cards">
+      <el-row
+        :gutter="20"
+        class="stat-cards"
+      >
         <el-col :span="6">
-          <el-card shadow="hover" class="stat-card">
-            <div class="stat-value">{{ stats.averageScore?.toFixed(1) || '-' }}</div>
-            <div class="stat-label">班级平均分</div>
+          <el-card
+            shadow="hover"
+            class="stat-card"
+          >
+            <div class="stat-value">
+              {{ stats.averageScore?.toFixed(1) || '-' }}
+            </div>
+            <div class="stat-label">
+              班级平均分
+            </div>
           </el-card>
         </el-col>
         <el-col :span="6">
-          <el-card shadow="hover" class="stat-card">
-            <div class="stat-value">{{ stats.passRate?.toFixed(1) || '-' }}%</div>
-            <div class="stat-label">及格率</div>
+          <el-card
+            shadow="hover"
+            class="stat-card"
+          >
+            <div class="stat-value">
+              {{ stats.passRate?.toFixed(1) || '-' }}%
+            </div>
+            <div class="stat-label">
+              及格率
+            </div>
           </el-card>
         </el-col>
         <el-col :span="6">
-          <el-card shadow="hover" class="stat-card">
-            <div class="stat-value">{{ stats.excellentRate?.toFixed(1) || '-' }}%</div>
-            <div class="stat-label">优秀率</div>
+          <el-card
+            shadow="hover"
+            class="stat-card"
+          >
+            <div class="stat-value">
+              {{ stats.excellentRate?.toFixed(1) || '-' }}%
+            </div>
+            <div class="stat-label">
+              优秀率
+            </div>
           </el-card>
         </el-col>
         <el-col :span="6">
-          <el-card shadow="hover" class="stat-card">
-            <div class="stat-value">{{ stats.totalStudents || 0 }}</div>
-            <div class="stat-label">学生总数</div>
+          <el-card
+            shadow="hover"
+            class="stat-card"
+          >
+            <div class="stat-value">
+              {{ stats.totalStudents || 0 }}
+            </div>
+            <div class="stat-label">
+              学生总数
+            </div>
           </el-card>
         </el-col>
       </el-row>
@@ -54,23 +121,43 @@
         <!-- 趋势图 -->
         <el-col :span="16">
           <el-card class="chart-card">
-            <template #header><span>成绩趋势（最近30天）</span></template>
-            <div ref="trendChartRef" class="chart-container"></div>
+            <template #header>
+              <span>成绩趋势（最近30天）</span>
+            </template>
+            <div
+              ref="trendChartRef"
+              class="chart-container"
+            />
           </el-card>
         </el-col>
 
         <!-- 知识点热力图 -->
         <el-col :span="8">
           <el-card class="chart-card">
-            <template #header><span>薄弱知识点</span></template>
+            <template #header>
+              <span>薄弱知识点</span>
+            </template>
             <div class="weak-points-list">
-              <div v-for="(point, index) in weakPoints" :key="point.id" class="weak-point-item">
+              <div
+                v-for="(point, index) in weakPoints"
+                :key="point.id"
+                class="weak-point-item"
+              >
                 <span class="point-rank">{{ index + 1 }}</span>
                 <span class="point-name">{{ point.name }}</span>
-                <el-progress :percentage="point.errorRate" :stroke-width="8" :status="getErrorRateStatus(point.errorRate)" style="width: 100px" />
+                <el-progress
+                  :percentage="point.errorRate"
+                  :stroke-width="8"
+                  :status="getErrorRateStatus(point.errorRate)"
+                  style="width: 100px"
+                />
                 <span class="point-rate">{{ point.errorRate }}%</span>
               </div>
-              <el-empty v-if="weakPoints.length === 0" description="暂无薄弱知识点" :image-size="60" />
+              <el-empty
+                v-if="weakPoints.length === 0"
+                description="暂无薄弱知识点"
+                :image-size="60"
+              />
             </div>
           </el-card>
         </el-col>
@@ -80,22 +167,51 @@
         <!-- 知识点掌握热力图 -->
         <el-col :span="12">
           <el-card class="chart-card">
-            <template #header><span>知识点掌握热力图</span></template>
-            <div ref="heatmapChartRef" class="chart-container"></div>
+            <template #header>
+              <span>知识点掌握热力图</span>
+            </template>
+            <div
+              ref="heatmapChartRef"
+              class="chart-container"
+            />
           </el-card>
         </el-col>
 
         <!-- 学生排名 -->
         <el-col :span="12">
           <el-card class="ranking-card">
-            <template #header><span>学生排名</span></template>
-            <el-table :data="studentRanking" size="small" style="width: 100%" max-height="350">
-              <el-table-column prop="rank" label="排名" width="60" />
-              <el-table-column prop="studentName" label="姓名" />
-              <el-table-column prop="averageScore" label="平均分" width="80">
-                <template #default="{ row }">{{ row.averageScore?.toFixed(1) }}</template>
+            <template #header>
+              <span>学生排名</span>
+            </template>
+            <el-table
+              :data="studentRanking"
+              size="small"
+              style="width: 100%"
+              max-height="350"
+            >
+              <el-table-column
+                prop="rank"
+                label="排名"
+                width="60"
+              />
+              <el-table-column
+                prop="studentName"
+                label="姓名"
+              />
+              <el-table-column
+                prop="averageScore"
+                label="平均分"
+                width="80"
+              >
+                <template #default="{ row }">
+                  {{ row.averageScore?.toFixed(1) }}
+                </template>
               </el-table-column>
-              <el-table-column prop="progress" label="进步幅度" width="100">
+              <el-table-column
+                prop="progress"
+                label="进步幅度"
+                width="100"
+              >
                 <template #default="{ row }">
                   <span :class="row.progress >= 0 ? 'text-success' : 'text-danger'">
                     {{ row.progress >= 0 ? '+' : '' }}{{ row.progress?.toFixed(1) }}
@@ -111,15 +227,30 @@
       <el-row :gutter="20">
         <el-col :span="24">
           <el-card class="suggestions-card">
-            <template #header><span>AI提升建议</span></template>
+            <template #header>
+              <span>AI提升建议</span>
+            </template>
             <div class="suggestions-content">
-              <div v-if="aiSuggestions.length > 0" class="suggestions-list">
-                <div v-for="(suggestion, index) in aiSuggestions" :key="index" class="suggestion-item">
-                  <el-icon class="suggestion-icon"><SuccessFilled /></el-icon>
+              <div
+                v-if="aiSuggestions.length > 0"
+                class="suggestions-list"
+              >
+                <div
+                  v-for="(suggestion, index) in aiSuggestions"
+                  :key="index"
+                  class="suggestion-item"
+                >
+                  <el-icon class="suggestion-icon">
+                    <SuccessFilled />
+                  </el-icon>
                   <span>{{ suggestion }}</span>
                 </div>
               </div>
-              <el-empty v-else description="暂无提升建议" :image-size="60" />
+              <el-empty
+                v-else
+                description="暂无提升建议"
+                :image-size="60"
+              />
             </div>
           </el-card>
         </el-col>
@@ -169,7 +300,7 @@ async function fetchClasses() {
 async function fetchAnalyticsData() {
   if (!selectedClassId.value) return
   try {
-    const params: Record<string, any> = { classId: selectedClassId.value }
+    const params: Record<string, unknown> = { classId: selectedClassId.value }
     if (dateRange.value) {
       params.startDate = dateRange.value[0].toISOString()
       params.endDate = dateRange.value[1].toISOString()
@@ -214,7 +345,7 @@ async function exportReport() {
   }
   exporting.value = true
   try {
-    const params: Record<string, any> = { classId: selectedClassId.value, format: 'pdf' }
+    const params: Record<string, unknown> = { classId: selectedClassId.value, format: 'pdf' }
     if (dateRange.value) {
       params.startDate = dateRange.value[0].toISOString()
       params.endDate = dateRange.value[1].toISOString()
@@ -272,7 +403,7 @@ function updateCharts() {
   if (heatmapChart && heatmapData.value.length > 0) {
     const students = [...new Set(heatmapData.value.map(d => d[1]))].map(i => `学生${i + 1}`)
     heatmapChart.setOption({
-      tooltip: { position: 'top', formatter: (params: any) => `${knowledgePointNames.value[params.data[0]] || '知识点'}: ${params.data[2]}%` },
+      tooltip: { position: 'top', formatter: (params: { data: unknown[] }) => `${knowledgePointNames.value[params.data[0] as number] || '知识点'}: ${params.data[2]}%` },
       grid: { height: '60%', top: '10%' },
       xAxis: { type: 'category', data: knowledgePointNames.value.slice(0, 10), splitArea: { show: true } },
       yAxis: { type: 'category', data: students.slice(0, 10), splitArea: { show: true } },

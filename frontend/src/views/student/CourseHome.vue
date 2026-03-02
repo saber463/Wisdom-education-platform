@@ -24,22 +24,48 @@
               </el-input>
             </el-col>
             <el-col :span="6">
-              <el-select v-model="filters.difficulty" placeholder="难度" clearable @change="loadCourses">
-                <el-option label="初级" value="beginner" />
-                <el-option label="中级" value="intermediate" />
-                <el-option label="高级" value="advanced" />
+              <el-select
+                v-model="filters.difficulty"
+                placeholder="难度"
+                clearable
+                @change="loadCourses"
+              >
+                <el-option
+                  label="初级"
+                  value="beginner"
+                />
+                <el-option
+                  label="中级"
+                  value="intermediate"
+                />
+                <el-option
+                  label="高级"
+                  value="advanced"
+                />
               </el-select>
             </el-col>
             <el-col :span="6">
-              <el-button type="primary" @click="loadCourses">搜索</el-button>
-              <el-button @click="resetFilters">重置</el-button>
+              <el-button
+                type="primary"
+                @click="loadCourses"
+              >
+                搜索
+              </el-button>
+              <el-button @click="resetFilters">
+                重置
+              </el-button>
             </el-col>
           </el-row>
         </el-card>
 
         <!-- 热门课程 -->
-        <div v-if="hotCourses.length > 0" class="section">
-          <h2 class="section-title">🔥 热门课程</h2>
+        <div
+          v-if="hotCourses.length > 0"
+          class="section"
+        >
+          <h2 class="section-title">
+            🔥 热门课程
+          </h2>
           <el-row :gutter="20">
             <el-col
               v-for="course in hotCourses"
@@ -49,15 +75,23 @@
               :md="8"
               :lg="6"
             >
-              <CourseCard :course="course" @click="goToDetail(course.id)" />
+              <CourseCard
+                :course="course"
+                @click="goToDetail(course.id)"
+              />
             </el-col>
           </el-row>
         </div>
 
         <!-- 全部课程 -->
         <div class="section">
-          <h2 class="section-title">全部课程</h2>
-          <el-row :gutter="20" v-loading="loading">
+          <h2 class="section-title">
+            全部课程
+          </h2>
+          <el-row
+            v-loading="loading"
+            :gutter="20"
+          >
             <el-col
               v-for="course in courses"
               :key="course.id"
@@ -66,7 +100,10 @@
               :md="8"
               :lg="6"
             >
-              <CourseCard :course="course" @click="goToDetail(course.id)" />
+              <CourseCard
+                :course="course"
+                @click="goToDetail(course.id)"
+              />
             </el-col>
           </el-row>
 
@@ -77,9 +114,9 @@
             :total="pagination.total"
             :page-sizes="[12, 24, 48]"
             layout="total, sizes, prev, pager, next, jumper"
+            class="pagination"
             @size-change="loadCourses"
             @current-change="loadCourses"
-            class="pagination"
           />
         </div>
       </div>
@@ -136,7 +173,7 @@ const pagination = ref({
 async function loadCourses() {
   loading.value = true
   try {
-    const params: any = {
+    const params: Record<string, unknown> = {
       page: pagination.value.page,
       limit: pagination.value.limit
     }

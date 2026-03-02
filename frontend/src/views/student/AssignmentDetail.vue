@@ -3,12 +3,21 @@
     <div class="assignment-detail-page">
       <!-- 页面标题 -->
       <div class="page-header">
-        <el-button @click="goBack" :icon="ArrowLeft">返回</el-button>
+        <el-button
+          :icon="ArrowLeft"
+          @click="goBack"
+        >
+          返回
+        </el-button>
         <h2>作业详情</h2>
       </div>
 
       <!-- 加载状态 -->
-      <el-skeleton v-if="loading" :rows="10" animated />
+      <el-skeleton
+        v-if="loading"
+        :rows="10"
+        animated
+      />
 
       <!-- 作业信息 -->
       <template v-else-if="assignment">
@@ -27,23 +36,51 @@
             </div>
           </template>
           
-          <el-descriptions :column="2" border>
-            <el-descriptions-item label="班级">{{ assignment.class_name }}</el-descriptions-item>
-            <el-descriptions-item label="教师">{{ assignment.teacher_name }}</el-descriptions-item>
-            <el-descriptions-item label="总分">{{ assignment.total_score }}分</el-descriptions-item>
-            <el-descriptions-item label="题目数量">{{ questions.length }}题</el-descriptions-item>
-            <el-descriptions-item label="截止时间" :span="2">
+          <el-descriptions
+            :column="2"
+            border
+          >
+            <el-descriptions-item label="班级">
+              {{ assignment.class_name }}
+            </el-descriptions-item>
+            <el-descriptions-item label="教师">
+              {{ assignment.teacher_name }}
+            </el-descriptions-item>
+            <el-descriptions-item label="总分">
+              {{ assignment.total_score }}分
+            </el-descriptions-item>
+            <el-descriptions-item label="题目数量">
+              {{ questions.length }}题
+            </el-descriptions-item>
+            <el-descriptions-item
+              label="截止时间"
+              :span="2"
+            >
               <span :class="{ 'text-danger': isExpired }">
                 {{ formatDate(assignment.deadline) }}
               </span>
-              <el-tag v-if="!isExpired" type="info" size="small" class="countdown-tag">
+              <el-tag
+                v-if="!isExpired"
+                type="info"
+                size="small"
+                class="countdown-tag"
+              >
                 {{ countdown }}
               </el-tag>
-              <el-tag v-else type="danger" size="small">已截止</el-tag>
+              <el-tag
+                v-else
+                type="danger"
+                size="small"
+              >
+                已截止
+              </el-tag>
             </el-descriptions-item>
           </el-descriptions>
           
-          <div v-if="assignment.description" class="description">
+          <div
+            v-if="assignment.description"
+            class="description"
+          >
             <strong>作业说明：</strong>{{ assignment.description }}
           </div>
         </el-card>
@@ -54,22 +91,54 @@
             <div class="card-header">
               <span>题目预览</span>
               <div class="question-stats">
-                <el-tag type="info" size="small">选择题 {{ choiceCount }}</el-tag>
-                <el-tag type="success" size="small">判断题 {{ judgeCount }}</el-tag>
-                <el-tag type="warning" size="small">填空题 {{ fillCount }}</el-tag>
-                <el-tag type="danger" size="small">主观题 {{ subjectiveCount }}</el-tag>
+                <el-tag
+                  type="info"
+                  size="small"
+                >
+                  选择题 {{ choiceCount }}
+                </el-tag>
+                <el-tag
+                  type="success"
+                  size="small"
+                >
+                  判断题 {{ judgeCount }}
+                </el-tag>
+                <el-tag
+                  type="warning"
+                  size="small"
+                >
+                  填空题 {{ fillCount }}
+                </el-tag>
+                <el-tag
+                  type="danger"
+                  size="small"
+                >
+                  主观题 {{ subjectiveCount }}
+                </el-tag>
               </div>
             </div>
           </template>
 
-          <div v-for="question in questions" :key="question.id" class="question-item">
+          <div
+            v-for="question in questions"
+            :key="question.id"
+            class="question-item"
+          >
             <div class="question-header">
               <span class="question-number">第{{ question.question_number }}题</span>
-              <el-tag :type="getQuestionTypeTag(question.question_type)" size="small">
+              <el-tag
+                :type="getQuestionTypeTag(question.question_type)"
+                size="small"
+              >
                 {{ getQuestionTypeLabel(question.question_type) }}
               </el-tag>
               <span class="question-score">（{{ question.score }}分）</span>
-              <el-tag v-if="question.knowledge_point_name" type="info" size="small" class="knowledge-tag">
+              <el-tag
+                v-if="question.knowledge_point_name"
+                type="info"
+                size="small"
+                class="knowledge-tag"
+              >
                 {{ question.knowledge_point_name }}
               </el-tag>
             </div>
@@ -82,7 +151,9 @@
 
         <!-- 操作按钮 -->
         <div class="action-buttons">
-          <el-button @click="goBack">返回列表</el-button>
+          <el-button @click="goBack">
+            返回列表
+          </el-button>
           <el-button
             v-if="submissionStatus === 'pending' && !isExpired"
             type="primary"
@@ -101,14 +172,21 @@
             <el-icon><View /></el-icon>
             查看批改结果
           </el-button>
-          <el-tag v-if="submissionStatus === 'submitted'" type="info" size="large">
+          <el-tag
+            v-if="submissionStatus === 'submitted'"
+            type="info"
+            size="large"
+          >
             作业已提交，等待批改中...
           </el-tag>
         </div>
       </template>
 
       <!-- 作业不存在 -->
-      <el-empty v-else description="作业不存在或已关闭" />
+      <el-empty
+        v-else
+        description="作业不存在或已关闭"
+      />
     </div>
   </StudentLayout>
 </template>

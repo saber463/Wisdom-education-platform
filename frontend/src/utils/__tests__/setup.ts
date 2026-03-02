@@ -113,7 +113,7 @@ if (typeof indexedDB === 'undefined') {
     }
   }
   
-  ;(globalThis as any).indexedDB = {
+  (globalThis as any).indexedDB = {
     open: (_name: string, _version: number) => {
       const openReq: Record<string, unknown> = { result: new MockIDBDatabase() }
       Object.defineProperty(openReq, 'onsuccess', { set: (fn: () => void) => setTimeout(() => fn(), 0), configurable: true })

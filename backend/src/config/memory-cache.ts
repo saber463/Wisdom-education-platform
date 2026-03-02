@@ -4,7 +4,7 @@
  */
 
 interface CacheEntry {
-  value: any;
+  value: unknown;
   expireAt: number;
 }
 
@@ -22,7 +22,7 @@ class MemoryCache {
   /**
    * 设置缓存
    */
-  set(key: string, value: any, ttl: number = 86400): boolean {
+  set(key: string, value: unknown, ttl: number = 86400): boolean {
     try {
       const expireAt = Date.now() + ttl * 1000;
       this.cache.set(key, { value, expireAt });
@@ -36,7 +36,7 @@ class MemoryCache {
   /**
    * 获取缓存
    */
-  get(key: string): any | null {
+  get(key: string): unknown | null {
     try {
       const entry = this.cache.get(key);
       if (!entry) {

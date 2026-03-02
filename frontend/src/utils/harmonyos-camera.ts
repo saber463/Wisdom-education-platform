@@ -69,10 +69,10 @@ export async function openHarmonyOSCamera(options: CameraOptions = {}): Promise<
  */
 async function captureWithHarmonyOSAPI(options: CameraOptions): Promise<CameraResult> {
   // 检查是否存在鸿蒙特定的相机API
-  // @ts-ignore - 鸿蒙特定API可能不在TypeScript类型定义中
+  // @ts-expect-error - 鸿蒙特定API可能不在TypeScript类型定义中
   if (window.harmony && window.harmony.camera) {
     try {
-      // @ts-ignore
+      // @ts-expect-error - 鸿蒙相机 API 类型未定义
       const result = await window.harmony.camera.capture({
         quality: options.quality || 0.9,
         maxWidth: options.maxWidth || 1920,

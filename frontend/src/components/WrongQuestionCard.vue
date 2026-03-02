@@ -1,8 +1,14 @@
 <template>
-  <el-card class="wrong-question-card" shadow="hover">
+  <el-card
+    class="wrong-question-card"
+    shadow="hover"
+  >
     <div class="question-header">
       <h4>{{ question.question_content }}</h4>
-      <el-tag :type="question.mastered ? 'success' : 'warning'" size="small">
+      <el-tag
+        :type="question.mastered ? 'success' : 'warning'"
+        size="small"
+      >
         {{ question.mastered ? '已掌握' : '待巩固' }}
       </el-tag>
     </div>
@@ -23,8 +29,20 @@
       </div>
     </div>
     <div class="question-actions">
-      <el-button type="primary" size="small" @click="$emit('view-detail')">查看详情</el-button>
-      <el-button type="success" size="small" @click="$emit('retry')">重做</el-button>
+      <el-button
+        type="primary"
+        size="small"
+        @click="$emit('view-detail')"
+      >
+        查看详情
+      </el-button>
+      <el-button
+        type="success"
+        size="small"
+        @click="$emit('retry')"
+      >
+        重做
+      </el-button>
       <el-button
         v-if="!question.mastered"
         type="warning"

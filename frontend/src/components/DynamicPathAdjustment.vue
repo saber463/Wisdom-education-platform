@@ -9,11 +9,19 @@
   >
     <template #default>
       <div class="adjustment-content">
-        <p class="adjustment-summary">{{ adjustmentSummary }}</p>
-        <div v-if="adjustmentDetails && adjustmentDetails.length > 0" class="adjustment-details">
+        <p class="adjustment-summary">
+          {{ adjustmentSummary }}
+        </p>
+        <div
+          v-if="adjustmentDetails && adjustmentDetails.length > 0"
+          class="adjustment-details"
+        >
           <h4>调整详情：</h4>
           <ul>
-            <li v-for="(detail, index) in adjustmentDetails" :key="index">
+            <li
+              v-for="(detail, index) in adjustmentDetails"
+              :key="index"
+            >
               <strong>{{ detail.knowledge_point_name }}</strong>：
               {{ formatAdjustmentAction(detail.action) }}
               <span class="reason">（{{ detail.reason }}）</span>
@@ -45,6 +53,8 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  adjustmentSummary: '',
+  adjustmentDetails: () => [] as AdjustmentDetail[],
   adjustmentType: 'knowledge_evaluation',
   closable: true
 })

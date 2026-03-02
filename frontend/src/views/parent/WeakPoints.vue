@@ -4,8 +4,18 @@
       <div class="page-header">
         <h2>薄弱点详情</h2>
         <div class="header-actions">
-          <el-select v-model="selectedChildId" placeholder="选择孩子" @change="handleChildChange" style="width: 150px">
-            <el-option v-for="child in children" :key="child.id" :label="child.name" :value="child.id" />
+          <el-select
+            v-model="selectedChildId"
+            placeholder="选择孩子"
+            style="width: 150px"
+            @change="handleChildChange"
+          >
+            <el-option
+              v-for="child in children"
+              :key="child.id"
+              :label="child.name"
+              :value="child.id"
+            />
           </el-select>
         </div>
       </div>
@@ -17,7 +27,12 @@
             <template #header>
               <div class="card-header">
                 <span>薄弱知识点列表</span>
-                <el-tag type="danger" size="small">{{ weakPoints.length }}个</el-tag>
+                <el-tag
+                  type="danger"
+                  size="small"
+                >
+                  {{ weakPoints.length }}个
+                </el-tag>
               </div>
             </template>
             <div class="weak-points-list">
@@ -42,14 +57,21 @@
                   <span class="mastery-rate">{{ point.masteryRate }}%</span>
                 </div>
               </div>
-              <el-empty v-if="weakPoints.length === 0" description="暂无薄弱知识点，继续保持！" :image-size="80" />
+              <el-empty
+                v-if="weakPoints.length === 0"
+                description="暂无薄弱知识点，继续保持！"
+                :image-size="80"
+              />
             </div>
           </el-card>
         </el-col>
 
         <!-- 薄弱点详情 -->
         <el-col :span="16">
-          <el-card v-if="selectedPoint" class="detail-card">
+          <el-card
+            v-if="selectedPoint"
+            class="detail-card"
+          >
             <template #header>
               <div class="card-header">
                 <span>{{ selectedPoint.name }}</span>
@@ -62,13 +84,29 @@
             <!-- 知识点基本信息 -->
             <div class="detail-section">
               <h4>基本信息</h4>
-              <el-descriptions :column="2" border size="small">
-                <el-descriptions-item label="学科">{{ selectedPoint.subject }}</el-descriptions-item>
-                <el-descriptions-item label="年级">{{ selectedPoint.grade }}</el-descriptions-item>
-                <el-descriptions-item label="错误次数">{{ selectedPoint.errorCount }}次</el-descriptions-item>
-                <el-descriptions-item label="总答题次数">{{ selectedPoint.totalCount }}次</el-descriptions-item>
-                <el-descriptions-item label="错误率">{{ selectedPoint.errorRate?.toFixed(1) }}%</el-descriptions-item>
-                <el-descriptions-item label="最后练习">{{ formatDate(selectedPoint.lastPracticeTime) }}</el-descriptions-item>
+              <el-descriptions
+                :column="2"
+                border
+                size="small"
+              >
+                <el-descriptions-item label="学科">
+                  {{ selectedPoint.subject }}
+                </el-descriptions-item>
+                <el-descriptions-item label="年级">
+                  {{ selectedPoint.grade }}
+                </el-descriptions-item>
+                <el-descriptions-item label="错误次数">
+                  {{ selectedPoint.errorCount }}次
+                </el-descriptions-item>
+                <el-descriptions-item label="总答题次数">
+                  {{ selectedPoint.totalCount }}次
+                </el-descriptions-item>
+                <el-descriptions-item label="错误率">
+                  {{ selectedPoint.errorRate?.toFixed(1) }}%
+                </el-descriptions-item>
+                <el-descriptions-item label="最后练习">
+                  {{ formatDate(selectedPoint.lastPracticeTime) }}
+                </el-descriptions-item>
               </el-descriptions>
             </div>
 
@@ -78,14 +116,30 @@
                 <el-icon><MagicStick /></el-icon>
                 AI辅导建议
               </h4>
-              <div class="ai-suggestions" v-loading="loadingSuggestions">
-                <div v-if="aiSuggestions.length > 0" class="suggestions-list">
-                  <div v-for="(suggestion, index) in aiSuggestions" :key="index" class="suggestion-item">
-                    <el-icon class="suggestion-icon"><CircleCheck /></el-icon>
+              <div
+                v-loading="loadingSuggestions"
+                class="ai-suggestions"
+              >
+                <div
+                  v-if="aiSuggestions.length > 0"
+                  class="suggestions-list"
+                >
+                  <div
+                    v-for="(suggestion, index) in aiSuggestions"
+                    :key="index"
+                    class="suggestion-item"
+                  >
+                    <el-icon class="suggestion-icon">
+                      <CircleCheck />
+                    </el-icon>
                     <span>{{ suggestion }}</span>
                   </div>
                 </div>
-                <el-empty v-else description="暂无AI辅导建议" :image-size="60" />
+                <el-empty
+                  v-else
+                  description="暂无AI辅导建议"
+                  :image-size="60"
+                />
               </div>
             </div>
 
@@ -95,23 +149,50 @@
                 <el-icon><Reading /></el-icon>
                 推荐学习资源
               </h4>
-              <div class="resources-list" v-loading="loadingResources">
-                <div v-for="resource in recommendedResources" :key="resource.id" class="resource-item">
-                  <div class="resource-icon" :style="{ background: getResourceColor(resource.type) }">
-                    <el-icon v-if="resource.type === 'video'"><VideoPlay /></el-icon>
-                    <el-icon v-else-if="resource.type === 'article'"><Document /></el-icon>
-                    <el-icon v-else-if="resource.type === 'exercise'"><Edit /></el-icon>
-                    <el-icon v-else><Link /></el-icon>
+              <div
+                v-loading="loadingResources"
+                class="resources-list"
+              >
+                <div
+                  v-for="resource in recommendedResources"
+                  :key="resource.id"
+                  class="resource-item"
+                >
+                  <div
+                    class="resource-icon"
+                    :style="{ background: getResourceColor(resource.type) }"
+                  >
+                    <el-icon v-if="resource.type === 'video'">
+                      <VideoPlay />
+                    </el-icon>
+                    <el-icon v-else-if="resource.type === 'article'">
+                      <Document />
+                    </el-icon>
+                    <el-icon v-else-if="resource.type === 'exercise'">
+                      <Edit />
+                    </el-icon>
+                    <el-icon v-else>
+                      <Link />
+                    </el-icon>
                   </div>
                   <div class="resource-info">
                     <span class="resource-title">{{ resource.title }}</span>
                     <span class="resource-desc">{{ resource.description }}</span>
                   </div>
-                  <el-button type="primary" size="small" link @click="openResource(resource)">
+                  <el-button
+                    type="primary"
+                    size="small"
+                    link
+                    @click="openResource(resource)"
+                  >
                     查看
                   </el-button>
                 </div>
-                <el-empty v-if="recommendedResources.length === 0" description="暂无推荐资源" :image-size="60" />
+                <el-empty
+                  v-if="recommendedResources.length === 0"
+                  description="暂无推荐资源"
+                  :image-size="60"
+                />
               </div>
             </div>
 
@@ -121,19 +202,50 @@
                 <el-icon><Warning /></el-icon>
                 相关错题
               </h4>
-              <el-table :data="relatedWrongQuestions" size="small" style="width: 100%" max-height="300">
-                <el-table-column prop="questionContent" label="题目内容" show-overflow-tooltip />
-                <el-table-column prop="studentAnswer" label="学生答案" width="150" show-overflow-tooltip />
-                <el-table-column prop="correctAnswer" label="正确答案" width="150" show-overflow-tooltip />
-                <el-table-column prop="errorTime" label="错误时间" width="120">
-                  <template #default="{ row }">{{ formatDate(row.errorTime) }}</template>
+              <el-table
+                :data="relatedWrongQuestions"
+                size="small"
+                style="width: 100%"
+                max-height="300"
+              >
+                <el-table-column
+                  prop="questionContent"
+                  label="题目内容"
+                  show-overflow-tooltip
+                />
+                <el-table-column
+                  prop="studentAnswer"
+                  label="学生答案"
+                  width="150"
+                  show-overflow-tooltip
+                />
+                <el-table-column
+                  prop="correctAnswer"
+                  label="正确答案"
+                  width="150"
+                  show-overflow-tooltip
+                />
+                <el-table-column
+                  prop="errorTime"
+                  label="错误时间"
+                  width="120"
+                >
+                  <template #default="{ row }">
+                    {{ formatDate(row.errorTime) }}
+                  </template>
                 </el-table-column>
               </el-table>
             </div>
           </el-card>
 
-          <el-card v-else class="empty-detail-card">
-            <el-empty description="请从左侧选择一个薄弱知识点查看详情" :image-size="120" />
+          <el-card
+            v-else
+            class="empty-detail-card"
+          >
+            <el-empty
+              description="请从左侧选择一个薄弱知识点查看详情"
+              :image-size="120"
+            />
           </el-card>
         </el-col>
       </el-row>

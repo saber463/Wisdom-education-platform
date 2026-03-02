@@ -4,11 +4,17 @@
       <!-- 页面标题 -->
       <div class="page-header">
         <h2>学习资源推荐</h2>
-        <p class="page-desc">根据您的学习行为，为您推荐优质学习资源</p>
+        <p class="page-desc">
+          根据您的学习行为，为您推荐优质学习资源
+        </p>
       </div>
 
       <!-- 加载状态 -->
-      <el-skeleton v-if="loading" :rows="10" animated />
+      <el-skeleton
+        v-if="loading"
+        :rows="10"
+        animated
+      />
 
       <div v-else>
         <!-- 资源类型筛选 -->
@@ -23,19 +29,40 @@
               {{ type.label }}
             </el-button>
           </el-button-group>
-          <el-button type="primary" @click="refreshRecommendations" :loading="refreshing" class="refresh-btn">
+          <el-button
+            type="primary"
+            :loading="refreshing"
+            class="refresh-btn"
+            @click="refreshRecommendations"
+          >
             <el-icon><Refresh /></el-icon> 刷新推荐
           </el-button>
         </div>
 
         <!-- 推荐资源列表 -->
-        <div v-if="resources.length > 0" class="resources-container">
+        <div
+          v-if="resources.length > 0"
+          class="resources-container"
+        >
           <el-row :gutter="20">
-            <el-col v-for="resource in resources" :key="resource.id" :xs="24" :sm="12" :md="8" :lg="6">
-              <div class="resource-card" @click="selectResource(resource)">
+            <el-col
+              v-for="resource in resources"
+              :key="resource.id"
+              :xs="24"
+              :sm="12"
+              :md="8"
+              :lg="6"
+            >
+              <div
+                class="resource-card"
+                @click="selectResource(resource)"
+              >
                 <!-- 资源类型标签 -->
                 <div class="resource-type-badge">
-                  <el-tag :type="getResourceTypeColor(resource.type)" size="small">
+                  <el-tag
+                    :type="getResourceTypeColor(resource.type)"
+                    size="small"
+                  >
                     {{ getResourceTypeLabel(resource.type) }}
                   </el-tag>
                 </div>
@@ -48,23 +75,39 @@
                     :alt="resource.title"
                     loading="lazy"
                     decoding="async"
-                  />
-                  <div v-else class="placeholder">
+                  >
+                  <div
+                    v-else
+                    class="placeholder"
+                  >
                     <el-icon><Picture /></el-icon>
                   </div>
                 </div>
 
                 <!-- 资源信息 -->
                 <div class="resource-info">
-                  <h3 class="resource-title">{{ resource.title }}</h3>
-                  <p class="resource-description">{{ truncateText(resource.description, 60) }}</p>
+                  <h3 class="resource-title">
+                    {{ resource.title }}
+                  </h3>
+                  <p class="resource-description">
+                    {{ truncateText(resource.description, 60) }}
+                  </p>
                   
                   <!-- 知识点标签 -->
                   <div class="knowledge-points">
-                    <el-tag v-for="kp in resource.knowledge_points.slice(0, 2)" :key="kp" type="info" size="small">
+                    <el-tag
+                      v-for="kp in resource.knowledge_points.slice(0, 2)"
+                      :key="kp"
+                      type="info"
+                      size="small"
+                    >
                       {{ kp }}
                     </el-tag>
-                    <el-tag v-if="resource.knowledge_points.length > 2" type="info" size="small">
+                    <el-tag
+                      v-if="resource.knowledge_points.length > 2"
+                      type="info"
+                      size="small"
+                    >
                       +{{ resource.knowledge_points.length - 2 }}
                     </el-tag>
                   </div>
@@ -81,10 +124,19 @@
 
                   <!-- 操作按钮 -->
                   <div class="resource-actions">
-                    <el-button type="primary" size="small" @click.stop="viewResource(resource)">
+                    <el-button
+                      type="primary"
+                      size="small"
+                      @click.stop="viewResource(resource)"
+                    >
                       查看详情
                     </el-button>
-                    <el-button type="danger" text size="small" @click.stop="markNotInterested(resource)">
+                    <el-button
+                      type="danger"
+                      text
+                      size="small"
+                      @click.stop="markNotInterested(resource)"
+                    >
                       不感兴趣
                     </el-button>
                   </div>
@@ -95,12 +147,24 @@
         </div>
 
         <!-- 空状态 -->
-        <el-empty v-else description="暂无推荐资源" :image-size="100">
-          <el-button type="primary" @click="refreshRecommendations">重新推荐</el-button>
+        <el-empty
+          v-else
+          description="暂无推荐资源"
+          :image-size="100"
+        >
+          <el-button
+            type="primary"
+            @click="refreshRecommendations"
+          >
+            重新推荐
+          </el-button>
         </el-empty>
 
         <!-- 分页 -->
-        <div v-if="resources.length > 0" class="pagination-section">
+        <div
+          v-if="resources.length > 0"
+          class="pagination-section"
+        >
           <el-pagination
             v-model:current-page="currentPage"
             v-model:page-size="pageSize"
@@ -113,8 +177,15 @@
       </div>
 
       <!-- 资源详情抽屉 -->
-      <el-drawer v-model="showDetailDrawer" title="资源详情" size="50%">
-        <div v-if="selectedResourceDetail" class="resource-detail">
+      <el-drawer
+        v-model="showDetailDrawer"
+        title="资源详情"
+        size="50%"
+      >
+        <div
+          v-if="selectedResourceDetail"
+          class="resource-detail"
+        >
           <!-- 资源标题和类型 -->
           <div class="detail-header">
             <h2>{{ selectedResourceDetail.title }}</h2>
@@ -124,13 +195,16 @@
           </div>
           
           <!-- 资源缩略图 -->
-          <div v-if="selectedResourceDetail.thumbnail_url" class="detail-thumbnail">
+          <div
+            v-if="selectedResourceDetail.thumbnail_url"
+            class="detail-thumbnail"
+          >
             <img 
               :src="selectedResourceDetail.thumbnail_url" 
               :alt="selectedResourceDetail.title"
               loading="lazy"
               decoding="async"
-            />
+            >
           </div>
 
           <!-- 资源描述 -->
@@ -143,7 +217,11 @@
           <div class="detail-section">
             <h3>相关知识点</h3>
             <div class="knowledge-points-full">
-              <el-tag v-for="kp in selectedResourceDetail.knowledge_points" :key="kp" type="info">
+              <el-tag
+                v-for="kp in selectedResourceDetail.knowledge_points"
+                :key="kp"
+                type="info"
+              >
                 {{ kp }}
               </el-tag>
             </div>
@@ -152,7 +230,10 @@
           <!-- 资源链接 -->
           <div class="detail-section">
             <h3>资源链接</h3>
-            <el-button type="primary" @click="openResource(selectedResourceDetail)">
+            <el-button
+              type="primary"
+              @click="openResource(selectedResourceDetail)"
+            >
               <el-icon><Link /></el-icon> 打开资源
             </el-button>
           </div>
@@ -162,26 +243,44 @@
             <h3>资源统计</h3>
             <div class="stats-grid">
               <div class="stat-card">
-                <div class="stat-value">{{ selectedResourceDetail.view_count }}</div>
-                <div class="stat-label">浏览次数</div>
+                <div class="stat-value">
+                  {{ selectedResourceDetail.view_count }}
+                </div>
+                <div class="stat-label">
+                  浏览次数
+                </div>
               </div>
               <div class="stat-card">
-                <div class="stat-value">{{ selectedResourceDetail.rating.toFixed(1) }}</div>
-                <div class="stat-label">评分</div>
+                <div class="stat-value">
+                  {{ selectedResourceDetail.rating.toFixed(1) }}
+                </div>
+                <div class="stat-label">
+                  评分
+                </div>
               </div>
               <div class="stat-card">
-                <div class="stat-value">{{ selectedResourceDetail.click_count }}</div>
-                <div class="stat-label">点击次数</div>
+                <div class="stat-value">
+                  {{ selectedResourceDetail.click_count }}
+                </div>
+                <div class="stat-label">
+                  点击次数
+                </div>
               </div>
             </div>
           </div>
 
           <!-- 操作按钮 -->
           <div class="detail-actions">
-            <el-button type="primary" @click="openResource(selectedResourceDetail)">
+            <el-button
+              type="primary"
+              @click="openResource(selectedResourceDetail)"
+            >
               打开资源
             </el-button>
-            <el-button type="danger" @click="markNotInterested(selectedResourceDetail)">
+            <el-button
+              type="danger"
+              @click="markNotInterested(selectedResourceDetail)"
+            >
               不感兴趣
             </el-button>
           </div>
@@ -262,9 +361,10 @@ async function fetchResources() {
       resources.value = response.data.resources
       total.value = response.data.total
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('[资源推荐] 获取资源失败:', error)
-    ElMessage.error(error.response?.data?.message || '获取资源失败')
+    const msg = (error as { response?: { data?: { message?: string } } })?.response?.data?.message
+    ElMessage.error(msg || '获取资源失败')
   } finally {
     loading.value = false
   }
@@ -278,9 +378,10 @@ async function refreshRecommendations() {
     ElMessage.success('推荐已刷新')
     currentPage.value = 1
     await fetchResources()
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('[资源推荐] 刷新失败:', error)
-    ElMessage.error(error.response?.data?.message || '刷新失败')
+    const msg = (error as { response?: { data?: { message?: string } } })?.response?.data?.message
+    ElMessage.error(msg || '刷新失败')
   } finally {
     refreshing.value = false
   }
@@ -299,9 +400,10 @@ async function markNotInterested(resource: Resource) {
     if (showDetailDrawer.value && selectedResourceDetail.value?.id === resource.id) {
       showDetailDrawer.value = false
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('[资源推荐] 标记失败:', error)
-    ElMessage.error(error.response?.data?.message || '标记失败')
+    const msg = (error as { response?: { data?: { message?: string } } })?.response?.data?.message
+    ElMessage.error(msg || '标记失败')
   }
 }
 

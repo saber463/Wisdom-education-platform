@@ -1,7 +1,11 @@
 <template>
   <div class="survey-step">
-    <h3 class="step-title">请选择您的学习目标</h3>
-    <p class="step-description">这将帮助我们为您推荐最合适的学习内容</p>
+    <h3 class="step-title">
+      请选择您的学习目标
+    </h3>
+    <p class="step-description">
+      这将帮助我们为您推荐最合适的学习内容
+    </p>
     
     <div class="options-grid">
       <div
@@ -11,9 +15,15 @@
         :class="{ active: modelValue === option.value }"
         @click="$emit('update:modelValue', option.value)"
       >
-        <div class="option-icon">{{ option.icon }}</div>
-        <div class="option-label">{{ option.label }}</div>
-        <div class="option-description">{{ option.description }}</div>
+        <div class="option-icon">
+          {{ option.icon }}
+        </div>
+        <div class="option-label">
+          {{ option.label }}
+        </div>
+        <div class="option-description">
+          {{ option.description }}
+        </div>
       </div>
     </div>
   </div>

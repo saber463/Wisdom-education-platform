@@ -14,23 +14,17 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import {
   initIndexedDB,
-  setCacheData,
-  getCacheData,
-  deleteCacheData,
   clearAllCache,
   getCacheStats,
   cleanupExpiredCache,
   cacheStudentData,
   getStudentData,
-  clearStudentCache,
-  type CacheStats
+  clearStudentCache
 } from '@/utils/indexeddb-cache'
 import {
   initOfflineQueue,
   addToQueue,
-  removeFromQueue,
   getUnsyncedItems,
-  syncQueueToServer,
   retrySyncErrors,
   getSyncErrors,
   getQueueStats,
@@ -217,7 +211,7 @@ export const useOfflineStore = defineStore('offline', () => {
   async function cacheData(
     studentId: number,
     dataType: 'learning_path' | 'error_book' | 'assignments',
-    data: any
+    data: unknown
   ): Promise<void> {
     try {
       await cacheStudentData(studentId, dataType, data)
@@ -235,7 +229,7 @@ export const useOfflineStore = defineStore('offline', () => {
   async function getCachedData(
     studentId: number,
     dataType: 'learning_path' | 'error_book' | 'assignments'
-  ): Promise<any | null> {
+  ): Promise<unknown | null> {
     try {
       return await getStudentData(studentId, dataType)
     } catch (error) {
@@ -251,7 +245,7 @@ export const useOfflineStore = defineStore('offline', () => {
     type: 'create' | 'update' | 'delete',
     resource: string,
     resourceId: string,
-    data: any
+    data: unknown
   ): Promise<string> {
     try {
       const id = await addToQueue(type, resource, resourceId, data)

@@ -1,7 +1,11 @@
 <template>
   <div class="survey-step">
-    <h3 class="step-title">请选择您当前的技能水平</h3>
-    <p class="step-description">这将帮助我们为您推荐合适难度的内容</p>
+    <h3 class="step-title">
+      请选择您当前的技能水平
+    </h3>
+    <p class="step-description">
+      这将帮助我们为您推荐合适难度的内容
+    </p>
     
     <div class="options-list">
       <div
@@ -12,10 +16,19 @@
         @click="$emit('update:modelValue', level.value)"
       >
         <div class="option-content">
-          <div class="option-label">{{ level.label }}</div>
-          <div class="option-description">{{ level.description }}</div>
+          <div class="option-label">
+            {{ level.label }}
+          </div>
+          <div class="option-description">
+            {{ level.description }}
+          </div>
         </div>
-        <div class="option-check" v-if="modelValue === level.value">✓</div>
+        <div
+          v-if="modelValue === level.value"
+          class="option-check"
+        >
+          ✓
+        </div>
       </div>
     </div>
   </div>

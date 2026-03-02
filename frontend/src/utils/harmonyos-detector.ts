@@ -40,7 +40,7 @@ export function detectHarmonyOS(): HarmonyOSInfo {
   
   // 提取鸿蒙OS版本号
   let version: string | undefined;
-  const versionMatch = userAgent.match(/HarmonyOS[\/\s]+([\d.]+)/i);
+  const versionMatch = userAgent.match(/HarmonyOS[/\s]+([\d.]+)/i);
   if (versionMatch) {
     version = versionMatch[1];
   }

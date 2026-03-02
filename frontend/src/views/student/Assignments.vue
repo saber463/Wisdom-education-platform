@@ -8,18 +8,42 @@
 
       <!-- 筛选 -->
       <el-card class="filter-card">
-        <el-form :inline="true" :model="filterForm" class="filter-form">
+        <el-form
+          :inline="true"
+          :model="filterForm"
+          class="filter-form"
+        >
           <el-form-item label="状态">
-            <el-select v-model="filterForm.status" placeholder="选择状态" clearable>
-              <el-option label="待完成" value="pending" />
-              <el-option label="已提交" value="submitted" />
-              <el-option label="已批改" value="graded" />
+            <el-select
+              v-model="filterForm.status"
+              placeholder="选择状态"
+              clearable
+            >
+              <el-option
+                label="待完成"
+                value="pending"
+              />
+              <el-option
+                label="已提交"
+                value="submitted"
+              />
+              <el-option
+                label="已批改"
+                value="graded"
+              />
             </el-select>
           </el-form-item>
           
           <el-form-item>
-            <el-button type="primary" @click="fetchAssignments">查询</el-button>
-            <el-button @click="resetFilter">重置</el-button>
+            <el-button
+              type="primary"
+              @click="fetchAssignments"
+            >
+              查询
+            </el-button>
+            <el-button @click="resetFilter">
+              重置
+            </el-button>
           </el-form-item>
         </el-form>
       </el-card>
@@ -32,17 +56,32 @@
           stripe
           style="width: 100%"
         >
-          <el-table-column prop="title" label="作业名称" min-width="200">
+          <el-table-column
+            prop="title"
+            label="作业名称"
+            min-width="200"
+          >
             <template #default="{ row }">
-              <el-link type="primary" @click="handleDetail(row.id)">
+              <el-link
+                type="primary"
+                @click="handleDetail(row.id)"
+              >
                 {{ row.title }}
               </el-link>
             </template>
           </el-table-column>
           
-          <el-table-column prop="className" label="班级" width="120" />
+          <el-table-column
+            prop="className"
+            label="班级"
+            width="120"
+          />
           
-          <el-table-column prop="difficulty" label="难度" width="100">
+          <el-table-column
+            prop="difficulty"
+            label="难度"
+            width="100"
+          >
             <template #default="{ row }">
               <el-tag :type="getDifficultyType(row.difficulty)">
                 {{ getDifficultyLabel(row.difficulty) }}
@@ -50,23 +89,46 @@
             </template>
           </el-table-column>
           
-          <el-table-column prop="totalScore" label="总分" width="80" />
+          <el-table-column
+            prop="totalScore"
+            label="总分"
+            width="80"
+          />
           
-          <el-table-column prop="deadline" label="截止时间" width="180">
+          <el-table-column
+            prop="deadline"
+            label="截止时间"
+            width="180"
+          >
             <template #default="{ row }">
               <div class="deadline-cell">
                 <span :class="{ 'text-danger': isExpired(row.deadline) }">
                   {{ formatDate(row.deadline) }}
                 </span>
-                <el-tag v-if="!isExpired(row.deadline)" type="info" size="small" class="countdown">
+                <el-tag
+                  v-if="!isExpired(row.deadline)"
+                  type="info"
+                  size="small"
+                  class="countdown"
+                >
                   {{ getCountdown(row.deadline) }}
                 </el-tag>
-                <el-tag v-else type="danger" size="small">已截止</el-tag>
+                <el-tag
+                  v-else
+                  type="danger"
+                  size="small"
+                >
+                  已截止
+                </el-tag>
               </div>
             </template>
           </el-table-column>
           
-          <el-table-column prop="submissionStatus" label="状态" width="100">
+          <el-table-column
+            prop="submissionStatus"
+            label="状态"
+            width="100"
+          >
             <template #default="{ row }">
               <el-tag :type="getStatusType(row.submissionStatus)">
                 {{ getStatusLabel(row.submissionStatus) }}
@@ -74,16 +136,27 @@
             </template>
           </el-table-column>
           
-          <el-table-column prop="score" label="得分" width="100">
+          <el-table-column
+            prop="score"
+            label="得分"
+            width="100"
+          >
             <template #default="{ row }">
-              <span v-if="row.submissionStatus === 'graded'" :class="getScoreClass(row.score, row.totalScore)">
+              <span
+                v-if="row.submissionStatus === 'graded'"
+                :class="getScoreClass(row.score, row.totalScore)"
+              >
                 {{ row.score }} / {{ row.totalScore }}
               </span>
               <span v-else>-</span>
             </template>
           </el-table-column>
           
-          <el-table-column label="操作" width="150" fixed="right">
+          <el-table-column
+            label="操作"
+            width="150"
+            fixed="right"
+          >
             <template #default="{ row }">
               <el-button
                 v-if="row.submissionStatus === 'pending' && !isExpired(row.deadline)"
@@ -101,7 +174,10 @@
               >
                 查看结果
               </el-button>
-              <el-button size="small" @click="handleDetail(row.id)">
+              <el-button
+                size="small"
+                @click="handleDetail(row.id)"
+              >
                 详情
               </el-button>
             </template>
@@ -182,7 +258,7 @@ let countdownTimer: number | null = null
 async function fetchAssignments() {
   loading.value = true
   try {
-    const params: Record<string, any> = {
+    const params: Record<string, unknown> = {
       page: pagination.page,
       pageSize: pagination.pageSize
     }

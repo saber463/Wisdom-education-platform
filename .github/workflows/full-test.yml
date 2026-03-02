@@ -1,6 +1,10 @@
 name: 完整测试套件
 
 on:
+  push:
+    branches: [ main, develop, master ]
+  pull_request:
+    branches: [ main, develop, master ]
   workflow_dispatch:
     inputs:
       run_backend:

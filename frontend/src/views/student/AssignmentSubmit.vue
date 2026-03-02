@@ -3,12 +3,21 @@
     <div class="assignment-submit-page">
       <!-- 页面标题 -->
       <div class="page-header">
-        <el-button @click="goBack" :icon="ArrowLeft">返回</el-button>
+        <el-button
+          :icon="ArrowLeft"
+          @click="goBack"
+        >
+          返回
+        </el-button>
         <h2>提交作业</h2>
       </div>
 
       <!-- 加载状态 -->
-      <el-skeleton v-if="loading" :rows="10" animated />
+      <el-skeleton
+        v-if="loading"
+        :rows="10"
+        animated
+      />
 
       <!-- 作业信息 -->
       <template v-else-if="assignment">
@@ -22,22 +31,45 @@
             </div>
           </template>
           
-          <el-descriptions :column="2" border>
-            <el-descriptions-item label="班级">{{ assignment.class_name }}</el-descriptions-item>
-            <el-descriptions-item label="总分">{{ assignment.total_score }}分</el-descriptions-item>
+          <el-descriptions
+            :column="2"
+            border
+          >
+            <el-descriptions-item label="班级">
+              {{ assignment.class_name }}
+            </el-descriptions-item>
+            <el-descriptions-item label="总分">
+              {{ assignment.total_score }}分
+            </el-descriptions-item>
             <el-descriptions-item label="截止时间">
               <span :class="{ 'text-danger': isExpired }">
                 {{ formatDate(assignment.deadline) }}
               </span>
-              <el-tag v-if="!isExpired" type="info" size="small" class="countdown-tag">
+              <el-tag
+                v-if="!isExpired"
+                type="info"
+                size="small"
+                class="countdown-tag"
+              >
                 {{ countdown }}
               </el-tag>
-              <el-tag v-else type="danger" size="small">已截止</el-tag>
+              <el-tag
+                v-else
+                type="danger"
+                size="small"
+              >
+                已截止
+              </el-tag>
             </el-descriptions-item>
-            <el-descriptions-item label="题目数量">{{ questions.length }}题</el-descriptions-item>
+            <el-descriptions-item label="题目数量">
+              {{ questions.length }}题
+            </el-descriptions-item>
           </el-descriptions>
           
-          <div v-if="assignment.description" class="description">
+          <div
+            v-if="assignment.description"
+            class="description"
+          >
             <strong>作业说明：</strong>{{ assignment.description }}
           </div>
         </el-card>
@@ -62,7 +94,9 @@
             :limit="1"
             accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
           >
-            <el-icon class="el-icon--upload"><UploadFilled /></el-icon>
+            <el-icon class="el-icon--upload">
+              <UploadFilled />
+            </el-icon>
             <div class="el-upload__text">
               将文件拖到此处，或<em>点击上传</em>
             </div>
@@ -73,8 +107,15 @@
             </template>
           </el-upload>
           
-          <div v-if="uploadedFileUrl" class="uploaded-file">
-            <el-tag type="success" closable @close="removeUploadedFile">
+          <div
+            v-if="uploadedFileUrl"
+            class="uploaded-file"
+          >
+            <el-tag
+              type="success"
+              closable
+              @close="removeUploadedFile"
+            >
               <el-icon><Document /></el-icon>
               已上传文件
             </el-tag>
@@ -92,7 +133,11 @@
             </div>
           </template>
 
-          <el-form ref="formRef" :model="answerForm" label-position="top">
+          <el-form
+            ref="formRef"
+            :model="answerForm"
+            label-position="top"
+          >
             <div
               v-for="question in questions"
               :key="question.id"
@@ -101,7 +146,10 @@
             >
               <div class="question-header">
                 <span class="question-number">第{{ question.question_number }}题</span>
-                <el-tag :type="getQuestionTypeTag(question.question_type)" size="small">
+                <el-tag
+                  :type="getQuestionTypeTag(question.question_type)"
+                  size="small"
+                >
                   {{ getQuestionTypeLabel(question.question_type) }}
                 </el-tag>
                 <span class="question-score">（{{ question.score }}分）</span>
@@ -113,19 +161,37 @@
 
               <!-- 选择题 -->
               <template v-if="question.question_type === 'choice'">
-                <el-radio-group v-model="answerForm.answers[question.id]" class="choice-options">
-                  <el-radio label="A">A</el-radio>
-                  <el-radio label="B">B</el-radio>
-                  <el-radio label="C">C</el-radio>
-                  <el-radio label="D">D</el-radio>
+                <el-radio-group
+                  v-model="answerForm.answers[question.id]"
+                  class="choice-options"
+                >
+                  <el-radio label="A">
+                    A
+                  </el-radio>
+                  <el-radio label="B">
+                    B
+                  </el-radio>
+                  <el-radio label="C">
+                    C
+                  </el-radio>
+                  <el-radio label="D">
+                    D
+                  </el-radio>
                 </el-radio-group>
               </template>
 
               <!-- 判断题 -->
               <template v-else-if="question.question_type === 'judge'">
-                <el-radio-group v-model="answerForm.answers[question.id]" class="judge-options">
-                  <el-radio label="对">对</el-radio>
-                  <el-radio label="错">错</el-radio>
+                <el-radio-group
+                  v-model="answerForm.answers[question.id]"
+                  class="judge-options"
+                >
+                  <el-radio label="对">
+                    对
+                  </el-radio>
+                  <el-radio label="错">
+                    错
+                  </el-radio>
                 </el-radio-group>
               </template>
 
@@ -142,7 +208,10 @@
               </template>
 
               <!-- WASM实时批改提示（仅客观题） -->
-              <div v-if="isObjectiveType(question.question_type) && isQuestionAnswered(question.id)" class="wasm-hint">
+              <div
+                v-if="isObjectiveType(question.question_type) && isQuestionAnswered(question.id)"
+                class="wasm-hint"
+              >
                 <el-icon><Lightning /></el-icon>
                 <span>客观题将使用WASM模块进行高速批改</span>
               </div>
@@ -152,7 +221,9 @@
 
         <!-- 提交按钮 -->
         <div class="submit-actions">
-          <el-button @click="goBack">取消</el-button>
+          <el-button @click="goBack">
+            取消
+          </el-button>
           <el-button
             type="primary"
             size="large"
@@ -160,20 +231,36 @@
             :disabled="isExpired || answeredCount === 0"
             @click="handleSubmit"
           >
-            <el-icon v-if="!submitting"><Upload /></el-icon>
+            <el-icon v-if="!submitting">
+              <Upload />
+            </el-icon>
             {{ submitting ? '提交中...' : '提交作业' }}
           </el-button>
         </div>
       </template>
 
       <!-- 作业不存在 -->
-      <el-empty v-else description="作业不存在或已关闭" />
+      <el-empty
+        v-else
+        description="作业不存在或已关闭"
+      />
 
       <!-- 批改结果弹窗 -->
-      <el-dialog v-model="showResultDialog" title="批改结果" width="600px" :close-on-click-modal="false">
-        <div v-if="gradingResult" class="grading-result">
+      <el-dialog
+        v-model="showResultDialog"
+        title="批改结果"
+        width="600px"
+        :close-on-click-modal="false"
+      >
+        <div
+          v-if="gradingResult"
+          class="grading-result"
+        >
           <div class="result-score">
-            <div class="score-circle" :class="getScoreClass(gradingResult.total_score, gradingResult.max_score)">
+            <div
+              class="score-circle"
+              :class="getScoreClass(gradingResult.total_score, gradingResult.max_score)"
+            >
               <span class="score-value">{{ gradingResult.total_score }}</span>
               <span class="score-max">/ {{ gradingResult.max_score }}</span>
             </div>
@@ -184,20 +271,33 @@
           <div class="result-summary">
             <el-row :gutter="20">
               <el-col :span="8">
-                <el-statistic title="正确题数" :value="correctCount" />
+                <el-statistic
+                  title="正确题数"
+                  :value="correctCount"
+                />
               </el-col>
               <el-col :span="8">
-                <el-statistic title="错误题数" :value="wrongCount" />
+                <el-statistic
+                  title="错误题数"
+                  :value="wrongCount"
+                />
               </el-col>
               <el-col :span="8">
-                <el-statistic title="正确率" :value="accuracyRate" suffix="%" />
+                <el-statistic
+                  title="正确率"
+                  :value="accuracyRate"
+                  suffix="%"
+                />
               </el-col>
             </el-row>
           </div>
 
           <el-divider />
 
-          <div v-if="gradingResult.needs_review" class="review-notice">
+          <div
+            v-if="gradingResult.needs_review"
+            class="review-notice"
+          >
             <el-alert
               title="部分题目待人工复核"
               type="warning"
@@ -209,8 +309,15 @@
         </div>
 
         <template #footer>
-          <el-button @click="showResultDialog = false">关闭</el-button>
-          <el-button type="primary" @click="viewDetailResult">查看详细结果</el-button>
+          <el-button @click="showResultDialog = false">
+            关闭
+          </el-button>
+          <el-button
+            type="primary"
+            @click="viewDetailResult"
+          >
+            查看详细结果
+          </el-button>
         </template>
       </el-dialog>
     </div>
@@ -501,7 +608,7 @@ function beforeUpload(file: File): boolean {
 }
 
 // 文件上传成功
-function handleUploadSuccess(response: any) {
+function handleUploadSuccess(response: { success?: boolean; data?: { url?: string }; message?: string }) {
   if (response.success && response.data?.url) {
     uploadedFileUrl.value = response.data.url
     ElMessage.success('文件上传成功')
@@ -511,7 +618,7 @@ function handleUploadSuccess(response: any) {
 }
 
 // 文件上传失败
-function handleUploadError(error: any) {
+function handleUploadError(error: unknown) {
   console.error('[作业提交] 文件上传失败:', error)
   ElMessage.error('文件上传失败，请重试')
 }
@@ -603,9 +710,10 @@ async function handleSubmit() {
     } else {
       ElMessage.error(response.message || '提交失败')
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('[作业提交] 提交失败:', error)
-    ElMessage.error(error.response?.data?.message || '提交失败，请重试')
+    const msg = (error as { response?: { data?: { message?: string } } })?.response?.data?.message
+    ElMessage.error(msg || '提交失败，请重试')
   } finally {
     submitting.value = false
   }

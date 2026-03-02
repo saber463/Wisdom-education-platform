@@ -3,7 +3,9 @@
     <!-- 页面标题 -->
     <div class="page-header">
       <h1>推送历史</h1>
-      <p class="subtitle">查看最近30天的推送记录</p>
+      <p class="subtitle">
+        查看最近30天的推送记录
+      </p>
     </div>
 
     <!-- 时间范围筛选 -->
@@ -16,7 +18,11 @@
         </template>
 
         <el-row :gutter="20">
-          <el-col :xs="24" :sm="12" :md="8">
+          <el-col
+            :xs="24"
+            :sm="12"
+            :md="8"
+          >
             <el-form-item label="开始日期">
               <el-date-picker
                 v-model="filterForm.startDate"
@@ -28,7 +34,11 @@
             </el-form-item>
           </el-col>
 
-          <el-col :xs="24" :sm="12" :md="8">
+          <el-col
+            :xs="24"
+            :sm="12"
+            :md="8"
+          >
             <el-form-item label="结束日期">
               <el-date-picker
                 v-model="filterForm.endDate"
@@ -40,17 +50,33 @@
             </el-form-item>
           </el-col>
 
-          <el-col :xs="24" :sm="12" :md="8">
+          <el-col
+            :xs="24"
+            :sm="12"
+            :md="8"
+          >
             <el-form-item label="推送状态">
               <el-select
                 v-model="filterForm.status"
                 placeholder="选择推送状态"
                 @change="handleFilterChange"
               >
-                <el-option label="全部" value="" />
-                <el-option label="成功" value="success" />
-                <el-option label="失败" value="failed" />
-                <el-option label="待发送" value="pending" />
+                <el-option
+                  label="全部"
+                  value=""
+                />
+                <el-option
+                  label="成功"
+                  value="success"
+                />
+                <el-option
+                  label="失败"
+                  value="failed"
+                />
+                <el-option
+                  label="待发送"
+                  value="pending"
+                />
               </el-select>
             </el-form-item>
           </el-col>
@@ -58,7 +84,10 @@
 
         <el-row :gutter="20">
           <el-col :xs="24">
-            <el-button type="primary" @click="handleFilterChange">
+            <el-button
+              type="primary"
+              @click="handleFilterChange"
+            >
               <el-icon><Search /></el-icon>
               查询
             </el-button>
@@ -77,7 +106,11 @@
         <template #header>
           <div class="card-header">
             <span>推送记录（共 {{ totalCount }} 条）</span>
-            <el-button type="primary" text @click="handleRefresh">
+            <el-button
+              type="primary"
+              text
+              @click="handleRefresh"
+            >
               <el-icon><Refresh /></el-icon>
               刷新
             </el-button>
@@ -85,10 +118,17 @@
         </template>
 
         <!-- 加载状态 -->
-        <el-skeleton v-if="loading" :rows="5" animated />
+        <el-skeleton
+          v-if="loading"
+          :rows="5"
+          animated
+        />
 
         <!-- 空状态 -->
-        <el-empty v-else-if="pushHistoryList.length === 0" description="暂无推送记录" />
+        <el-empty
+          v-else-if="pushHistoryList.length === 0"
+          description="暂无推送记录"
+        />
 
         <!-- 推送历史表格 -->
         <el-table
@@ -191,8 +231,14 @@
       width="600px"
       @close="handleCloseDetail"
     >
-      <div v-if="selectedPush" class="detail-content">
-        <el-descriptions :column="1" border>
+      <div
+        v-if="selectedPush"
+        class="detail-content"
+      >
+        <el-descriptions
+          :column="1"
+          border
+        >
           <el-descriptions-item label="推送时间">
             {{ formatDateTime(selectedPush) }}
           </el-descriptions-item>
@@ -202,7 +248,9 @@
           </el-descriptions-item>
 
           <el-descriptions-item label="推送内容">
-            <div class="content-text">{{ selectedPush.content }}</div>
+            <div class="content-text">
+              {{ selectedPush.content }}
+            </div>
           </el-descriptions-item>
 
           <el-descriptions-item label="发送状态">
@@ -214,23 +262,35 @@
             </el-tag>
           </el-descriptions-item>
 
-          <el-descriptions-item v-if="selectedPush.errorMessage" label="错误信息">
-            <div class="error-text">{{ selectedPush.errorMessage }}</div>
+          <el-descriptions-item
+            v-if="selectedPush.errorMessage"
+            label="错误信息"
+          >
+            <div class="error-text">
+              {{ selectedPush.errorMessage }}
+            </div>
           </el-descriptions-item>
 
           <el-descriptions-item label="推送类型">
             {{ selectedPush.type || '系统推送' }}
           </el-descriptions-item>
 
-          <el-descriptions-item v-if="selectedPush.actionUrl" label="跳转链接">
-            <div class="action-url-text">{{ selectedPush.actionUrl }}</div>
+          <el-descriptions-item
+            v-if="selectedPush.actionUrl"
+            label="跳转链接"
+          >
+            <div class="action-url-text">
+              {{ selectedPush.actionUrl }}
+            </div>
           </el-descriptions-item>
         </el-descriptions>
       </div>
 
       <template #footer>
         <div class="dialog-footer">
-          <el-button @click="handleCloseDetail">关闭</el-button>
+          <el-button @click="handleCloseDetail">
+            关闭
+          </el-button>
           <el-button
             v-if="selectedPush?.actionUrl"
             type="primary"
@@ -245,7 +305,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Search, RefreshRight, Refresh } from '@element-plus/icons-vue'
 import axios from 'axios'

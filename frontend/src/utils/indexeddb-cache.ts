@@ -10,12 +10,10 @@
  * 需求：17.1 - 离线模式与本地缓存
  */
 
-import { ElMessage } from 'element-plus'
-
 // 缓存数据接口
 export interface CacheData {
   key: string
-  value: any
+  value: unknown
   timestamp: number
   expiresAt?: number
   encrypted?: boolean
@@ -33,7 +31,6 @@ export interface CacheStats {
 const DB_NAME = 'edu_offline_cache'
 const DB_VERSION = 1
 const STORE_NAME = 'cache_data'
-const MAX_CACHE_SIZE = 10 * 1024 * 1024 * 1024 // 10GB
 
 let db: IDBDatabase | null = null
 
@@ -84,7 +81,7 @@ async function getDB(): Promise<IDBDatabase> {
  */
 export async function setCacheData(
   key: string,
-  value: any,
+  value: unknown,
   expiresIn?: number,
   encrypted: boolean = false
 ): Promise<void> {
@@ -121,7 +118,7 @@ export async function setCacheData(
 /**
  * 从缓存读取数据
  */
-export async function getCacheData(key: string): Promise<any | null> {
+export async function getCacheData(key: string): Promise<unknown | null> {
   try {
     const database = await getDB()
     const transaction = database.transaction([STORE_NAME], 'readonly')
@@ -319,7 +316,7 @@ export async function getAllCacheKeys(): Promise<string[]> {
 export async function cacheStudentData(
   studentId: number,
   dataType: 'learning_path' | 'error_book' | 'assignments',
-  data: any
+  data: unknown
 ): Promise<void> {
   const key = `student_${studentId}_${dataType}`
   // 缓存7天
@@ -332,7 +329,7 @@ export async function cacheStudentData(
 export async function getStudentData(
   studentId: number,
   dataType: 'learning_path' | 'error_book' | 'assignments'
-): Promise<any | null> {
+): Promise<unknown | null> {
   const key = `student_${studentId}_${dataType}`
   return getCacheData(key)
 }

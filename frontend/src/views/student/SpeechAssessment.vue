@@ -8,7 +8,12 @@
             <template #header>
               <div class="card-header">
                 <span><el-icon><Microphone /></el-icon> 口语评测</span>
-                <el-button type="primary" link @click="resetRecording" v-if="recordingState !== 'idle'">
+                <el-button
+                  v-if="recordingState !== 'idle'"
+                  type="primary"
+                  link
+                  @click="resetRecording"
+                >
                   <el-icon><RefreshRight /></el-icon> 重新录制
                 </el-button>
               </div>
@@ -16,16 +21,27 @@
 
             <!-- 录制状态显示 -->
             <div class="recording-status">
-              <div class="status-indicator" :class="recordingState">
-                <div v-if="recordingState === 'recording'" class="pulse"></div>
+              <div
+                class="status-indicator"
+                :class="recordingState"
+              >
+                <div
+                  v-if="recordingState === 'recording'"
+                  class="pulse"
+                />
                 <span>{{ getStatusText() }}</span>
               </div>
-              <div class="recording-time">{{ formatTime(recordingTime) }}</div>
+              <div class="recording-time">
+                {{ formatTime(recordingTime) }}
+              </div>
             </div>
 
             <!-- 音频波形显示 -->
             <div class="waveform-container">
-              <canvas ref="waveformCanvas" class="waveform"></canvas>
+              <canvas
+                ref="waveformCanvas"
+                class="waveform"
+              />
             </div>
 
             <!-- 录制控制按钮 -->
@@ -34,26 +50,42 @@
                 v-if="recordingState === 'idle'" 
                 type="primary" 
                 size="large"
-                @click="startRecording"
                 :loading="isInitializing"
+                @click="startRecording"
               >
                 <el-icon><VideoPlay /></el-icon> 开始录制
               </el-button>
               
               <el-button-group v-if="recordingState === 'recording'">
-                <el-button type="warning" size="large" @click="pauseRecording">
+                <el-button
+                  type="warning"
+                  size="large"
+                  @click="pauseRecording"
+                >
                   <el-icon><VideoPause /></el-icon> 暂停
                 </el-button>
-                <el-button type="danger" size="large" @click="stopRecording">
+                <el-button
+                  type="danger"
+                  size="large"
+                  @click="stopRecording"
+                >
                   <el-icon><VideoPause /></el-icon> 停止
                 </el-button>
               </el-button-group>
 
               <el-button-group v-if="recordingState === 'paused'">
-                <el-button type="primary" size="large" @click="resumeRecording">
+                <el-button
+                  type="primary"
+                  size="large"
+                  @click="resumeRecording"
+                >
                   <el-icon><VideoPlay /></el-icon> 继续
                 </el-button>
-                <el-button type="danger" size="large" @click="stopRecording">
+                <el-button
+                  type="danger"
+                  size="large"
+                  @click="stopRecording"
+                >
                   <el-icon><VideoPause /></el-icon> 停止
                 </el-button>
               </el-button-group>
@@ -62,8 +94,8 @@
                 v-if="recordingState === 'stopped'" 
                 type="success" 
                 size="large"
-                @click="submitRecording"
                 :loading="isSubmitting"
+                @click="submitRecording"
               >
                 <el-icon><Upload /></el-icon> 提交评测
               </el-button>
@@ -80,10 +112,22 @@
             </div>
 
             <!-- 音频播放器 -->
-            <div v-if="recordingState === 'stopped'" class="audio-player">
-              <div class="player-label">录制的音频：</div>
-              <audio ref="audioPlayer" controls class="audio-element">
-                <source :src="audioUrl" type="audio/wav">
+            <div
+              v-if="recordingState === 'stopped'"
+              class="audio-player"
+            >
+              <div class="player-label">
+                录制的音频：
+              </div>
+              <audio
+                ref="audioPlayer"
+                controls
+                class="audio-element"
+              >
+                <source
+                  :src="audioUrl"
+                  type="audio/wav"
+                >
                 您的浏览器不支持音频播放
               </audio>
             </div>
@@ -129,63 +173,118 @@
 
               <div class="info-section">
                 <h4>会员权益</h4>
-                <el-tag type="success" effect="plain">会员用户：≤1秒响应</el-tag>
-                <el-tag effect="plain">普通用户：≤3秒响应</el-tag>
+                <el-tag
+                  type="success"
+                  effect="plain"
+                >
+                  会员用户：≤1秒响应
+                </el-tag>
+                <el-tag effect="plain">
+                  普通用户：≤3秒响应
+                </el-tag>
               </div>
             </div>
           </el-card>
 
           <!-- 最近评测 -->
-          <el-card class="recent-card" style="margin-top: 20px;">
+          <el-card
+            class="recent-card"
+            style="margin-top: 20px;"
+          >
             <template #header>
               <div class="card-header">
                 <span><el-icon><Clock /></el-icon> 最近评测</span>
-                <el-button type="primary" link @click="goToHistory">
+                <el-button
+                  type="primary"
+                  link
+                  @click="goToHistory"
+                >
                   <el-icon><ArrowRight /></el-icon> 查看全部
                 </el-button>
               </div>
             </template>
 
-            <div v-if="recentAssessments.length > 0" class="recent-list">
-              <div v-for="assessment in recentAssessments.slice(0, 3)" :key="assessment.id" 
-                   class="recent-item" @click="viewAssessmentDetail(assessment)">
-                <div class="recent-score">{{ assessment.accuracy_score }}</div>
+            <div
+              v-if="recentAssessments.length > 0"
+              class="recent-list"
+            >
+              <div
+                v-for="assessment in recentAssessments.slice(0, 3)"
+                :key="assessment.id" 
+                class="recent-item"
+                @click="viewAssessmentDetail(assessment)"
+              >
+                <div class="recent-score">
+                  {{ assessment.accuracy_score }}
+                </div>
                 <div class="recent-info">
-                  <div class="recent-time">{{ formatDate(assessment.created_at) }}</div>
+                  <div class="recent-time">
+                    {{ formatDate(assessment.created_at) }}
+                  </div>
                   <div class="recent-status">
-                    <el-tag :type="getScoreType(assessment.accuracy_score)" size="small">
+                    <el-tag
+                      :type="getScoreType(assessment.accuracy_score)"
+                      size="small"
+                    >
                       {{ getScoreLabel(assessment.accuracy_score) }}
                     </el-tag>
                   </div>
                 </div>
               </div>
             </div>
-            <el-empty v-else description="暂无评测记录" :image-size="60" />
+            <el-empty
+              v-else
+              description="暂无评测记录"
+              :image-size="60"
+            />
           </el-card>
         </el-col>
       </el-row>
 
       <!-- 评测结果对话框 -->
-      <el-dialog v-model="resultDialogVisible" title="评测结果" width="700px" @close="resetResultDialog">
-        <div v-if="assessmentResult" class="result-content">
+      <el-dialog
+        v-model="resultDialogVisible"
+        title="评测结果"
+        width="700px"
+        @close="resetResultDialog"
+      >
+        <div
+          v-if="assessmentResult"
+          class="result-content"
+        >
           <!-- 评分卡片 -->
-          <el-row :gutter="20" class="score-cards">
+          <el-row
+            :gutter="20"
+            class="score-cards"
+          >
             <el-col :span="8">
               <div class="score-card">
-                <div class="score-value">{{ assessmentResult.accuracy_score }}</div>
-                <div class="score-label">发音准确率</div>
+                <div class="score-value">
+                  {{ assessmentResult.accuracy_score }}
+                </div>
+                <div class="score-label">
+                  发音准确率
+                </div>
               </div>
             </el-col>
             <el-col :span="8">
               <div class="score-card">
-                <div class="score-value">{{ assessmentResult.tone_score }}</div>
-                <div class="score-label">语调评分</div>
+                <div class="score-value">
+                  {{ assessmentResult.tone_score }}
+                </div>
+                <div class="score-label">
+                  语调评分
+                </div>
               </div>
             </el-col>
             <el-col :span="8">
               <div class="score-card">
-                <div class="score-value">{{ assessmentResult.fluency_score }}</div>
-                <div class="score-label">流畅度评分</div>
+                <div class="score-value">
+                  {{ assessmentResult.fluency_score }}
+                </div>
+                <div class="score-label">
+                  流畅度评分
+                </div>
               </div>
             </el-col>
           </el-row>
@@ -193,19 +292,44 @@
           <!-- 逐句批改报告 -->
           <div class="report-section">
             <h4>逐句批改报告</h4>
-            <div v-if="assessmentResult.sentence_reports && assessmentResult.sentence_reports.length > 0" 
-                 class="sentence-reports">
-              <div v-for="(report, index) in assessmentResult.sentence_reports" :key="index" 
-                   class="sentence-item">
-                <div class="sentence-number">第{{ index + 1 }}句</div>
-                <div class="sentence-text">{{ report.text }}</div>
-                <div class="sentence-issues" v-if="report.issues && report.issues.length > 0">
-                  <el-tag v-for="(issue, i) in report.issues" :key="i" type="warning" size="small">
+            <div
+              v-if="assessmentResult.sentence_reports && assessmentResult.sentence_reports.length > 0" 
+              class="sentence-reports"
+            >
+              <div
+                v-for="(report, index) in assessmentResult.sentence_reports"
+                :key="index" 
+                class="sentence-item"
+              >
+                <div class="sentence-number">
+                  第{{ index + 1 }}句
+                </div>
+                <div class="sentence-text">
+                  {{ report.text }}
+                </div>
+                <div
+                  v-if="report.issues && report.issues.length > 0"
+                  class="sentence-issues"
+                >
+                  <el-tag
+                    v-for="(issue, i) in report.issues"
+                    :key="i"
+                    type="warning"
+                    size="small"
+                  >
                     {{ issue }}
                   </el-tag>
                 </div>
-                <div v-else class="sentence-perfect">
-                  <el-tag type="success" size="small">完美</el-tag>
+                <div
+                  v-else
+                  class="sentence-perfect"
+                >
+                  <el-tag
+                    type="success"
+                    size="small"
+                  >
+                    完美
+                  </el-tag>
                 </div>
               </div>
             </div>
@@ -214,14 +338,23 @@
           <!-- 标准发音示范 -->
           <div class="reference-section">
             <h4>标准发音示范</h4>
-            <audio controls class="reference-audio">
-              <source :src="assessmentResult.reference_audio_url" type="audio/mpeg">
+            <audio
+              controls
+              class="reference-audio"
+            >
+              <source
+                :src="assessmentResult.reference_audio_url"
+                type="audio/mpeg"
+              >
               您的浏览器不支持音频播放
             </audio>
           </div>
 
           <!-- 改进建议 -->
-          <div class="suggestion-section" v-if="assessmentResult.suggestions">
+          <div
+            v-if="assessmentResult.suggestions"
+            class="suggestion-section"
+          >
             <h4>改进建议</h4>
             <el-alert 
               :title="assessmentResult.suggestions" 
@@ -318,7 +451,7 @@ async function startRecording() {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
     
     // 初始化AudioContext用于波形显示
-    audioContext = new (window.AudioContext || (window as any).webkitAudioContext)()
+    audioContext = new (window.AudioContext || (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext)()
     analyser = audioContext.createAnalyser()
     const source = audioContext.createMediaStreamSource(stream)
     source.connect(analyser)
@@ -353,7 +486,7 @@ async function startRecording() {
     // 启动波形动画
     drawWaveform()
     isInitializing.value = false
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('[口语评测] 获取麦克风权限失败:', error)
     ElMessage.error('无法访问麦克风，请检查权限设置')
     isInitializing.value = false
@@ -511,9 +644,9 @@ async function submitRecording() {
       // 刷新最近评测列表
       fetchRecentAssessments()
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('[口语评测] 提交失败:', error)
-    const errorMsg = error.response?.data?.message || '评测提交失败，请稍后重试'
+    const errorMsg = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || '评测提交失败，请稍后重试'
     ElMessage.error(errorMsg)
   } finally {
     isSubmitting.value = false
@@ -530,7 +663,7 @@ async function fetchRecentAssessments() {
     if (response.success && response.data) {
       recentAssessments.value = response.data.assessments
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('[口语评测] 获取最近评测失败:', error)
   }
 }

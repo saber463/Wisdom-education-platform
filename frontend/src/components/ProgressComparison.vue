@@ -16,7 +16,10 @@
       </div>
       <div class="progress-diff">
         <span>进度差：{{ Math.abs(progressDiff).toFixed(1) }}%</span>
-        <el-tag :type="progressDiff >= 0 ? 'success' : 'warning'" size="small">
+        <el-tag
+          :type="progressDiff >= 0 ? 'success' : 'warning'"
+          size="small"
+        >
           {{ progressDiff >= 0 ? '领先' : '落后' }}
         </el-tag>
       </div>

@@ -296,7 +296,6 @@ export async function performanceTest(): Promise<{
 
   const iterations = 1000;
   let wasmTime: number | null = null;
-  let jsTime: number;
   let speedup: number | null = null;
 
   console.log('========== WASM性能测试 ==========');
@@ -328,7 +327,7 @@ export async function performanceTest(): Promise<{
     });
   }
   const jsEnd = performance.now();
-  jsTime = jsEnd - jsStart;
+  const jsTime = jsEnd - jsStart;
   console.log(`JavaScript实现: ${jsTime.toFixed(2)}ms`);
 
   // 计算性能提升

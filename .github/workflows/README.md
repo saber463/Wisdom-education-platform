@@ -63,8 +63,9 @@
 
 ### 6. 完整测试套件 (`full-test.yml`)
 **触发条件**: 
+- **自动**：Push / Pull Request 到 main、develop、master 分支
 - 手动触发（可选择运行哪些模块）
-- 定时任务（每天凌晨2点）
+- 定时任务（每天凌晨 2:00 UTC）
 
 **功能**:
 - 运行所有模块的完整测试套件
@@ -98,8 +99,9 @@ cargo test --release
 ### GitHub Actions 使用
 
 1. **自动触发**: 
-   - 推送到 main/develop/master 分支时自动运行
-   - 创建 Pull Request 时自动运行
+   - 推送到 main/develop/master 分支时：主 CI (`ci.yml`) 与完整测试套件 (`full-test.yml`) 会自动运行
+   - 创建 Pull Request 到上述分支时同样自动运行
+   - 仅修改某目录时，对应模块 CI（如 `backend-ci.yml`）会按路径自动触发
 
 2. **手动触发**:
    - 进入 GitHub Actions 页面

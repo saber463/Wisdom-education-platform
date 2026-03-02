@@ -32,7 +32,7 @@ function buildGetCacheKey(config: AxiosRequestConfig): string {
 }
 
 // API响应接口 - 统一后端响应格式
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   code?: number
   success?: boolean
   msg?: string
@@ -72,7 +72,7 @@ request.interceptors.request.use(
             config
           } as AxiosResponse)
       } else {
-        ;(config as AxiosRequestConfig & { _getCacheKey?: string })._getCacheKey = key
+        (config as AxiosRequestConfig & { _getCacheKey?: string })._getCacheKey = key
       }
     }
     return config
@@ -84,9 +84,8 @@ request.interceptors.request.use(
 )
 
 // 响应拦截器 - 统一错误处理；GET 成功响应写入短时缓存
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 request.interceptors.response.use(
-  (response: AxiosResponse<any>) => {
+  (response: AxiosResponse<unknown>) => {
     const cfg = response.config as AxiosRequestConfig & { _getCacheKey?: string }
     if ((cfg.method ?? 'get').toLowerCase() === 'get' && cfg._getCacheKey && response.status === 200) {
       const store = getCacheStore()
@@ -95,7 +94,7 @@ request.interceptors.response.use(
         expireAt: Date.now() + GET_CACHE_TTL_MS
       })
     }
-    return response.data as any
+    return response.data
   },
   (error: AxiosError<ApiResponse>) => {
     // 处理HTTP错误

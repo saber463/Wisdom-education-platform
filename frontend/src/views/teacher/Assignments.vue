@@ -4,7 +4,10 @@
       <!-- 页面标题和操作 -->
       <div class="page-header">
         <h2>作业管理</h2>
-        <el-button type="primary" @click="handleCreate">
+        <el-button
+          type="primary"
+          @click="handleCreate"
+        >
           <el-icon><Plus /></el-icon>
           创建作业
         </el-button>
@@ -12,9 +15,17 @@
 
       <!-- 搜索和筛选 -->
       <el-card class="filter-card">
-        <el-form :inline="true" :model="filterForm" class="filter-form">
+        <el-form
+          :inline="true"
+          :model="filterForm"
+          class="filter-form"
+        >
           <el-form-item label="班级">
-            <el-select v-model="filterForm.classId" placeholder="选择班级" clearable>
+            <el-select
+              v-model="filterForm.classId"
+              placeholder="选择班级"
+              clearable
+            >
               <el-option
                 v-for="cls in classList"
                 :key="cls.id"
@@ -25,16 +36,36 @@
           </el-form-item>
           
           <el-form-item label="状态">
-            <el-select v-model="filterForm.status" placeholder="选择状态" clearable>
-              <el-option label="草稿" value="draft" />
-              <el-option label="已发布" value="published" />
-              <el-option label="已关闭" value="closed" />
+            <el-select
+              v-model="filterForm.status"
+              placeholder="选择状态"
+              clearable
+            >
+              <el-option
+                label="草稿"
+                value="draft"
+              />
+              <el-option
+                label="已发布"
+                value="published"
+              />
+              <el-option
+                label="已关闭"
+                value="closed"
+              />
             </el-select>
           </el-form-item>
           
           <el-form-item>
-            <el-button type="primary" @click="fetchAssignments">查询</el-button>
-            <el-button @click="resetFilter">重置</el-button>
+            <el-button
+              type="primary"
+              @click="fetchAssignments"
+            >
+              查询
+            </el-button>
+            <el-button @click="resetFilter">
+              重置
+            </el-button>
           </el-form-item>
         </el-form>
       </el-card>
@@ -47,17 +78,32 @@
           stripe
           style="width: 100%"
         >
-          <el-table-column prop="title" label="作业名称" min-width="200">
+          <el-table-column
+            prop="title"
+            label="作业名称"
+            min-width="200"
+          >
             <template #default="{ row }">
-              <el-link type="primary" @click="handleDetail(row.id)">
+              <el-link
+                type="primary"
+                @click="handleDetail(row.id)"
+              >
                 {{ row.title }}
               </el-link>
             </template>
           </el-table-column>
           
-          <el-table-column prop="className" label="班级" width="120" />
+          <el-table-column
+            prop="className"
+            label="班级"
+            width="120"
+          />
           
-          <el-table-column prop="difficulty" label="难度" width="100">
+          <el-table-column
+            prop="difficulty"
+            label="难度"
+            width="100"
+          >
             <template #default="{ row }">
               <el-tag :type="getDifficultyType(row.difficulty)">
                 {{ getDifficultyLabel(row.difficulty) }}
@@ -65,13 +111,21 @@
             </template>
           </el-table-column>
           
-          <el-table-column prop="createdAt" label="发布时间" width="180">
+          <el-table-column
+            prop="createdAt"
+            label="发布时间"
+            width="180"
+          >
             <template #default="{ row }">
               {{ formatDate(row.createdAt) }}
             </template>
           </el-table-column>
           
-          <el-table-column prop="deadline" label="截止时间" width="180">
+          <el-table-column
+            prop="deadline"
+            label="截止时间"
+            width="180"
+          >
             <template #default="{ row }">
               <span :class="{ 'text-danger': isExpired(row.deadline) }">
                 {{ formatDate(row.deadline) }}
@@ -79,13 +133,19 @@
             </template>
           </el-table-column>
           
-          <el-table-column label="提交人数" width="120">
+          <el-table-column
+            label="提交人数"
+            width="120"
+          >
             <template #default="{ row }">
               <span>{{ row.submittedCount || 0 }} / {{ row.totalStudents || 0 }}</span>
             </template>
           </el-table-column>
           
-          <el-table-column label="批改进度" width="150">
+          <el-table-column
+            label="批改进度"
+            width="150"
+          >
             <template #default="{ row }">
               <el-progress
                 :percentage="getGradingProgress(row)"
@@ -95,7 +155,11 @@
             </template>
           </el-table-column>
           
-          <el-table-column prop="status" label="状态" width="100">
+          <el-table-column
+            prop="status"
+            label="状态"
+            width="100"
+          >
             <template #default="{ row }">
               <el-tag :type="getStatusType(row.status)">
                 {{ getStatusLabel(row.status) }}
@@ -103,7 +167,11 @@
             </template>
           </el-table-column>
           
-          <el-table-column label="操作" width="200" fixed="right">
+          <el-table-column
+            label="操作"
+            width="200"
+            fixed="right"
+          >
             <template #default="{ row }">
               <el-button
                 v-if="row.status === 'draft'"
@@ -113,7 +181,10 @@
               >
                 发布
               </el-button>
-              <el-button size="small" @click="handleDetail(row.id)">
+              <el-button
+                size="small"
+                @click="handleDetail(row.id)"
+              >
                 详情
               </el-button>
               <el-button
@@ -218,7 +289,7 @@ async function fetchClasses() {
 async function fetchAssignments() {
   loading.value = true
   try {
-    const params: Record<string, any> = {
+    const params: Record<string, unknown> = {
       page: pagination.page,
       pageSize: pagination.pageSize
     }
@@ -278,10 +349,11 @@ async function handlePublish(row: Assignment) {
     await request.post(`/assignments/${row.id}/publish`)
     ElMessage.success('作业发布成功')
     fetchAssignments()
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (error !== 'cancel') {
       console.error('[作业管理] 发布作业失败:', error)
-      ElMessage.error(error.response?.data?.message || '发布作业失败')
+      const d = (error as { response?: { data?: { message?: string } } })?.response?.data
+      ElMessage.error(d?.message || '发布作业失败')
     }
   }
 }
@@ -302,7 +374,7 @@ async function handleDelete(row: Assignment) {
     await request.delete(`/assignments/${row.id}`)
     ElMessage.success('作业删除成功')
     fetchAssignments()
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (error !== 'cancel') {
       console.error('[作业管理] 删除作业失败:', error)
       ElMessage.error('删除作业失败')

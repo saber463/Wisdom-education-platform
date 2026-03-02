@@ -2,15 +2,25 @@
   <StudentLayout>
     <template #content>
       <div class="my-partner">
-        <div v-if="loading" v-loading="loading" class="loading-container"></div>
+        <div
+          v-if="loading"
+          v-loading="loading"
+          class="loading-container"
+        />
         
-        <div v-else-if="partner" class="partner-content">
+        <div
+          v-else-if="partner"
+          class="partner-content"
+        >
           <!-- 伙伴信息卡片 -->
           <PartnerCard :partner="partner" />
 
           <el-row :gutter="20">
             <!-- 聊天面板 -->
-            <el-col :xs="24" :md="12">
+            <el-col
+              :xs="24"
+              :md="12"
+            >
               <el-card class="chat-card">
                 <template #header>
                   <h3>与{{ partner.partner_name }}聊天</h3>
@@ -20,7 +30,10 @@
             </el-col>
 
             <!-- 共同任务 -->
-            <el-col :xs="24" :md="12">
+            <el-col
+              :xs="24"
+              :md="12"
+            >
               <el-card class="tasks-card">
                 <template #header>
                   <h3>共同任务</h3>
@@ -33,14 +46,23 @@
                     @updated="loadTasks"
                   />
                 </div>
-                <el-empty v-else description="暂无任务" />
+                <el-empty
+                  v-else
+                  description="暂无任务"
+                />
               </el-card>
             </el-col>
           </el-row>
 
-          <el-row :gutter="20" class="mt-4">
+          <el-row
+            :gutter="20"
+            class="mt-4"
+          >
             <!-- 进度比拼 -->
-            <el-col :xs="24" :md="12">
+            <el-col
+              :xs="24"
+              :md="12"
+            >
               <ProgressComparison
                 v-if="progressData"
                 :user-progress="progressData.userProgress"
@@ -50,7 +72,10 @@
             </el-col>
 
             <!-- 排行榜 -->
-            <el-col :xs="24" :md="12">
+            <el-col
+              :xs="24"
+              :md="12"
+            >
               <CollaborationLeaderboard
                 v-if="leaderboard.length > 0"
                 :leaderboard="leaderboard"
@@ -59,8 +84,16 @@
           </el-row>
         </div>
 
-        <el-empty v-else description="暂无学习伙伴，请先生成">
-          <el-button type="primary" @click="generatePartner">生成学习伙伴</el-button>
+        <el-empty
+          v-else
+          description="暂无学习伙伴，请先生成"
+        >
+          <el-button
+            type="primary"
+            @click="generatePartner"
+          >
+            生成学习伙伴
+          </el-button>
         </el-empty>
       </div>
     </template>
@@ -79,10 +112,10 @@ import ProgressComparison from '@/components/ProgressComparison.vue'
 import CollaborationLeaderboard from '@/components/CollaborationLeaderboard.vue'
 
 const loading = ref(false)
-const partner = ref<any>(null)
-const tasks = ref<any[]>([])
-const progressData = ref<any>(null)
-const leaderboard = ref<any[]>([])
+const partner = ref<Record<string, unknown> | null>(null)
+const tasks = ref<Record<string, unknown>[]>([])
+const progressData = ref<Record<string, unknown> | null>(null)
+const leaderboard = ref<Record<string, unknown>[]>([])
 
 async function loadPartner() {
   loading.value = true
@@ -165,10 +198,11 @@ async function generatePartner() {
     } else {
       ElMessage.error(response.msg || '生成失败')
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (error !== 'cancel') {
       console.error('生成伙伴失败:', error)
-      ElMessage.error(error.response?.data?.msg || '生成失败')
+      const msg = (error as { response?: { data?: { msg?: string } } })?.response?.data?.msg
+      ElMessage.error(msg || '生成失败')
     }
   }
 }

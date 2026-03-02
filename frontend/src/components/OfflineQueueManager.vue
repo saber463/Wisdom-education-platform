@@ -1,8 +1,14 @@
 <template>
-  <div v-if="showQueueManager" class="offline-queue-manager">
+  <div
+    v-if="showQueueManager"
+    class="offline-queue-manager"
+  >
     <!-- 队列状态指示器 -->
     <div class="queue-status">
-      <el-badge :value="unsyncedCount" class="queue-badge">
+      <el-badge
+        :value="unsyncedCount"
+        class="queue-badge"
+      >
         <el-button
           circle
           :type="hasErrors ? 'danger' : 'warning'"
@@ -39,21 +45,40 @@
           style="width: 100%; margin-top: 16px"
           max-height="400"
         >
-          <el-table-column prop="type" label="操作类型" width="80">
+          <el-table-column
+            prop="type"
+            label="操作类型"
+            width="80"
+          >
             <template #default="{ row }">
               <el-tag :type="getOperationTypeColor(row.type)">
                 {{ getOperationTypeLabel(row.type) }}
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="resource" label="资源类型" width="100" />
-          <el-table-column prop="resourceId" label="资源ID" width="100" />
-          <el-table-column prop="timestamp" label="时间" width="150">
+          <el-table-column
+            prop="resource"
+            label="资源类型"
+            width="100"
+          />
+          <el-table-column
+            prop="resourceId"
+            label="资源ID"
+            width="100"
+          />
+          <el-table-column
+            prop="timestamp"
+            label="时间"
+            width="150"
+          >
             <template #default="{ row }">
               {{ formatDate(row.timestamp) }}
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="80">
+          <el-table-column
+            label="操作"
+            width="80"
+          >
             <template #default="{ row }">
               <el-button
                 link
@@ -68,7 +93,10 @@
         </el-table>
 
         <!-- 同步错误 -->
-        <div v-if="syncErrors.size > 0" class="sync-errors">
+        <div
+          v-if="syncErrors.size > 0"
+          class="sync-errors"
+        >
           <el-alert
             title="同步错误"
             type="error"
@@ -97,7 +125,9 @@
 
       <template #footer>
         <div class="dialog-footer">
-          <el-button @click="showQueueDialog = false">关闭</el-button>
+          <el-button @click="showQueueDialog = false">
+            关闭
+          </el-button>
           <el-button
             v-if="unsyncedCount > 0"
             type="primary"
@@ -117,8 +147,7 @@ import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useOfflineStore } from '@/stores/offline'
 import { Upload } from '@element-plus/icons-vue'
-import type { QueueItem } from '@/utils/offline-queue'
-import { removeFromQueue, getSyncErrors } from '@/utils/offline-queue'
+import { removeFromQueue } from '@/utils/offline-queue'
 
 // 离线模式store
 const offlineStore = useOfflineStore()
@@ -196,7 +225,7 @@ async function syncNow(): Promise<void> {
 /**
  * 重试同步
  */
-async function retrySync(itemId: string): Promise<void> {
+async function retrySync(_itemId: string): Promise<void> {
   try {
     await offlineStore.retrySync()
     ElMessage.success('重试完成')

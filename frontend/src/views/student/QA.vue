@@ -8,69 +8,136 @@
             <template #header>
               <div class="card-header">
                 <span><el-icon><ChatDotRound /></el-icon> AI答疑助手</span>
-                <el-button type="primary" link @click="clearChat">
+                <el-button
+                  type="primary"
+                  link
+                  @click="clearChat"
+                >
                   <el-icon><Delete /></el-icon> 清空对话
                 </el-button>
               </div>
             </template>
 
             <!-- 对话消息区域 -->
-            <div class="chat-messages" ref="messagesContainer">
+            <div
+              ref="messagesContainer"
+              class="chat-messages"
+            >
               <!-- 欢迎消息 -->
-              <div v-if="messages.length === 0" class="welcome-message">
-                <el-icon class="welcome-icon"><ChatDotRound /></el-icon>
+              <div
+                v-if="messages.length === 0"
+                class="welcome-message"
+              >
+                <el-icon class="welcome-icon">
+                  <ChatDotRound />
+                </el-icon>
                 <h3>你好！我是AI答疑助手</h3>
                 <p>有任何学习问题都可以问我，我会尽力帮你解答。</p>
                 <div class="quick-questions">
                   <p>试试这些问题：</p>
-                  <el-tag v-for="q in quickQuestions" :key="q" @click="askQuickQuestion(q)"
-                          class="quick-tag" effect="plain">{{ q }}</el-tag>
+                  <el-tag
+                    v-for="q in quickQuestions"
+                    :key="q"
+                    class="quick-tag"
+                    effect="plain"
+                    @click="askQuickQuestion(q)"
+                  >
+                    {{ q }}
+                  </el-tag>
                 </div>
               </div>
 
               <!-- 消息列表 -->
-              <div v-for="(msg, index) in messages" :key="index" class="message-item"
-                   :class="msg.role">
+              <div
+                v-for="(msg, index) in messages"
+                :key="index"
+                class="message-item"
+                :class="msg.role"
+              >
                 <div class="message-avatar">
-                  <el-avatar v-if="msg.role === 'user'" :size="36" :icon="User" />
-                  <el-avatar v-else :size="36" :icon="ChatDotRound" style="background: #409eff" />
+                  <el-avatar
+                    v-if="msg.role === 'user'"
+                    :size="36"
+                    :icon="User"
+                  />
+                  <el-avatar
+                    v-else
+                    :size="36"
+                    :icon="ChatDotRound"
+                    style="background: #409eff"
+                  />
                 </div>
                 <div class="message-content">
-                  <div class="message-text">{{ msg.content }}</div>
+                  <div class="message-text">
+                    {{ msg.content }}
+                  </div>
                   
                   <!-- AI回答的额外信息 -->
                   <template v-if="msg.role === 'assistant' && msg.extra">
                     <!-- 解题步骤 -->
-                    <div v-if="msg.extra.steps && msg.extra.steps.length > 0" class="answer-steps">
-                      <div class="steps-title"><el-icon><List /></el-icon> 解题步骤</div>
+                    <div
+                      v-if="msg.extra.steps && msg.extra.steps.length > 0"
+                      class="answer-steps"
+                    >
+                      <div class="steps-title">
+                        <el-icon><List /></el-icon> 解题步骤
+                      </div>
                       <ol>
-                        <li v-for="(step, i) in msg.extra.steps" :key="i">{{ step }}</li>
+                        <li
+                          v-for="(step, i) in msg.extra.steps"
+                          :key="i"
+                        >
+                          {{ step }}
+                        </li>
                       </ol>
                     </div>
                     
                     <!-- 相关例题 -->
-                    <div v-if="msg.extra.related_examples && msg.extra.related_examples.length > 0"
-                         class="related-examples">
-                      <div class="examples-title"><el-icon><Document /></el-icon> 相关例题</div>
+                    <div
+                      v-if="msg.extra.related_examples && msg.extra.related_examples.length > 0"
+                      class="related-examples"
+                    >
+                      <div class="examples-title">
+                        <el-icon><Document /></el-icon> 相关例题
+                      </div>
                       <ul>
-                        <li v-for="(ex, i) in msg.extra.related_examples" :key="i">{{ ex }}</li>
+                        <li
+                          v-for="(ex, i) in msg.extra.related_examples"
+                          :key="i"
+                        >
+                          {{ ex }}
+                        </li>
                       </ul>
                     </div>
 
                     <!-- 满意度反馈 -->
-                    <div v-if="msg.extra.qa_record_id && !msg.feedbackGiven" class="feedback-section">
+                    <div
+                      v-if="msg.extra.qa_record_id && !msg.feedbackGiven"
+                      class="feedback-section"
+                    >
                       <span>这个回答对你有帮助吗？</span>
                       <el-button-group size="small">
-                        <el-button @click="giveFeedback(msg, 'satisfied')" :icon="CircleCheck">
+                        <el-button
+                          :icon="CircleCheck"
+                          @click="giveFeedback(msg, 'satisfied')"
+                        >
                           有帮助
                         </el-button>
-                        <el-button @click="giveFeedback(msg, 'neutral')">一般</el-button>
-                        <el-button @click="giveFeedback(msg, 'unsatisfied')" :icon="CircleClose">
+                        <el-button @click="giveFeedback(msg, 'neutral')">
+                          一般
+                        </el-button>
+                        <el-button
+                          :icon="CircleClose"
+                          @click="giveFeedback(msg, 'unsatisfied')"
+                        >
                           没帮助
                         </el-button>
                       </el-button-group>
                     </div>
-                    <div v-if="msg.feedbackGiven" class="feedback-given">
+                    <div
+                      v-if="msg.feedbackGiven"
+                      class="feedback-given"
+                    >
                       <el-icon><Check /></el-icon> 感谢您的反馈！
                     </div>
                   </template>
@@ -78,13 +145,20 @@
               </div>
 
               <!-- 加载中 -->
-              <div v-if="loading" class="message-item assistant">
+              <div
+                v-if="loading"
+                class="message-item assistant"
+              >
                 <div class="message-avatar">
-                  <el-avatar :size="36" :icon="ChatDotRound" style="background: #409eff" />
+                  <el-avatar
+                    :size="36"
+                    :icon="ChatDotRound"
+                    style="background: #409eff"
+                  />
                 </div>
                 <div class="message-content">
                   <div class="typing-indicator">
-                    <span></span><span></span><span></span>
+                    <span /><span /><span />
                   </div>
                 </div>
               </div>
@@ -92,13 +166,22 @@
 
             <!-- 输入区域 -->
             <div class="chat-input">
-              <el-input v-model="inputQuestion" type="textarea" :rows="2"
-                        placeholder="输入你的问题..." :disabled="loading"
-                        @keydown.enter.ctrl="sendQuestion" />
+              <el-input
+                v-model="inputQuestion"
+                type="textarea"
+                :rows="2"
+                placeholder="输入你的问题..."
+                :disabled="loading"
+                @keydown.enter.ctrl="sendQuestion"
+              />
               <div class="input-actions">
                 <span class="input-hint">Ctrl + Enter 发送</span>
-                <el-button type="primary" @click="sendQuestion" :loading="loading"
-                           :disabled="!inputQuestion.trim()">
+                <el-button
+                  type="primary"
+                  :loading="loading"
+                  :disabled="!inputQuestion.trim()"
+                  @click="sendQuestion"
+                >
                   <el-icon><Promotion /></el-icon> 发送
                 </el-button>
               </div>
@@ -112,55 +195,106 @@
             <template #header>
               <div class="card-header">
                 <span><el-icon><Clock /></el-icon> 问答历史</span>
-                <el-button type="primary" link @click="fetchHistory">
+                <el-button
+                  type="primary"
+                  link
+                  @click="fetchHistory"
+                >
                   <el-icon><Refresh /></el-icon>
                 </el-button>
               </div>
             </template>
 
-            <div v-if="history.length > 0" class="history-list">
-              <div v-for="record in history" :key="record.id" class="history-item"
-                   @click="viewHistoryDetail(record)">
-                <div class="history-question">{{ truncateText(record.question, 50) }}</div>
+            <div
+              v-if="history.length > 0"
+              class="history-list"
+            >
+              <div
+                v-for="record in history"
+                :key="record.id"
+                class="history-item"
+                @click="viewHistoryDetail(record)"
+              >
+                <div class="history-question">
+                  {{ truncateText(record.question, 50) }}
+                </div>
                 <div class="history-meta">
                   <span class="history-time">{{ formatDate(record.created_at) }}</span>
-                  <el-tag v-if="record.satisfaction" :type="getSatisfactionType(record.satisfaction)"
-                          size="small">
+                  <el-tag
+                    v-if="record.satisfaction"
+                    :type="getSatisfactionType(record.satisfaction)"
+                    size="small"
+                  >
                     {{ getSatisfactionLabel(record.satisfaction) }}
                   </el-tag>
                 </div>
               </div>
             </div>
-            <el-empty v-else description="暂无问答记录" :image-size="60" />
+            <el-empty
+              v-else
+              description="暂无问答记录"
+              :image-size="60"
+            />
 
             <!-- 分页 -->
-            <div v-if="historyPagination.total > historyPagination.limit" class="history-pagination">
-              <el-pagination small layout="prev, pager, next" :total="historyPagination.total"
-                             :page-size="historyPagination.limit"
-                             v-model:current-page="historyPagination.page"
-                             @current-change="fetchHistory" />
+            <div
+              v-if="historyPagination.total > historyPagination.limit"
+              class="history-pagination"
+            >
+              <el-pagination
+                v-model:current-page="historyPagination.page"
+                small
+                layout="prev, pager, next"
+                :total="historyPagination.total"
+                :page-size="historyPagination.limit"
+                @current-change="fetchHistory"
+              />
             </div>
           </el-card>
         </el-col>
       </el-row>
 
       <!-- 历史详情对话框 -->
-      <el-dialog v-model="historyDialogVisible" title="问答详情" width="600px">
-        <div v-if="selectedHistory" class="history-detail">
+      <el-dialog
+        v-model="historyDialogVisible"
+        title="问答详情"
+        width="600px"
+      >
+        <div
+          v-if="selectedHistory"
+          class="history-detail"
+        >
           <div class="detail-section">
-            <div class="detail-label">问题</div>
-            <div class="detail-content">{{ selectedHistory.question }}</div>
+            <div class="detail-label">
+              问题
+            </div>
+            <div class="detail-content">
+              {{ selectedHistory.question }}
+            </div>
           </div>
           <div class="detail-section">
-            <div class="detail-label">回答</div>
-            <div class="detail-content">{{ selectedHistory.answer }}</div>
+            <div class="detail-label">
+              回答
+            </div>
+            <div class="detail-content">
+              {{ selectedHistory.answer }}
+            </div>
           </div>
           <div class="detail-section">
-            <div class="detail-label">时间</div>
-            <div class="detail-content">{{ formatDate(selectedHistory.created_at) }}</div>
+            <div class="detail-label">
+              时间
+            </div>
+            <div class="detail-content">
+              {{ formatDate(selectedHistory.created_at) }}
+            </div>
           </div>
-          <div v-if="selectedHistory.satisfaction" class="detail-section">
-            <div class="detail-label">评价</div>
+          <div
+            v-if="selectedHistory.satisfaction"
+            class="detail-section"
+          >
+            <div class="detail-label">
+              评价
+            </div>
             <div class="detail-content">
               <el-tag :type="getSatisfactionType(selectedHistory.satisfaction)">
                 {{ getSatisfactionLabel(selectedHistory.satisfaction) }}
@@ -248,9 +382,9 @@ async function sendQuestion() {
         feedbackGiven: false
       })
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('[AI答疑] 提问失败:', error)
-    const errorMsg = error.response?.data?.message || 'AI服务暂时不可用，请稍后重试'
+    const errorMsg = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'AI服务暂时不可用，请稍后重试'
     messages.value.push({ role: 'assistant', content: errorMsg })
     ElMessage.error(errorMsg)
   } finally {
@@ -268,7 +402,7 @@ async function giveFeedback(msg: Message, satisfaction: 'satisfied' | 'unsatisfi
     })
     msg.feedbackGiven = true
     ElMessage.success('感谢您的反馈！')
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('[AI答疑] 反馈失败:', error)
     ElMessage.error('反馈提交失败')
   }
@@ -286,7 +420,7 @@ async function fetchHistory() {
       history.value = response.data.records
       historyPagination.value.total = response.data.pagination.total
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('[AI答疑] 获取历史失败:', error)
   }
 }

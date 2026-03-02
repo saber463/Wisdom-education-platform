@@ -25,7 +25,7 @@ export interface QueueItem {
   type: OperationType
   resource: string // 资源类型（如'assignment', 'note'）
   resourceId: string
-  data: any
+  data: unknown
   timestamp: number
   synced: boolean
   syncError?: string
@@ -36,7 +36,7 @@ export interface SyncResult {
   success: boolean
   itemId: string
   error?: string
-  serverData?: any
+  serverData?: unknown
 }
 
 // 队列状态
@@ -75,7 +75,7 @@ export async function addToQueue(
   type: OperationType,
   resource: string,
   resourceId: string,
-  data: any
+  data: unknown
 ): Promise<string> {
   const id = `${resource}_${resourceId}_${Date.now()}_${Math.random()}`
   
@@ -184,7 +184,7 @@ export function getQueueStats() {
  */
 export async function syncQueueToServer(
   syncHandler: (item: QueueItem) => Promise<SyncResult>,
-  conflictStrategy: ConflictStrategy = 'server'
+  _conflictStrategy: ConflictStrategy = 'server'
 ): Promise<SyncResult[]> {
   if (isSyncing.value) {
     console.warn('[离线队列] 正在同步中，请勿重复操作')
@@ -306,9 +306,9 @@ export async function clearSyncError(itemId: string): Promise<void> {
  */
 export function mergeConflictingOperations(
   localItem: QueueItem,
-  serverData: any,
+  serverData: unknown,
   strategy: ConflictStrategy
-): any {
+): unknown {
   switch (strategy) {
     case 'server':
       // 服务器优先

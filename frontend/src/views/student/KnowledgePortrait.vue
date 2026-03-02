@@ -9,13 +9,25 @@
 
           <div v-loading="loading">
             <!-- 能力画像 -->
-            <el-card class="ability-profile-card" shadow="never">
+            <el-card
+              class="ability-profile-card"
+              shadow="never"
+            >
               <h3>学习能力画像</h3>
-              <div v-if="abilityProfile" class="ability-content">
-                <el-tag :type="abilityTagType" size="large" class="ability-tag">
+              <div
+                v-if="abilityProfile"
+                class="ability-content"
+              >
+                <el-tag
+                  :type="abilityTagType"
+                  size="large"
+                  class="ability-tag"
+                >
                   {{ abilityTagText }}
                 </el-tag>
-                <p class="ability-description">{{ abilityProfile.ability_tag_description }}</p>
+                <p class="ability-description">
+                  {{ abilityProfile.ability_tag_description }}
+                </p>
                 <div class="ability-stats">
                   <div class="stat-item">
                     <span class="stat-label">平均完成时间比率：</span>
@@ -30,30 +42,57 @@
             </el-card>
 
             <!-- 知识点掌握度图表 -->
-            <el-card class="mastery-chart-card" shadow="never">
+            <el-card
+              class="mastery-chart-card"
+              shadow="never"
+            >
               <h3>知识点掌握度分布</h3>
-              <KnowledgeMasteryChart v-if="masteryList.length > 0" :mastery-list="masteryList" />
-              <el-empty v-else description="暂无数据" />
+              <KnowledgeMasteryChart
+                v-if="masteryList.length > 0"
+                :mastery-list="masteryList"
+              />
+              <el-empty
+                v-else
+                description="暂无数据"
+              />
             </el-card>
 
             <!-- 知识点掌握度列表 -->
-            <el-card class="mastery-list-card" shadow="never">
+            <el-card
+              class="mastery-list-card"
+              shadow="never"
+            >
               <h3>知识点详情</h3>
-              <el-table :data="masteryList" stripe>
-                <el-table-column prop="knowledge_point_name" label="知识点" />
-                <el-table-column prop="mastery_level" label="掌握度">
+              <el-table
+                :data="masteryList"
+                stripe
+              >
+                <el-table-column
+                  prop="knowledge_point_name"
+                  label="知识点"
+                />
+                <el-table-column
+                  prop="mastery_level"
+                  label="掌握度"
+                >
                   <template #default="{ row }">
                     <el-tag :type="getMasteryTagType(row.mastery_level)">
                       {{ getMasteryText(row.mastery_level) }}
                     </el-tag>
                   </template>
                 </el-table-column>
-                <el-table-column prop="mastery_score" label="掌握分数">
+                <el-table-column
+                  prop="mastery_score"
+                  label="掌握分数"
+                >
                   <template #default="{ row }">
                     {{ row.mastery_score }}分
                   </template>
                 </el-table-column>
-                <el-table-column prop="evaluation_count" label="评估次数" />
+                <el-table-column
+                  prop="evaluation_count"
+                  label="评估次数"
+                />
               </el-table>
             </el-card>
           </div>

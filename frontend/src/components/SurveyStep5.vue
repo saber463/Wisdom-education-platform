@@ -1,7 +1,11 @@
 <template>
   <div class="survey-step">
-    <h3 class="step-title">您每周可以投入多少时间学习？</h3>
-    <p class="step-description">这将帮助我们为您制定合理的学习计划</p>
+    <h3 class="step-title">
+      您每周可以投入多少时间学习？
+    </h3>
+    <p class="step-description">
+      这将帮助我们为您制定合理的学习计划
+    </p>
     
     <div class="options-list">
       <div
@@ -12,10 +16,19 @@
         @click="$emit('update:modelValue', hours.value)"
       >
         <div class="option-content">
-          <div class="option-label">{{ hours.label }}</div>
-          <div class="option-description">{{ hours.description }}</div>
+          <div class="option-label">
+            {{ hours.label }}
+          </div>
+          <div class="option-description">
+            {{ hours.description }}
+          </div>
         </div>
-        <div class="option-check" v-if="modelValue === hours.value">✓</div>
+        <div
+          v-if="modelValue === hours.value"
+          class="option-check"
+        >
+          ✓
+        </div>
       </div>
     </div>
   </div>

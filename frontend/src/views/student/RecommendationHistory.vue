@@ -4,56 +4,117 @@
       <!-- 页面标题 -->
       <div class="page-header">
         <h2>推荐历史</h2>
-        <p class="page-desc">查看最近30天的推荐记录和点击率统计</p>
+        <p class="page-desc">
+          查看最近30天的推荐记录和点击率统计
+        </p>
       </div>
 
       <!-- 加载状态 -->
-      <el-skeleton v-if="loading" :rows="10" animated />
+      <el-skeleton
+        v-if="loading"
+        :rows="10"
+        animated
+      />
 
       <div v-else>
         <!-- 统计卡片 -->
-        <el-row :gutter="20" class="stats-row">
-          <el-col :xs="24" :sm="12" :md="6">
+        <el-row
+          :gutter="20"
+          class="stats-row"
+        >
+          <el-col
+            :xs="24"
+            :sm="12"
+            :md="6"
+          >
             <div class="stat-card">
-              <div class="stat-icon" style="background: #e6f7ff;">
-                <el-icon style="color: #1890ff;"><DataAnalysis /></el-icon>
+              <div
+                class="stat-icon"
+                style="background: #e6f7ff;"
+              >
+                <el-icon style="color: #1890ff;">
+                  <DataAnalysis />
+                </el-icon>
               </div>
               <div class="stat-content">
-                <div class="stat-label">总推荐数</div>
-                <div class="stat-value">{{ statistics.total_recommendations }}</div>
+                <div class="stat-label">
+                  总推荐数
+                </div>
+                <div class="stat-value">
+                  {{ statistics.total_recommendations }}
+                </div>
               </div>
             </div>
           </el-col>
-          <el-col :xs="24" :sm="12" :md="6">
+          <el-col
+            :xs="24"
+            :sm="12"
+            :md="6"
+          >
             <div class="stat-card">
-              <div class="stat-icon" style="background: #f6ffed;">
-                <el-icon style="color: #52c41a;"><SuccessFilled /></el-icon>
+              <div
+                class="stat-icon"
+                style="background: #f6ffed;"
+              >
+                <el-icon style="color: #52c41a;">
+                  <SuccessFilled />
+                </el-icon>
               </div>
               <div class="stat-content">
-                <div class="stat-label">点击数</div>
-                <div class="stat-value">{{ statistics.total_clicks }}</div>
+                <div class="stat-label">
+                  点击数
+                </div>
+                <div class="stat-value">
+                  {{ statistics.total_clicks }}
+                </div>
               </div>
             </div>
           </el-col>
-          <el-col :xs="24" :sm="12" :md="6">
+          <el-col
+            :xs="24"
+            :sm="12"
+            :md="6"
+          >
             <div class="stat-card">
-              <div class="stat-icon" style="background: #fff7e6;">
-                <el-icon style="color: #faad14;"><Discount /></el-icon>
+              <div
+                class="stat-icon"
+                style="background: #fff7e6;"
+              >
+                <el-icon style="color: #faad14;">
+                  <Discount />
+                </el-icon>
               </div>
               <div class="stat-content">
-                <div class="stat-label">点击率</div>
-                <div class="stat-value">{{ statistics.click_rate }}%</div>
+                <div class="stat-label">
+                  点击率
+                </div>
+                <div class="stat-value">
+                  {{ statistics.click_rate }}%
+                </div>
               </div>
             </div>
           </el-col>
-          <el-col :xs="24" :sm="12" :md="6">
+          <el-col
+            :xs="24"
+            :sm="12"
+            :md="6"
+          >
             <div class="stat-card">
-              <div class="stat-icon" style="background: #f9f0ff;">
-                <el-icon style="color: #722ed1;"><TrendCharts /></el-icon>
+              <div
+                class="stat-icon"
+                style="background: #f9f0ff;"
+              >
+                <el-icon style="color: #722ed1;">
+                  <TrendCharts />
+                </el-icon>
               </div>
               <div class="stat-content">
-                <div class="stat-label">平均评分</div>
-                <div class="stat-value">{{ statistics.average_rating.toFixed(1) }}</div>
+                <div class="stat-label">
+                  平均评分
+                </div>
+                <div class="stat-value">
+                  {{ statistics.average_rating.toFixed(1) }}
+                </div>
               </div>
             </div>
           </el-col>
@@ -66,7 +127,10 @@
               <span>点击率趋势（最近30天）</span>
             </div>
           </template>
-          <div ref="chartContainer" style="height: 300px;"></div>
+          <div
+            ref="chartContainer"
+            style="height: 300px;"
+          />
         </el-card>
 
         <!-- 推荐记录表格 -->
@@ -74,7 +138,12 @@
           <template #header>
             <div class="card-header">
               <span>推荐记录</span>
-              <el-button type="primary" @click="exportHistory" :loading="exporting" size="small">
+              <el-button
+                type="primary"
+                :loading="exporting"
+                size="small"
+                @click="exportHistory"
+              >
                 <el-icon><Download /></el-icon> 导出
               </el-button>
             </div>
@@ -82,12 +151,32 @@
 
           <!-- 筛选条件 -->
           <div class="filter-bar">
-            <el-select v-model="filterType" placeholder="资源类型" clearable style="width: 150px;">
-              <el-option label="全部" value="" />
-              <el-option label="文章" value="article" />
-              <el-option label="视频" value="video" />
-              <el-option label="练习" value="exercise" />
-              <el-option label="教程" value="tutorial" />
+            <el-select
+              v-model="filterType"
+              placeholder="资源类型"
+              clearable
+              style="width: 150px;"
+            >
+              <el-option
+                label="全部"
+                value=""
+              />
+              <el-option
+                label="文章"
+                value="article"
+              />
+              <el-option
+                label="视频"
+                value="video"
+              />
+              <el-option
+                label="练习"
+                value="exercise"
+              />
+              <el-option
+                label="教程"
+                value="tutorial"
+              />
             </el-select>
             <el-date-picker
               v-model="dateRange"
@@ -98,52 +187,131 @@
               style="width: 250px;"
               @change="fetchHistory"
             />
-            <el-button type="primary" @click="fetchHistory" :loading="loading">
+            <el-button
+              type="primary"
+              :loading="loading"
+              @click="fetchHistory"
+            >
               <el-icon><Search /></el-icon> 查询
             </el-button>
           </div>
 
           <!-- 历史记录表格 -->
-          <el-table :data="historyRecords" stripe style="width: 100%; margin-top: 16px;">
-            <el-table-column prop="resource_title" label="资源标题" min-width="200" show-overflow-tooltip />
-            <el-table-column prop="resource_type" label="类型" width="100">
+          <el-table
+            :data="historyRecords"
+            stripe
+            style="width: 100%; margin-top: 16px;"
+          >
+            <el-table-column
+              prop="resource_title"
+              label="资源标题"
+              min-width="200"
+              show-overflow-tooltip
+            />
+            <el-table-column
+              prop="resource_type"
+              label="类型"
+              width="100"
+            >
               <template #default="{ row }">
                 <el-tag :type="getResourceTypeColor(row.resource_type)">
                   {{ getResourceTypeLabel(row.resource_type) }}
                 </el-tag>
               </template>
             </el-table-column>
-            <el-table-column prop="knowledge_points" label="知识点" min-width="150" show-overflow-tooltip>
+            <el-table-column
+              prop="knowledge_points"
+              label="知识点"
+              min-width="150"
+              show-overflow-tooltip
+            >
               <template #default="{ row }">
                 <div class="knowledge-points-cell">
-                  <el-tag v-for="kp in row.knowledge_points.slice(0, 2)" :key="kp" type="info" size="small">
+                  <el-tag
+                    v-for="kp in row.knowledge_points.slice(0, 2)"
+                    :key="kp"
+                    type="info"
+                    size="small"
+                  >
                     {{ kp }}
                   </el-tag>
-                  <el-tag v-if="row.knowledge_points.length > 2" type="info" size="small">
+                  <el-tag
+                    v-if="row.knowledge_points.length > 2"
+                    type="info"
+                    size="small"
+                  >
                     +{{ row.knowledge_points.length - 2 }}
                   </el-tag>
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="recommended_at" label="推荐时间" width="180" :formatter="formatDate" />
-            <el-table-column prop="click_count" label="点击次数" width="100" align="center" />
-            <el-table-column prop="is_clicked" label="是否点击" width="100" align="center">
+            <el-table-column
+              prop="recommended_at"
+              label="推荐时间"
+              width="180"
+              :formatter="formatDate"
+            />
+            <el-table-column
+              prop="click_count"
+              label="点击次数"
+              width="100"
+              align="center"
+            />
+            <el-table-column
+              prop="is_clicked"
+              label="是否点击"
+              width="100"
+              align="center"
+            >
               <template #default="{ row }">
-                <el-tag v-if="row.is_clicked" type="success">已点击</el-tag>
-                <el-tag v-else type="info">未点击</el-tag>
+                <el-tag
+                  v-if="row.is_clicked"
+                  type="success"
+                >
+                  已点击
+                </el-tag>
+                <el-tag
+                  v-else
+                  type="info"
+                >
+                  未点击
+                </el-tag>
               </template>
             </el-table-column>
-            <el-table-column prop="rating" label="评分" width="100" align="center">
+            <el-table-column
+              prop="rating"
+              label="评分"
+              width="100"
+              align="center"
+            >
               <template #default="{ row }">
-                <el-rate v-model="row.rating" disabled allow-half />
+                <el-rate
+                  v-model="row.rating"
+                  disabled
+                  allow-half
+                />
               </template>
             </el-table-column>
-            <el-table-column label="操作" width="150" align="center">
+            <el-table-column
+              label="操作"
+              width="150"
+              align="center"
+            >
               <template #default="{ row }">
-                <el-button type="primary" text size="small" @click="viewResource(row)">
+                <el-button
+                  type="primary"
+                  text
+                  size="small"
+                  @click="viewResource(row)"
+                >
                   查看
                 </el-button>
-                <el-button type="danger" text size="small" @click="removeRecord(row)">
+                <el-button
+                  type="danger"
+                  text
+                  size="small"
+                  @click="removeRecord(row)"
+                >
                   删除
                 </el-button>
               </template>
@@ -165,8 +333,15 @@
       </div>
 
       <!-- 资源详情对话框 -->
-      <el-dialog v-model="showResourceDialog" title="资源详情" width="50%">
-        <div v-if="selectedRecord" class="resource-dialog-content">
+      <el-dialog
+        v-model="showResourceDialog"
+        title="资源详情"
+        width="50%"
+      >
+        <div
+          v-if="selectedRecord"
+          class="resource-dialog-content"
+        >
           <div class="dialog-section">
             <label>资源标题</label>
             <p>{{ selectedRecord.resource_title }}</p>
@@ -187,19 +362,29 @@
           </div>
           <div class="dialog-section">
             <label>评分</label>
-            <el-rate v-model="selectedRecord.rating" disabled allow-half />
+            <el-rate
+              v-model="selectedRecord.rating"
+              disabled
+              allow-half
+            />
           </div>
           <div class="dialog-section">
             <label>知识点</label>
             <div class="knowledge-points-full">
-              <el-tag v-for="kp in selectedRecord.knowledge_points" :key="kp" type="info">
+              <el-tag
+                v-for="kp in selectedRecord.knowledge_points"
+                :key="kp"
+                type="info"
+              >
                 {{ kp }}
               </el-tag>
             </div>
           </div>
         </div>
         <template #footer>
-          <el-button @click="showResourceDialog = false">关闭</el-button>
+          <el-button @click="showResourceDialog = false">
+            关闭
+          </el-button>
         </template>
       </el-dialog>
     </div>
@@ -278,7 +463,7 @@ async function fetchHistory() {
   if (!studentId.value) return
   loading.value = true
   try {
-    const params: any = {
+    const params: Record<string, unknown> = {
       page: currentPage.value,
       page_size: pageSize.value
     }
@@ -307,9 +492,10 @@ async function fetchHistory() {
       trendData.value = response.data.trend_data
       renderChart()
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('[推荐历史] 获取历史失败:', error)
-    ElMessage.error(error.response?.data?.message || '获取历史失败')
+    const msg = (error as { response?: { data?: { message?: string } } })?.response?.data?.message
+    ElMessage.error(msg || '获取历史失败')
   } finally {
     loading.value = false
   }
@@ -387,9 +573,10 @@ async function exportHistory() {
     link.click()
     window.URL.revokeObjectURL(url)
     ElMessage.success('导出成功')
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('[推荐历史] 导出失败:', error)
-    ElMessage.error(error.response?.data?.message || '导出失败')
+    const msg = (error as { response?: { data?: { message?: string } } })?.response?.data?.message
+    ElMessage.error(msg || '导出失败')
   } finally {
     exporting.value = false
   }
@@ -406,9 +593,10 @@ async function removeRecord(record: HistoryRecord) {
     await request.delete(`/recommendations/history/${studentId.value}/${record.id}`)
     ElMessage.success('已删除')
     await fetchHistory()
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('[推荐历史] 删除失败:', error)
-    ElMessage.error(error.response?.data?.message || '删除失败')
+    const msg = (error as { response?: { data?: { message?: string } } })?.response?.data?.message
+    ElMessage.error(msg || '删除失败')
   }
 }
 

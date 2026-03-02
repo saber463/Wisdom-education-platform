@@ -6,50 +6,130 @@
       </div>
 
       <el-card class="filter-card">
-        <el-form :inline="true" :model="filterForm" class="filter-form">
+        <el-form
+          :inline="true"
+          :model="filterForm"
+          class="filter-form"
+        >
           <el-form-item label="作业">
-            <el-select v-model="filterForm.assignmentId" placeholder="选择作业" clearable style="width: 200px">
-              <el-option v-for="a in assignmentList" :key="a.id" :label="a.title" :value="a.id" />
+            <el-select
+              v-model="filterForm.assignmentId"
+              placeholder="选择作业"
+              clearable
+              style="width: 200px"
+            >
+              <el-option
+                v-for="a in assignmentList"
+                :key="a.id"
+                :label="a.title"
+                :value="a.id"
+              />
             </el-select>
           </el-form-item>
           <el-form-item label="状态">
-            <el-select v-model="filterForm.status" placeholder="选择状态" clearable>
-              <el-option label="待批改" value="submitted" />
-              <el-option label="批改中" value="grading" />
-              <el-option label="已批改" value="graded" />
-              <el-option label="已复核" value="reviewed" />
+            <el-select
+              v-model="filterForm.status"
+              placeholder="选择状态"
+              clearable
+            >
+              <el-option
+                label="待批改"
+                value="submitted"
+              />
+              <el-option
+                label="批改中"
+                value="grading"
+              />
+              <el-option
+                label="已批改"
+                value="graded"
+              />
+              <el-option
+                label="已复核"
+                value="reviewed"
+              />
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="fetchSubmissions">查询</el-button>
-            <el-button @click="resetFilter">重置</el-button>
+            <el-button
+              type="primary"
+              @click="fetchSubmissions"
+            >
+              查询
+            </el-button>
+            <el-button @click="resetFilter">
+              重置
+            </el-button>
           </el-form-item>
         </el-form>
       </el-card>
 
       <el-card class="list-card">
-        <el-table v-loading="loading" :data="submissionList" stripe style="width: 100%">
-          <el-table-column prop="studentName" label="学生姓名" width="120" />
-          <el-table-column prop="assignmentTitle" label="作业名称" min-width="200" />
-          <el-table-column prop="submitTime" label="提交时间" width="180">
-            <template #default="{ row }">{{ formatDate(row.submitTime) }}</template>
-          </el-table-column>
-          <el-table-column prop="totalScore" label="得分" width="100">
+        <el-table
+          v-loading="loading"
+          :data="submissionList"
+          stripe
+          style="width: 100%"
+        >
+          <el-table-column
+            prop="studentName"
+            label="学生姓名"
+            width="120"
+          />
+          <el-table-column
+            prop="assignmentTitle"
+            label="作业名称"
+            min-width="200"
+          />
+          <el-table-column
+            prop="submitTime"
+            label="提交时间"
+            width="180"
+          >
             <template #default="{ row }">
-              <span v-if="row.totalScore !== null" :class="getScoreClass(row.totalScore, row.maxScore)">
+              {{ formatDate(row.submitTime) }}
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="totalScore"
+            label="得分"
+            width="100"
+          >
+            <template #default="{ row }">
+              <span
+                v-if="row.totalScore !== null"
+                :class="getScoreClass(row.totalScore, row.maxScore)"
+              >
                 {{ row.totalScore }} / {{ row.maxScore }}
               </span>
-              <span v-else class="text-muted">-</span>
+              <span
+                v-else
+                class="text-muted"
+              >-</span>
             </template>
           </el-table-column>
-          <el-table-column prop="status" label="状态" width="100">
+          <el-table-column
+            prop="status"
+            label="状态"
+            width="100"
+          >
             <template #default="{ row }">
-              <el-tag :type="getStatusType(row.status)">{{ getStatusLabel(row.status) }}</el-tag>
+              <el-tag :type="getStatusType(row.status)">
+                {{ getStatusLabel(row.status) }}
+              </el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="150" fixed="right">
+          <el-table-column
+            label="操作"
+            width="150"
+            fixed="right"
+          >
             <template #default="{ row }">
-              <el-button type="primary" size="small" @click="handleDetail(row.id)">
+              <el-button
+                type="primary"
+                size="small"
+                @click="handleDetail(row.id)"
+              >
                 {{ row.status === 'graded' || row.status === 'reviewed' ? '查看/复核' : '批改' }}
               </el-button>
             </template>
@@ -57,9 +137,15 @@
         </el-table>
 
         <div class="pagination-wrapper">
-          <el-pagination v-model:current-page="pagination.page" v-model:page-size="pagination.pageSize"
-            :page-sizes="[10, 20, 50]" :total="pagination.total" layout="total, sizes, prev, pager, next, jumper"
-            @size-change="fetchSubmissions" @current-change="fetchSubmissions" />
+          <el-pagination
+            v-model:current-page="pagination.page"
+            v-model:page-size="pagination.pageSize"
+            :page-sizes="[10, 20, 50]"
+            :total="pagination.total"
+            layout="total, sizes, prev, pager, next, jumper"
+            @size-change="fetchSubmissions"
+            @current-change="fetchSubmissions"
+          />
         </div>
       </el-card>
     </div>
@@ -96,7 +182,7 @@ async function fetchAssignments() {
 async function fetchSubmissions() {
   loading.value = true
   try {
-    const params: Record<string, any> = { page: pagination.page, pageSize: pagination.pageSize }
+    const params: Record<string, unknown> = { page: pagination.page, pageSize: pagination.pageSize }
     if (filterForm.assignmentId) params.assignmentId = filterForm.assignmentId
     if (filterForm.status) params.status = filterForm.status
     const response = await request.get<{ submissions?: Submission[]; total?: number }>('/grading/submissions', { params })

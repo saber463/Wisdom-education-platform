@@ -38,7 +38,7 @@ export function useOffline() {
   async function cacheData(
     studentId: number,
     dataType: 'learning_path' | 'error_book' | 'assignments',
-    data: any
+    data: unknown
   ): Promise<void> {
     try {
       await offlineStore.cacheData(studentId, dataType, data)
@@ -54,7 +54,7 @@ export function useOffline() {
   async function getCachedData(
     studentId: number,
     dataType: 'learning_path' | 'error_book' | 'assignments'
-  ): Promise<any | null> {
+  ): Promise<unknown | null> {
     try {
       return await offlineStore.getCachedData(studentId, dataType)
     } catch (error) {
@@ -70,7 +70,7 @@ export function useOffline() {
     type: 'create' | 'update' | 'delete',
     resource: string,
     resourceId: string,
-    data: any
+    data: unknown
   ): Promise<string> {
     try {
       return await offlineStore.addEdit(type, resource, resourceId, data)

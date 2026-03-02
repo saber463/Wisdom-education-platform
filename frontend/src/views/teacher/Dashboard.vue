@@ -4,62 +4,111 @@
       <h2>欢迎回来，{{ userStore.displayName }}</h2>
       
       <!-- 统计卡片 -->
-      <el-row :gutter="20" class="stat-cards">
+      <el-row
+        :gutter="20"
+        class="stat-cards"
+      >
         <el-col :span="6">
-          <el-card shadow="hover" class="stat-card">
-            <div class="stat-icon" style="background: #409eff;">
+          <el-card
+            shadow="hover"
+            class="stat-card"
+          >
+            <div
+              class="stat-icon"
+              style="background: #409eff;"
+            >
               <el-icon><Document /></el-icon>
             </div>
             <div class="stat-info">
-              <div class="stat-value">{{ stats.totalAssignments }}</div>
-              <div class="stat-label">作业总数</div>
+              <div class="stat-value">
+                {{ stats.totalAssignments }}
+              </div>
+              <div class="stat-label">
+                作业总数
+              </div>
             </div>
           </el-card>
         </el-col>
         <el-col :span="6">
-          <el-card shadow="hover" class="stat-card">
-            <div class="stat-icon" style="background: #67c23a;">
+          <el-card
+            shadow="hover"
+            class="stat-card"
+          >
+            <div
+              class="stat-icon"
+              style="background: #67c23a;"
+            >
               <el-icon><Check /></el-icon>
             </div>
             <div class="stat-info">
-              <div class="stat-value">{{ stats.gradedCount }}</div>
-              <div class="stat-label">已批改</div>
+              <div class="stat-value">
+                {{ stats.gradedCount }}
+              </div>
+              <div class="stat-label">
+                已批改
+              </div>
             </div>
           </el-card>
         </el-col>
         <el-col :span="6">
-          <el-card shadow="hover" class="stat-card">
-            <div class="stat-icon" style="background: #e6a23c;">
+          <el-card
+            shadow="hover"
+            class="stat-card"
+          >
+            <div
+              class="stat-icon"
+              style="background: #e6a23c;"
+            >
               <el-icon><Clock /></el-icon>
             </div>
             <div class="stat-info">
-              <div class="stat-value">{{ stats.pendingCount }}</div>
-              <div class="stat-label">待批改</div>
+              <div class="stat-value">
+                {{ stats.pendingCount }}
+              </div>
+              <div class="stat-label">
+                待批改
+              </div>
             </div>
           </el-card>
         </el-col>
         <el-col :span="6">
-          <el-card shadow="hover" class="stat-card">
-            <div class="stat-icon" style="background: #f56c6c;">
+          <el-card
+            shadow="hover"
+            class="stat-card"
+          >
+            <div
+              class="stat-icon"
+              style="background: #f56c6c;"
+            >
               <el-icon><User /></el-icon>
             </div>
             <div class="stat-info">
-              <div class="stat-value">{{ stats.totalStudents }}</div>
-              <div class="stat-label">学生总数</div>
+              <div class="stat-value">
+                {{ stats.totalStudents }}
+              </div>
+              <div class="stat-label">
+                学生总数
+              </div>
             </div>
           </el-card>
         </el-col>
       </el-row>
 
       <!-- 快捷操作 -->
-      <el-row :gutter="20" class="quick-actions">
+      <el-row
+        :gutter="20"
+        class="quick-actions"
+      >
         <el-col :span="12">
           <el-card>
             <template #header>
               <span>快捷操作</span>
             </template>
             <div class="action-buttons">
-              <el-button type="primary" @click="$router.push('/teacher/assignments/create')">
+              <el-button
+                type="primary"
+                @click="$router.push('/teacher/assignments/create')"
+              >
                 <el-icon><Plus /></el-icon>创建作业
               </el-button>
               <el-button @click="$router.push('/teacher/grading')">
@@ -76,11 +125,25 @@
             <template #header>
               <span>最近作业</span>
             </template>
-            <el-table :data="recentAssignments" size="small" style="width: 100%">
-              <el-table-column prop="title" label="作业名称" />
-              <el-table-column prop="status" label="状态" width="100">
+            <el-table
+              :data="recentAssignments"
+              size="small"
+              style="width: 100%"
+            >
+              <el-table-column
+                prop="title"
+                label="作业名称"
+              />
+              <el-table-column
+                prop="status"
+                label="状态"
+                width="100"
+              >
                 <template #default="{ row }">
-                  <el-tag :type="row.status === 'published' ? 'success' : 'info'" size="small">
+                  <el-tag
+                    :type="row.status === 'published' ? 'success' : 'info'"
+                    size="small"
+                  >
                     {{ row.status === 'published' ? '已发布' : '草稿' }}
                   </el-tag>
                 </template>

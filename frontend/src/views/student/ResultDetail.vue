@@ -3,18 +3,33 @@
     <div class="result-detail-page">
       <!-- 页面标题 -->
       <div class="page-header">
-        <el-button @click="goBack" :icon="ArrowLeft">返回</el-button>
+        <el-button
+          :icon="ArrowLeft"
+          @click="goBack"
+        >
+          返回
+        </el-button>
         <h2>批改结果详情</h2>
-        <el-tag v-if="submission" :type="getStatusType(submission.status)">
+        <el-tag
+          v-if="submission"
+          :type="getStatusType(submission.status)"
+        >
           {{ getStatusLabel(submission.status) }}
         </el-tag>
       </div>
 
       <!-- 加载状态 -->
-      <el-skeleton v-if="loading" :rows="10" animated />
+      <el-skeleton
+        v-if="loading"
+        :rows="10"
+        animated
+      />
 
       <!-- 主要内容 -->
-      <el-row v-else-if="submission" :gutter="20">
+      <el-row
+        v-else-if="submission"
+        :gutter="20"
+      >
         <!-- 左侧：答题详情 -->
         <el-col :span="16">
           <!-- 作业信息卡片 -->
@@ -24,7 +39,10 @@
                 <span>作业信息</span>
               </div>
             </template>
-            <el-descriptions :column="2" border>
+            <el-descriptions
+              :column="2"
+              border
+            >
               <el-descriptions-item label="作业名称">
                 {{ submission.assignment_title }}
               </el-descriptions-item>
@@ -35,7 +53,10 @@
                 {{ formatDate(submission.grading_time) }}
               </el-descriptions-item>
               <el-descriptions-item label="批改状态">
-                <el-tag :type="getStatusType(submission.status)" size="small">
+                <el-tag
+                  :type="getStatusType(submission.status)"
+                  size="small"
+                >
                   {{ getStatusLabel(submission.status) }}
                 </el-tag>
               </el-descriptions-item>
@@ -48,23 +69,47 @@
               <div class="card-header">
                 <span>答题详情</span>
                 <div class="header-stats">
-                  <el-tag type="success" size="small">正确 {{ statistics.correct_count }}</el-tag>
-                  <el-tag type="danger" size="small">错误 {{ statistics.wrong_count }}</el-tag>
+                  <el-tag
+                    type="success"
+                    size="small"
+                  >
+                    正确 {{ statistics.correct_count }}
+                  </el-tag>
+                  <el-tag
+                    type="danger"
+                    size="small"
+                  >
+                    错误 {{ statistics.wrong_count }}
+                  </el-tag>
                 </div>
               </div>
             </template>
 
-            <div v-for="answer in answers" :key="answer.id" class="answer-item" 
-                 :class="{ 'wrong': !answer.is_correct }">
+            <div
+              v-for="answer in answers"
+              :key="answer.id"
+              class="answer-item" 
+              :class="{ 'wrong': !answer.is_correct }"
+            >
               <div class="answer-header">
                 <span class="question-number">第 {{ answer.question_number }} 题</span>
-                <el-tag :type="getQuestionTypeTag(answer.question_type)" size="small">
+                <el-tag
+                  :type="getQuestionTypeTag(answer.question_type)"
+                  size="small"
+                >
                   {{ getQuestionTypeLabel(answer.question_type) }}
                 </el-tag>
-                <el-tag v-if="answer.knowledge_point" type="info" size="small">
+                <el-tag
+                  v-if="answer.knowledge_point"
+                  type="info"
+                  size="small"
+                >
                   {{ answer.knowledge_point }}
                 </el-tag>
-                <span class="answer-score" :class="answer.is_correct ? 'correct' : 'wrong'">
+                <span
+                  class="answer-score"
+                  :class="answer.is_correct ? 'correct' : 'wrong'"
+                >
                   {{ answer.score ?? 0 }} / {{ answer.max_score }} 分
                 </span>
               </div>
@@ -78,26 +123,51 @@
                 <span :class="answer.is_correct ? 'correct' : 'wrong'">
                   {{ answer.student_answer || '未作答' }}
                 </span>
-                <el-icon v-if="answer.is_correct" class="correct-icon"><CircleCheck /></el-icon>
-                <el-icon v-else class="wrong-icon"><CircleClose /></el-icon>
+                <el-icon
+                  v-if="answer.is_correct"
+                  class="correct-icon"
+                >
+                  <CircleCheck />
+                </el-icon>
+                <el-icon
+                  v-else
+                  class="wrong-icon"
+                >
+                  <CircleClose />
+                </el-icon>
               </div>
 
-              <div v-if="answer.standard_answer" class="standard-answer">
+              <div
+                v-if="answer.standard_answer"
+                class="standard-answer"
+              >
                 <strong>标准答案：</strong>{{ answer.standard_answer }}
               </div>
 
-              <div v-if="answer.ai_feedback" class="ai-feedback">
+              <div
+                v-if="answer.ai_feedback"
+                class="ai-feedback"
+              >
                 <el-icon><InfoFilled /></el-icon>
                 <span>{{ answer.ai_feedback }}</span>
               </div>
 
-              <div v-if="answer.review_comment" class="review-comment">
+              <div
+                v-if="answer.review_comment"
+                class="review-comment"
+              >
                 <el-icon><Comment /></el-icon>
                 <span><strong>教师复核：</strong>{{ answer.review_comment }}</span>
               </div>
 
-              <div v-if="answer.needs_review" class="needs-review-tag">
-                <el-tag type="warning" size="small">
+              <div
+                v-if="answer.needs_review"
+                class="needs-review-tag"
+              >
+                <el-tag
+                  type="warning"
+                  size="small"
+                >
                   <el-icon><Warning /></el-icon> 待人工复核
                 </el-tag>
               </div>
@@ -109,15 +179,23 @@
         <el-col :span="8">
           <!-- 得分统计卡片 -->
           <el-card class="score-card">
-            <template #header><span>得分统计</span></template>
+            <template #header>
+              <span>得分统计</span>
+            </template>
             <div class="total-score">
-              <span class="score-value" :class="getScoreClass()">
+              <span
+                class="score-value"
+                :class="getScoreClass()"
+              >
                 {{ submission.total_score ?? 0 }}
               </span>
               <span class="score-max">/ {{ submission.max_score }} 分</span>
             </div>
-            <el-progress :percentage="getScorePercentage()" :stroke-width="20" 
-                         :status="getProgressStatus()" />
+            <el-progress
+              :percentage="getScorePercentage()"
+              :stroke-width="20" 
+              :status="getProgressStatus()"
+            />
             <div class="score-breakdown">
               <div class="breakdown-item">
                 <span>总题数</span><span>{{ statistics.total_questions }} 题</span>
@@ -138,60 +216,115 @@
           </el-card>
 
           <!-- 错题汇总 -->
-          <el-card v-if="wrongQuestions.length > 0" class="wrong-questions-card">
-            <template #header><span>错题汇总</span></template>
-            <div v-for="(wq, index) in wrongQuestions" :key="index" class="wrong-question-item">
+          <el-card
+            v-if="wrongQuestions.length > 0"
+            class="wrong-questions-card"
+          >
+            <template #header>
+              <span>错题汇总</span>
+            </template>
+            <div
+              v-for="(wq, index) in wrongQuestions"
+              :key="index"
+              class="wrong-question-item"
+            >
               <div class="wq-header">
                 <span class="wq-number">第 {{ wq.question_number }} 题</span>
-                <el-tag v-if="wq.knowledge_point" type="danger" size="small">
+                <el-tag
+                  v-if="wq.knowledge_point"
+                  type="danger"
+                  size="small"
+                >
                   {{ wq.knowledge_point }}
                 </el-tag>
               </div>
-              <div class="wq-content">{{ truncateText(wq.question_content, 50) }}</div>
+              <div class="wq-content">
+                {{ truncateText(wq.question_content, 50) }}
+              </div>
             </div>
           </el-card>
 
           <!-- 改进建议 -->
           <el-card class="suggestions-card">
-            <template #header><span>改进建议</span></template>
+            <template #header>
+              <span>改进建议</span>
+            </template>
             <div v-if="improvementSuggestions.length > 0">
-              <div v-for="(suggestion, index) in improvementSuggestions" :key="index" 
-                   class="suggestion-item">
+              <div
+                v-for="(suggestion, index) in improvementSuggestions"
+                :key="index" 
+                class="suggestion-item"
+              >
                 <el-icon><Promotion /></el-icon>
                 <span>{{ suggestion }}</span>
               </div>
             </div>
-            <el-empty v-else description="暂无改进建议" :image-size="60" />
+            <el-empty
+              v-else
+              description="暂无改进建议"
+              :image-size="60"
+            />
           </el-card>
 
           <!-- 申请复核 -->
-          <el-card v-if="canRequestReview" class="review-request-card">
-            <template #header><span>申请人工复核</span></template>
-            <p class="review-hint">如果您对批改结果有疑问，可以申请人工复核。</p>
-            <el-form :model="reviewForm" label-position="top">
+          <el-card
+            v-if="canRequestReview"
+            class="review-request-card"
+          >
+            <template #header>
+              <span>申请人工复核</span>
+            </template>
+            <p class="review-hint">
+              如果您对批改结果有疑问，可以申请人工复核。
+            </p>
+            <el-form
+              :model="reviewForm"
+              label-position="top"
+            >
               <el-form-item label="复核原因">
-                <el-input v-model="reviewForm.reason" type="textarea" :rows="3"
-                          placeholder="请说明申请复核的原因..." maxlength="500" show-word-limit />
+                <el-input
+                  v-model="reviewForm.reason"
+                  type="textarea"
+                  :rows="3"
+                  placeholder="请说明申请复核的原因..."
+                  maxlength="500"
+                  show-word-limit
+                />
               </el-form-item>
               <el-form-item label="选择需要复核的题目">
                 <el-checkbox-group v-model="reviewForm.questionIds">
-                  <el-checkbox v-for="answer in answers" :key="answer.question_id"
-                               :label="answer.question_id" :disabled="answer.needs_review">
+                  <el-checkbox
+                    v-for="answer in answers"
+                    :key="answer.question_id"
+                    :label="answer.question_id"
+                    :disabled="answer.needs_review"
+                  >
                     第 {{ answer.question_number }} 题
-                    <span v-if="answer.needs_review" class="already-review">(已申请)</span>
+                    <span
+                      v-if="answer.needs_review"
+                      class="already-review"
+                    >(已申请)</span>
                   </el-checkbox>
                 </el-checkbox-group>
               </el-form-item>
             </el-form>
-            <el-button type="primary" @click="handleRequestReview" :loading="submittingReview"
-                       :disabled="reviewForm.questionIds.length === 0" style="width: 100%">
+            <el-button
+              type="primary"
+              :loading="submittingReview"
+              :disabled="reviewForm.questionIds.length === 0"
+              style="width: 100%"
+              @click="handleRequestReview"
+            >
               提交复核申请
             </el-button>
           </el-card>
         </el-col>
       </el-row>
 
-      <el-empty v-else description="批改结果不存在" />
+      <el-empty
+        v-else
+        description="批改结果不存在"
+      />
     </div>
   </StudentLayout>
 </template>
@@ -303,9 +436,10 @@ async function fetchGradingResult() {
       wrongQuestions.value = response.data.wrong_questions || []
       improvementSuggestions.value = response.data.improvement_suggestions || []
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('[批改结果] 获取失败:', error)
-    ElMessage.error(error.response?.data?.message || '获取批改结果失败')
+    const msg = (error as { response?: { data?: { message?: string } } })?.response?.data?.message
+    ElMessage.error(msg || '获取批改结果失败')
   } finally {
     loading.value = false
   }
@@ -329,10 +463,11 @@ async function handleRequestReview() {
     ElMessage.success('复核申请已提交，请等待教师处理')
     reviewForm.value = { reason: '', questionIds: [] }
     await fetchGradingResult()
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (error !== 'cancel') {
       console.error('[批改结果] 申请复核失败:', error)
-      ElMessage.error(error.response?.data?.message || '申请复核失败')
+      const msg = (error as { response?: { data?: { message?: string } } })?.response?.data?.message
+      ElMessage.error(msg || '申请复核失败')
     }
   } finally {
     submittingReview.value = false

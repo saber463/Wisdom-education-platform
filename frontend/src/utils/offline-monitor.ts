@@ -47,7 +47,7 @@ export function initNetworkMonitor(): void {
 
   // 监听连接变化（如果支持）
   if ('connection' in navigator) {
-    const connection = (navigator as any).connection
+    const connection = (navigator as Navigator & { connection?: { addEventListener: (type: string, listener: () => void) => void; removeEventListener: (type: string, listener: () => void) => void; effectiveType?: string } }).connection
     if (connection) {
       connection.addEventListener('change', handleConnectionChange)
     }
@@ -64,7 +64,7 @@ export function cleanupNetworkMonitor(): void {
   window.removeEventListener('offline', handleOffline)
 
   if ('connection' in navigator) {
-    const connection = (navigator as any).connection
+    const connection = (navigator as Navigator & { connection?: { addEventListener: (type: string, listener: () => void) => void; removeEventListener: (type: string, listener: () => void) => void; effectiveType?: string } }).connection
     if (connection) {
       connection.removeEventListener('change', handleConnectionChange)
     }
@@ -107,7 +107,7 @@ function handleOffline(): void {
  */
 function handleConnectionChange(): void {
   if ('connection' in navigator) {
-    const connection = (navigator as any).connection
+    const connection = (navigator as Navigator & { connection?: { addEventListener: (type: string, listener: () => void) => void; removeEventListener: (type: string, listener: () => void) => void; effectiveType?: string } }).connection
     const effectiveType = connection?.effectiveType
 
     // 判断网络速度

@@ -1,8 +1,17 @@
 <template>
-  <el-card class="task-card" shadow="hover">
+  <el-card
+    class="task-card"
+    shadow="hover"
+  >
     <div class="task-header">
       <h4>{{ task.task_description }}</h4>
-      <el-tag v-if="task.completed" type="success" size="small">已完成</el-tag>
+      <el-tag
+        v-if="task.completed"
+        type="success"
+        size="small"
+      >
+        已完成
+      </el-tag>
     </div>
     <div class="task-progress">
       <div class="progress-info">
@@ -14,12 +23,24 @@
         :status="task.completed ? 'success' : ''"
       />
     </div>
-    <div v-if="task.completed && task.reward" class="task-reward">
+    <div
+      v-if="task.completed && task.reward"
+      class="task-reward"
+    >
       <span>奖励：{{ task.reward.points }}积分</span>
       <span v-if="task.reward.badge_fragment">+ {{ task.reward.badge_fragment }}</span>
     </div>
-    <div v-else class="task-actions">
-      <el-button type="primary" size="small" @click="updateProgress">更新进度</el-button>
+    <div
+      v-else
+      class="task-actions"
+    >
+      <el-button
+        type="primary"
+        size="small"
+        @click="updateProgress"
+      >
+        更新进度
+      </el-button>
     </div>
   </el-card>
 </template>
@@ -63,9 +84,10 @@ async function updateProgress() {
     } else {
       ElMessage.error(response.msg || '更新失败')
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('更新任务进度失败:', error)
-    ElMessage.error(error.response?.data?.msg || '更新失败')
+    const msg = (error as { response?: { data?: { msg?: string } } })?.response?.data?.msg
+    ElMessage.error(msg || '更新失败')
   }
 }
 </script>

@@ -1,10 +1,18 @@
 <template>
-  <div v-if="showIndicator" class="offline-indicator" :class="indicatorClass">
+  <div
+    v-if="showIndicator"
+    class="offline-indicator"
+    :class="indicatorClass"
+  >
     <el-icon class="indicator-icon">
       <component :is="statusIcon" />
     </el-icon>
     <span class="indicator-text">{{ statusText }}</span>
-    <el-tooltip v-if="isOfflineMode" content="点击查看缓存统计" placement="bottom">
+    <el-tooltip
+      v-if="isOfflineMode"
+      content="点击查看缓存统计"
+      placement="bottom"
+    >
       <el-button
         link
         type="primary"
@@ -24,7 +32,10 @@
     @close="cacheStatsVisible = false"
   >
     <div class="cache-stats-content">
-      <el-descriptions :column="1" border>
+      <el-descriptions
+        :column="1"
+        border
+      >
         <el-descriptions-item label="缓存项数">
           {{ cacheStats.itemCount }}
         </el-descriptions-item>
@@ -46,10 +57,18 @@
       </el-descriptions>
 
       <div class="cache-actions">
-        <el-button @click="cleanupCache" type="warning" size="small">
+        <el-button
+          type="warning"
+          size="small"
+          @click="cleanupCache"
+        >
           清理过期缓存
         </el-button>
-        <el-button @click="clearAllCache" type="danger" size="small">
+        <el-button
+          type="danger"
+          size="small"
+          @click="clearAllCache"
+        >
           清空所有缓存
         </el-button>
       </div>

@@ -2,41 +2,95 @@
   <TeacherLayout>
     <div class="assignment-detail-page">
       <div class="page-header">
-        <el-button @click="goBack" :icon="ArrowLeft">返回</el-button>
+        <el-button
+          :icon="ArrowLeft"
+          @click="goBack"
+        >
+          返回
+        </el-button>
         <h2>{{ assignment?.title || '作业详情' }}</h2>
-        <div class="header-actions" v-if="assignment">
-          <el-button v-if="assignment.status === 'draft'" type="primary" @click="handlePublish">发布作业</el-button>
-          <el-tag :type="getStatusType(assignment.status)">{{ getStatusLabel(assignment.status) }}</el-tag>
+        <div
+          v-if="assignment"
+          class="header-actions"
+        >
+          <el-button
+            v-if="assignment.status === 'draft'"
+            type="primary"
+            @click="handlePublish"
+          >
+            发布作业
+          </el-button>
+          <el-tag :type="getStatusType(assignment.status)">
+            {{ getStatusLabel(assignment.status) }}
+          </el-tag>
         </div>
       </div>
 
-      <el-row :gutter="20" v-loading="loading">
+      <el-row
+        v-loading="loading"
+        :gutter="20"
+      >
         <el-col :span="16">
           <el-card class="info-card">
-            <template #header><span>基本信息</span></template>
-            <el-descriptions :column="2" border>
-              <el-descriptions-item label="作业标题">{{ assignment?.title }}</el-descriptions-item>
-              <el-descriptions-item label="所属班级">{{ assignment?.className }}</el-descriptions-item>
-              <el-descriptions-item label="难度等级">
-                <el-tag :type="getDifficultyType(assignment?.difficulty)">{{ getDifficultyLabel(assignment?.difficulty) }}</el-tag>
+            <template #header>
+              <span>基本信息</span>
+            </template>
+            <el-descriptions
+              :column="2"
+              border
+            >
+              <el-descriptions-item label="作业标题">
+                {{ assignment?.title }}
               </el-descriptions-item>
-              <el-descriptions-item label="总分">{{ assignment?.totalScore }} 分</el-descriptions-item>
-              <el-descriptions-item label="截止时间">{{ formatDate(assignment?.deadline) }}</el-descriptions-item>
-              <el-descriptions-item label="创建时间">{{ formatDate(assignment?.createdAt) }}</el-descriptions-item>
-              <el-descriptions-item label="作业描述" :span="2">{{ assignment?.description || '无' }}</el-descriptions-item>
+              <el-descriptions-item label="所属班级">
+                {{ assignment?.className }}
+              </el-descriptions-item>
+              <el-descriptions-item label="难度等级">
+                <el-tag :type="getDifficultyType(assignment?.difficulty)">
+                  {{ getDifficultyLabel(assignment?.difficulty) }}
+                </el-tag>
+              </el-descriptions-item>
+              <el-descriptions-item label="总分">
+                {{ assignment?.totalScore }} 分
+              </el-descriptions-item>
+              <el-descriptions-item label="截止时间">
+                {{ formatDate(assignment?.deadline) }}
+              </el-descriptions-item>
+              <el-descriptions-item label="创建时间">
+                {{ formatDate(assignment?.createdAt) }}
+              </el-descriptions-item>
+              <el-descriptions-item
+                label="作业描述"
+                :span="2"
+              >
+                {{ assignment?.description || '无' }}
+              </el-descriptions-item>
             </el-descriptions>
           </el-card>
 
           <el-card class="questions-card">
-            <template #header><span>题目列表 ({{ questions.length }} 题)</span></template>
-            <div v-for="(q, index) in questions" :key="q.id" class="question-item">
+            <template #header>
+              <span>题目列表 ({{ questions.length }} 题)</span>
+            </template>
+            <div
+              v-for="(q, index) in questions"
+              :key="q.id"
+              class="question-item"
+            >
               <div class="question-header">
                 <span class="question-number">第 {{ index + 1 }} 题</span>
-                <el-tag size="small">{{ getQuestionTypeLabel(q.questionType) }}</el-tag>
+                <el-tag size="small">
+                  {{ getQuestionTypeLabel(q.questionType) }}
+                </el-tag>
                 <span class="question-score">{{ q.score }} 分</span>
               </div>
-              <div class="question-content">{{ q.questionContent }}</div>
-              <div class="question-answer" v-if="q.standardAnswer">
+              <div class="question-content">
+                {{ q.questionContent }}
+              </div>
+              <div
+                v-if="q.standardAnswer"
+                class="question-answer"
+              >
                 <strong>标准答案：</strong>{{ q.standardAnswer }}
               </div>
             </div>
@@ -45,14 +99,19 @@
 
         <el-col :span="8">
           <el-card class="stats-card">
-            <template #header><span>提交统计</span></template>
+            <template #header>
+              <span>提交统计</span>
+            </template>
             <div class="stats-item">
               <span class="stats-label">提交人数</span>
               <span class="stats-value">{{ assignment?.submittedCount || 0 }} / {{ assignment?.totalStudents || 0 }}</span>
             </div>
             <div class="stats-item">
               <span class="stats-label">批改进度</span>
-              <el-progress :percentage="getGradingProgress()" :stroke-width="10" />
+              <el-progress
+                :percentage="getGradingProgress()"
+                :stroke-width="10"
+              />
             </div>
             <div class="stats-item">
               <span class="stats-label">平均分</span>
@@ -61,13 +120,32 @@
           </el-card>
 
           <el-card class="submissions-card">
-            <template #header><span>最近提交</span></template>
-            <el-table :data="recentSubmissions" size="small">
-              <el-table-column prop="studentName" label="学生" />
-              <el-table-column prop="totalScore" label="得分" width="80" />
-              <el-table-column prop="status" label="状态" width="80">
+            <template #header>
+              <span>最近提交</span>
+            </template>
+            <el-table
+              :data="recentSubmissions"
+              size="small"
+            >
+              <el-table-column
+                prop="studentName"
+                label="学生"
+              />
+              <el-table-column
+                prop="totalScore"
+                label="得分"
+                width="80"
+              />
+              <el-table-column
+                prop="status"
+                label="状态"
+                width="80"
+              >
                 <template #default="{ row }">
-                  <el-tag :type="row.status === 'graded' ? 'success' : 'warning'" size="small">
+                  <el-tag
+                    :type="row.status === 'graded' ? 'success' : 'warning'"
+                    size="small"
+                  >
                     {{ row.status === 'graded' ? '已批改' : '待批改' }}
                   </el-tag>
                 </template>
@@ -126,8 +204,8 @@ async function handlePublish() {
     await request.post(`/assignments/${assignment.value?.id}/publish`)
     ElMessage.success('作业发布成功')
     fetchAssignment()
-  } catch (error: any) {
-    if (error !== 'cancel') ElMessage.error(error.response?.data?.message || '发布失败')
+  } catch (error: unknown) {
+    if (error !== 'cancel') { const m = (error as { response?: { data?: { message?: string } } })?.response?.data?.message; ElMessage.error(m || '发布失败') }
   }
 }
 

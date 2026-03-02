@@ -2,32 +2,69 @@
   <TeacherLayout>
     <div class="grading-detail-page">
       <div class="page-header">
-        <el-button @click="goBack" :icon="ArrowLeft">返回</el-button>
+        <el-button
+          :icon="ArrowLeft"
+          @click="goBack"
+        >
+          返回
+        </el-button>
         <h2>批改详情</h2>
-        <el-tag v-if="submission" :type="getStatusType(submission.status)">{{ getStatusLabel(submission.status) }}</el-tag>
+        <el-tag
+          v-if="submission"
+          :type="getStatusType(submission.status)"
+        >
+          {{ getStatusLabel(submission.status) }}
+        </el-tag>
       </div>
 
-      <el-row :gutter="20" v-loading="loading">
+      <el-row
+        v-loading="loading"
+        :gutter="20"
+      >
         <el-col :span="16">
           <!-- 学生信息 -->
           <el-card class="info-card">
-            <template #header><span>提交信息</span></template>
-            <el-descriptions :column="2" border>
-              <el-descriptions-item label="学生姓名">{{ submission?.studentName }}</el-descriptions-item>
-              <el-descriptions-item label="作业名称">{{ submission?.assignmentTitle }}</el-descriptions-item>
-              <el-descriptions-item label="提交时间">{{ formatDate(submission?.submitTime) }}</el-descriptions-item>
-              <el-descriptions-item label="批改时间">{{ formatDate(submission?.gradingTime) }}</el-descriptions-item>
+            <template #header>
+              <span>提交信息</span>
+            </template>
+            <el-descriptions
+              :column="2"
+              border
+            >
+              <el-descriptions-item label="学生姓名">
+                {{ submission?.studentName }}
+              </el-descriptions-item>
+              <el-descriptions-item label="作业名称">
+                {{ submission?.assignmentTitle }}
+              </el-descriptions-item>
+              <el-descriptions-item label="提交时间">
+                {{ formatDate(submission?.submitTime) }}
+              </el-descriptions-item>
+              <el-descriptions-item label="批改时间">
+                {{ formatDate(submission?.gradingTime) }}
+              </el-descriptions-item>
             </el-descriptions>
           </el-card>
 
           <!-- 答题详情 -->
           <el-card class="answers-card">
-            <template #header><span>答题详情</span></template>
-            <div v-for="(answer, index) in answers" :key="answer.id" class="answer-item">
+            <template #header>
+              <span>答题详情</span>
+            </template>
+            <div
+              v-for="(answer, index) in answers"
+              :key="answer.id"
+              class="answer-item"
+            >
               <div class="answer-header">
                 <span class="question-number">第 {{ index + 1 }} 题</span>
-                <el-tag size="small">{{ getQuestionTypeLabel(answer.questionType) }}</el-tag>
-                <span class="answer-score" :class="answer.isCorrect ? 'correct' : 'wrong'">
+                <el-tag size="small">
+                  {{ getQuestionTypeLabel(answer.questionType) }}
+                </el-tag>
+                <span
+                  class="answer-score"
+                  :class="answer.isCorrect ? 'correct' : 'wrong'"
+                >
                   {{ answer.score }} / {{ answer.maxScore }} 分
                 </span>
               </div>
@@ -41,23 +78,44 @@
                 <span :class="answer.isCorrect ? 'correct' : 'wrong'">{{ answer.studentAnswer || '未作答' }}</span>
               </div>
               
-              <div class="standard-answer" v-if="answer.standardAnswer">
+              <div
+                v-if="answer.standardAnswer"
+                class="standard-answer"
+              >
                 <strong>标准答案：</strong>{{ answer.standardAnswer }}
               </div>
               
-              <div class="ai-feedback" v-if="answer.aiFeedback">
+              <div
+                v-if="answer.aiFeedback"
+                class="ai-feedback"
+              >
                 <strong>AI反馈：</strong>{{ answer.aiFeedback }}
               </div>
 
               <!-- 人工复核区域 -->
-              <div class="review-section" v-if="submission?.status === 'graded' || submission?.status === 'reviewed'">
-                <el-divider content-position="left">人工复核</el-divider>
+              <div
+                v-if="submission?.status === 'graded' || submission?.status === 'reviewed'"
+                class="review-section"
+              >
+                <el-divider content-position="left">
+                  人工复核
+                </el-divider>
                 <el-form :inline="true">
                   <el-form-item label="调整分数">
-                    <el-input-number v-model="answer.adjustedScore" :min="0" :max="answer.maxScore" size="small" />
+                    <el-input-number
+                      v-model="answer.adjustedScore"
+                      :min="0"
+                      :max="answer.maxScore"
+                      size="small"
+                    />
                   </el-form-item>
                   <el-form-item label="复核意见">
-                    <el-input v-model="answer.reviewComment" placeholder="输入复核意见" size="small" style="width: 300px" />
+                    <el-input
+                      v-model="answer.reviewComment"
+                      placeholder="输入复核意见"
+                      size="small"
+                      style="width: 300px"
+                    />
                   </el-form-item>
                 </el-form>
               </div>
@@ -68,12 +126,21 @@
         <el-col :span="8">
           <!-- 得分统计 -->
           <el-card class="score-card">
-            <template #header><span>得分统计</span></template>
+            <template #header>
+              <span>得分统计</span>
+            </template>
             <div class="total-score">
-              <span class="score-value" :class="getScoreClass(totalScore, maxScore)">{{ totalScore }}</span>
+              <span
+                class="score-value"
+                :class="getScoreClass(totalScore, maxScore)"
+              >{{ totalScore }}</span>
               <span class="score-max">/ {{ maxScore }} 分</span>
             </div>
-            <el-progress :percentage="Math.round((totalScore / maxScore) * 100)" :stroke-width="20" :status="getProgressStatus()" />
+            <el-progress
+              :percentage="Math.round((totalScore / maxScore) * 100)"
+              :stroke-width="20"
+              :status="getProgressStatus()"
+            />
             
             <div class="score-breakdown">
               <div class="breakdown-item">
@@ -89,20 +156,40 @@
 
           <!-- 改进建议 -->
           <el-card class="suggestions-card">
-            <template #header><span>改进建议</span></template>
+            <template #header>
+              <span>改进建议</span>
+            </template>
             <div v-if="suggestions.length > 0">
-              <div v-for="(suggestion, index) in suggestions" :key="index" class="suggestion-item">
+              <div
+                v-for="(suggestion, index) in suggestions"
+                :key="index"
+                class="suggestion-item"
+              >
                 <el-icon><Warning /></el-icon>
                 <span>{{ suggestion }}</span>
               </div>
             </div>
-            <el-empty v-else description="暂无改进建议" :image-size="60" />
+            <el-empty
+              v-else
+              description="暂无改进建议"
+              :image-size="60"
+            />
           </el-card>
 
           <!-- 操作按钮 -->
-          <el-card class="actions-card" v-if="submission?.status === 'graded' || submission?.status === 'reviewed'">
-            <template #header><span>复核操作</span></template>
-            <el-button type="primary" @click="handleSaveReview" :loading="saving" style="width: 100%">
+          <el-card
+            v-if="submission?.status === 'graded' || submission?.status === 'reviewed'"
+            class="actions-card"
+          >
+            <template #header>
+              <span>复核操作</span>
+            </template>
+            <el-button
+              type="primary"
+              :loading="saving"
+              style="width: 100%"
+              @click="handleSaveReview"
+            >
               保存复核结果
             </el-button>
           </el-card>
@@ -173,9 +260,10 @@ async function handleSaveReview() {
     await request.put(`/grading/${submission.value?.id}/review`, reviewData)
     ElMessage.success('复核结果保存成功')
     fetchGradingDetail()
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('[批改详情] 保存复核失败:', error)
-    ElMessage.error(error.response?.data?.message || '保存失败')
+    const msg = (error as { response?: { data?: { message?: string } } })?.response?.data?.message
+    ElMessage.error(msg || '保存失败')
   } finally { saving.value = false }
 }
 

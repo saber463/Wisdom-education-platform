@@ -11,12 +11,11 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import request from '@/utils/request'
 import InterestSurveyModal from '@/components/InterestSurveyModal.vue'
 
-const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
 

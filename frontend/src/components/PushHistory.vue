@@ -4,7 +4,12 @@
       <template #header>
         <div class="card-header">
           <span class="title">📬 推送历史</span>
-          <el-button type="primary" @click="refreshHistory">刷新</el-button>
+          <el-button
+            type="primary"
+            @click="refreshHistory"
+          >
+            刷新
+          </el-button>
         </div>
       </template>
 
@@ -12,35 +17,63 @@
       <div class="filter-section">
         <el-space>
           <span>时间范围：</span>
-          <el-radio-group v-model="selectedDays" @change="onDaysChange">
-            <el-radio :label="7">最近7天</el-radio>
-            <el-radio :label="30">最近30天</el-radio>
-            <el-radio :label="90">最近90天</el-radio>
+          <el-radio-group
+            v-model="selectedDays"
+            @change="onDaysChange"
+          >
+            <el-radio :label="7">
+              最近7天
+            </el-radio>
+            <el-radio :label="30">
+              最近30天
+            </el-radio>
+            <el-radio :label="90">
+              最近90天
+            </el-radio>
           </el-radio-group>
         </el-space>
       </div>
 
       <!-- 推送历史列表 -->
       <el-table
+        v-loading="loading"
         :data="pushHistory"
         stripe
         style="width: 100%; margin-top: 20px"
-        v-loading="loading"
       >
-        <el-table-column prop="id" label="ID" width="80" />
-        <el-table-column prop="push_content" label="推送内容" min-width="300">
+        <el-table-column
+          prop="id"
+          label="ID"
+          width="80"
+        />
+        <el-table-column
+          prop="push_content"
+          label="推送内容"
+          min-width="300"
+        >
           <template #default="{ row }">
-            <el-tooltip :content="row.push_content" placement="top">
+            <el-tooltip
+              :content="row.push_content"
+              placement="top"
+            >
               <span>{{ truncateText(row.push_content, 50) }}</span>
             </el-tooltip>
           </template>
         </el-table-column>
-        <el-table-column prop="sent_time" label="发送时间" width="180">
+        <el-table-column
+          prop="sent_time"
+          label="发送时间"
+          width="180"
+        >
           <template #default="{ row }">
             {{ formatTime(row.sent_time) }}
           </template>
         </el-table-column>
-        <el-table-column prop="receive_status" label="状态" width="100">
+        <el-table-column
+          prop="receive_status"
+          label="状态"
+          width="100"
+        >
           <template #default="{ row }">
             <el-tag
               :type="row.receive_status === 'success' ? 'success' : 'danger'"
@@ -49,7 +82,10 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="150">
+        <el-table-column
+          label="操作"
+          width="150"
+        >
           <template #default="{ row }">
             <el-button
               type="primary"
@@ -74,9 +110,19 @@
     </el-card>
 
     <!-- 详情对话框 -->
-    <el-dialog v-model="detailsVisible" title="推送详情" width="600px">
-      <div v-if="selectedPush" class="details-content">
-        <el-descriptions :column="1" border>
+    <el-dialog
+      v-model="detailsVisible"
+      title="推送详情"
+      width="600px"
+    >
+      <div
+        v-if="selectedPush"
+        class="details-content"
+      >
+        <el-descriptions
+          :column="1"
+          border
+        >
           <el-descriptions-item label="推送ID">
             {{ selectedPush.id }}
           </el-descriptions-item>
@@ -93,10 +139,16 @@
               {{ selectedPush.receive_status === 'success' ? '成功' : '失败' }}
             </el-tag>
           </el-descriptions-item>
-          <el-descriptions-item v-if="selectedPush.error_message" label="错误信息">
+          <el-descriptions-item
+            v-if="selectedPush.error_message"
+            label="错误信息"
+          >
             {{ selectedPush.error_message }}
           </el-descriptions-item>
-          <el-descriptions-item v-if="selectedPush.response_code" label="响应码">
+          <el-descriptions-item
+            v-if="selectedPush.response_code"
+            label="响应码"
+          >
             {{ selectedPush.response_code }}
           </el-descriptions-item>
         </el-descriptions>

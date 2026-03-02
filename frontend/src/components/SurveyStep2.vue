@@ -1,7 +1,11 @@
 <template>
   <div class="survey-step">
-    <h3 class="step-title">请选择您感兴趣的编程语言</h3>
-    <p class="step-description">可多选，至少选择一项</p>
+    <h3 class="step-title">
+      请选择您感兴趣的编程语言
+    </h3>
+    <p class="step-description">
+      可多选，至少选择一项
+    </p>
     
     <div class="options-grid">
       <div
@@ -15,15 +19,16 @@
       </div>
     </div>
     
-    <div v-if="modelValue.length === 0" class="error-message">
+    <div
+      v-if="modelValue.length === 0"
+      class="error-message"
+    >
       请至少选择一种编程语言
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-
 interface Props {
   modelValue: string[]
 }

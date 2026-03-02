@@ -1,0 +1,16 @@
+# 依赖与构建
+node_modules/
+dist/
+coverage/
+
+# 环境与缓存
+.env
+.env.local
+.env.*.local
+*.local
+.vite/
+
+# IDE 与系统
+.DS_Store
+Thumbs.db
+*.log

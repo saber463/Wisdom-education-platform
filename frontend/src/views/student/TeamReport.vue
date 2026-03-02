@@ -1,6 +1,9 @@
 <template>
   <div class="team-report-container">
-    <el-loading :active="loading" fullscreen />
+    <el-loading
+      :active="loading"
+      fullscreen
+    />
 
     <!-- 小组基本信息 -->
     <div class="report-section">
@@ -49,25 +52,65 @@
       <h3>成员贡献度排名</h3>
       <div class="contribution-table">
         <div class="table-header">
-          <div class="col rank">排名</div>
-          <div class="col name">成员</div>
-          <div class="col score">贡献度评分</div>
-          <div class="col stats">打卡/互评</div>
-        </div>
-        <div v-for="member in report?.member_contributions" :key="member.student_id" class="table-row">
           <div class="col rank">
-            <el-tag v-if="member.rank === 1" type="danger">{{ member.rank }}</el-tag>
-            <el-tag v-else-if="member.rank === 2" type="warning">{{ member.rank }}</el-tag>
-            <el-tag v-else-if="member.rank === 3" type="info">{{ member.rank }}</el-tag>
+            排名
+          </div>
+          <div class="col name">
+            成员
+          </div>
+          <div class="col score">
+            贡献度评分
+          </div>
+          <div class="col stats">
+            打卡/互评
+          </div>
+        </div>
+        <div
+          v-for="member in report?.member_contributions"
+          :key="member.student_id"
+          class="table-row"
+        >
+          <div class="col rank">
+            <el-tag
+              v-if="member.rank === 1"
+              type="danger"
+            >
+              {{ member.rank }}
+            </el-tag>
+            <el-tag
+              v-else-if="member.rank === 2"
+              type="warning"
+            >
+              {{ member.rank }}
+            </el-tag>
+            <el-tag
+              v-else-if="member.rank === 3"
+              type="info"
+            >
+              {{ member.rank }}
+            </el-tag>
             <span v-else>{{ member.rank }}</span>
           </div>
           <div class="col name">
-            <el-avatar :src="member.avatar_url" :alt="member.real_name" size="small" />
+            <el-avatar
+              :src="member.avatar_url"
+              :alt="member.real_name"
+              size="small"
+            />
             <span>{{ member.real_name }}</span>
-            <el-tag v-if="member.is_creator" type="success" size="small">创建者</el-tag>
+            <el-tag
+              v-if="member.is_creator"
+              type="success"
+              size="small"
+            >
+              创建者
+            </el-tag>
           </div>
           <div class="col score">
-            <el-progress :percentage="member.contribution_score" :color="getScoreColor(member.contribution_score)" />
+            <el-progress
+              :percentage="member.contribution_score"
+              :color="getScoreColor(member.contribution_score)"
+            />
           </div>
           <div class="col stats">
             {{ member.check_in_count }}/{{ member.peer_review_count }}
@@ -81,26 +124,45 @@
       <h3>打卡率统计</h3>
       <div class="stats-overview">
         <div class="stat-card">
-          <div class="stat-value">{{ report?.check_in_statistics?.avg_check_in_rate }}%</div>
-          <div class="stat-label">平均打卡率</div>
+          <div class="stat-value">
+            {{ report?.check_in_statistics?.avg_check_in_rate }}%
+          </div>
+          <div class="stat-label">
+            平均打卡率
+          </div>
         </div>
         <div class="stat-card">
-          <div class="stat-value">{{ report?.check_in_statistics?.total_check_ins }}</div>
-          <div class="stat-label">总打卡次数</div>
+          <div class="stat-value">
+            {{ report?.check_in_statistics?.total_check_ins }}
+          </div>
+          <div class="stat-label">
+            总打卡次数
+          </div>
         </div>
         <div class="stat-card">
-          <div class="stat-value">{{ report?.check_in_statistics?.total_study_duration }}</div>
-          <div class="stat-label">总学习时长(分)</div>
+          <div class="stat-value">
+            {{ report?.check_in_statistics?.total_study_duration }}
+          </div>
+          <div class="stat-label">
+            总学习时长(分)
+          </div>
         </div>
         <div class="stat-card">
-          <div class="stat-value">{{ report?.check_in_statistics?.total_completed_tasks }}</div>
-          <div class="stat-label">完成任务数</div>
+          <div class="stat-value">
+            {{ report?.check_in_statistics?.total_completed_tasks }}
+          </div>
+          <div class="stat-label">
+            完成任务数
+          </div>
         </div>
       </div>
 
       <!-- 打卡率趋势图 -->
       <div class="chart-container">
-        <div id="checkInChart" style="width: 100%; height: 300px"></div>
+        <div
+          id="checkInChart"
+          style="width: 100%; height: 300px"
+        />
       </div>
     </div>
 
@@ -108,22 +170,45 @@
     <div class="report-section">
       <h3>学习趋势（最近7天）</h3>
       <div class="chart-container">
-        <div id="trendChart" style="width: 100%; height: 300px"></div>
+        <div
+          id="trendChart"
+          style="width: 100%; height: 300px"
+        />
       </div>
 
       <!-- 趋势数据表 -->
       <div class="trend-table">
         <div class="table-header">
-          <div class="col date">日期</div>
-          <div class="col active">活跃成员</div>
-          <div class="col duration">学习时长(分)</div>
-          <div class="col tasks">完成任务数</div>
+          <div class="col date">
+            日期
+          </div>
+          <div class="col active">
+            活跃成员
+          </div>
+          <div class="col duration">
+            学习时长(分)
+          </div>
+          <div class="col tasks">
+            完成任务数
+          </div>
         </div>
-        <div v-for="trend in report?.learning_trend" :key="trend.date" class="table-row">
-          <div class="col date">{{ formatDate(trend.date) }}</div>
-          <div class="col active">{{ trend.active_members }}</div>
-          <div class="col duration">{{ trend.total_study_duration }}</div>
-          <div class="col tasks">{{ trend.total_completed_tasks }}</div>
+        <div
+          v-for="trend in report?.learning_trend"
+          :key="trend.date"
+          class="table-row"
+        >
+          <div class="col date">
+            {{ formatDate(trend.date) }}
+          </div>
+          <div class="col active">
+            {{ trend.active_members }}
+          </div>
+          <div class="col duration">
+            {{ trend.total_study_duration }}
+          </div>
+          <div class="col tasks">
+            {{ trend.total_completed_tasks }}
+          </div>
         </div>
       </div>
     </div>
@@ -133,20 +218,36 @@
       <h3>互评统计</h3>
       <div class="stats-overview">
         <div class="stat-card">
-          <div class="stat-value">{{ report?.peer_review_statistics?.total_reviews }}</div>
-          <div class="stat-label">总互评数</div>
+          <div class="stat-value">
+            {{ report?.peer_review_statistics?.total_reviews }}
+          </div>
+          <div class="stat-label">
+            总互评数
+          </div>
         </div>
         <div class="stat-card">
-          <div class="stat-value">{{ report?.peer_review_statistics?.active_reviewers }}</div>
-          <div class="stat-label">参与互评人数</div>
+          <div class="stat-value">
+            {{ report?.peer_review_statistics?.active_reviewers }}
+          </div>
+          <div class="stat-label">
+            参与互评人数
+          </div>
         </div>
         <div class="stat-card">
-          <div class="stat-value">{{ report?.peer_review_statistics?.avg_score }}</div>
-          <div class="stat-label">平均评分</div>
+          <div class="stat-value">
+            {{ report?.peer_review_statistics?.avg_score }}
+          </div>
+          <div class="stat-label">
+            平均评分
+          </div>
         </div>
         <div class="stat-card">
-          <div class="stat-value">{{ report?.peer_review_statistics?.participation_rate }}%</div>
-          <div class="stat-label">参与率</div>
+          <div class="stat-value">
+            {{ report?.peer_review_statistics?.participation_rate }}%
+          </div>
+          <div class="stat-label">
+            参与率
+          </div>
         </div>
       </div>
     </div>
@@ -171,7 +272,7 @@ interface Props {
 const props = defineProps<Props>()
 
 const loading = ref(false)
-const report = ref<any>(null)
+const report = ref<Record<string, unknown> | null>(null)
 let checkInChart: echarts.ECharts | null = null
 let trendChart: echarts.ECharts | null = null
 
@@ -208,12 +309,12 @@ const drawCheckInChart = () => {
 
   checkInChart = echarts.init(chartDom)
 
-  const dates = report.value?.check_in_statistics?.last_7_days?.map((d: any) => {
+  const dates = report.value?.check_in_statistics?.last_7_days?.map((d: { date: string }) => {
     const date = new Date(d.date)
     return `${date.getMonth() + 1}/${date.getDate()}`
   }) || []
 
-  const rates = report.value?.check_in_statistics?.last_7_days?.map((d: any) => d.check_in_rate) || []
+  const rates = report.value?.check_in_statistics?.last_7_days?.map((d: { check_in_rate?: number }) => d.check_in_rate) || []
 
   const option = {
     title: {
@@ -258,13 +359,13 @@ const drawTrendChart = () => {
 
   trendChart = echarts.init(chartDom)
 
-  const dates = report.value?.learning_trend?.map((t: any) => {
+  const dates = report.value?.learning_trend?.map((t: { date: string }) => {
     const date = new Date(t.date)
     return `${date.getMonth() + 1}/${date.getDate()}`
   }) || []
 
-  const durations = report.value?.learning_trend?.map((t: any) => t.total_study_duration) || []
-  const tasks = report.value?.learning_trend?.map((t: any) => t.total_completed_tasks) || []
+  const durations = report.value?.learning_trend?.map((t: { total_study_duration?: number }) => t.total_study_duration) || []
+  const tasks = report.value?.learning_trend?.map((t: { total_completed_tasks?: number }) => t.total_completed_tasks) || []
 
   const option = {
     title: {

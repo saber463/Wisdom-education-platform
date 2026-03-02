@@ -1,6 +1,9 @@
 <template>
   <div class="knowledge-mastery-chart">
-    <div ref="chartContainer" class="chart-container"></div>
+    <div
+      ref="chartContainer"
+      class="chart-container"
+    />
   </div>
 </template>
 

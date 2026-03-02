@@ -1,7 +1,11 @@
 <template>
   <div class="survey-step">
-    <h3 class="step-title">请选择您偏好的学习方式</h3>
-    <p class="step-description">可多选，至少选择一项</p>
+    <h3 class="step-title">
+      请选择您偏好的学习方式
+    </h3>
+    <p class="step-description">
+      可多选，至少选择一项
+    </p>
     
     <div class="options-grid">
       <div
@@ -11,13 +15,22 @@
         :class="{ active: modelValue.includes(style.value) }"
         @click="toggleStyle(style.value)"
       >
-        <div class="option-icon">{{ style.icon }}</div>
-        <div class="option-label">{{ style.label }}</div>
-        <div class="option-description">{{ style.description }}</div>
+        <div class="option-icon">
+          {{ style.icon }}
+        </div>
+        <div class="option-label">
+          {{ style.label }}
+        </div>
+        <div class="option-description">
+          {{ style.description }}
+        </div>
       </div>
     </div>
     
-    <div v-if="modelValue.length === 0" class="error-message">
+    <div
+      v-if="modelValue.length === 0"
+      class="error-message"
+    >
       请至少选择一种学习方式
     </div>
   </div>

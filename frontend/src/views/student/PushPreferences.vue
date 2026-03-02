@@ -3,7 +3,9 @@
     <!-- 页面标题 -->
     <div class="page-header">
       <h1>推送偏好设置</h1>
-      <p class="subtitle">自定义您的推送通知偏好</p>
+      <p class="subtitle">
+        自定义您的推送通知偏好
+      </p>
     </div>
 
     <!-- 推送偏好设置卡片 -->
@@ -16,8 +18,8 @@
               v-if="hasChanges"
               type="primary"
               size="small"
-              @click="handleSave"
               :loading="saving"
+              @click="handleSave"
             >
               保存设置
             </el-button>
@@ -25,14 +27,23 @@
         </template>
 
         <!-- 加载状态 -->
-        <el-skeleton v-if="loading" :rows="5" animated />
+        <el-skeleton
+          v-if="loading"
+          :rows="5"
+          animated
+        />
 
         <!-- 推送偏好设置表单 -->
-        <div v-else class="preferences-form">
+        <div
+          v-else
+          class="preferences-form"
+        >
           <!-- 打卡提醒 -->
           <div class="preference-item">
             <div class="item-header">
-              <el-icon class="item-icon"><Bell /></el-icon>
+              <el-icon class="item-icon">
+                <Bell />
+              </el-icon>
               <div class="item-info">
                 <h3>打卡提醒</h3>
                 <p>每日学习打卡提醒通知</p>
@@ -40,8 +51,8 @@
             </div>
             <el-switch
               v-model="preferences.checkInReminder"
-              @change="handlePreferenceChange"
               size="large"
+              @change="handlePreferenceChange"
             />
           </div>
 
@@ -50,7 +61,9 @@
           <!-- 任务提醒 -->
           <div class="preference-item">
             <div class="item-header">
-              <el-icon class="item-icon"><DocumentCopy /></el-icon>
+              <el-icon class="item-icon">
+                <DocumentCopy />
+              </el-icon>
               <div class="item-info">
                 <h3>任务提醒</h3>
                 <p>新作业发布和任务截止提醒</p>
@@ -58,8 +71,8 @@
             </div>
             <el-switch
               v-model="preferences.taskReminder"
-              @change="handlePreferenceChange"
               size="large"
+              @change="handlePreferenceChange"
             />
           </div>
 
@@ -68,7 +81,9 @@
           <!-- 班级通知 -->
           <div class="preference-item">
             <div class="item-header">
-              <el-icon class="item-icon"><ChatDotSquare /></el-icon>
+              <el-icon class="item-icon">
+                <ChatDotSquare />
+              </el-icon>
               <div class="item-info">
                 <h3>班级通知</h3>
                 <p>班级公告和重要通知</p>
@@ -76,8 +91,8 @@
             </div>
             <el-switch
               v-model="preferences.classNotification"
-              @change="handlePreferenceChange"
               size="large"
+              @change="handlePreferenceChange"
             />
           </div>
 
@@ -86,17 +101,37 @@
           <!-- 推送时间设置 -->
           <div class="preference-item">
             <div class="item-header">
-              <el-icon class="item-icon"><Clock /></el-icon>
+              <el-icon class="item-icon">
+                <Clock />
+              </el-icon>
               <div class="item-info">
                 <h3>推送时间</h3>
                 <p>选择您希望接收推送的时间段</p>
               </div>
             </div>
             <div class="time-settings">
-              <el-checkbox-group v-model="preferences.pushTimes" @change="handlePreferenceChange">
-                <el-checkbox label="8:00" value="08:00">上午 8:00</el-checkbox>
-                <el-checkbox label="15:00" value="15:00">下午 3:00</el-checkbox>
-                <el-checkbox label="20:00" value="20:00">晚上 8:00</el-checkbox>
+              <el-checkbox-group
+                v-model="preferences.pushTimes"
+                @change="handlePreferenceChange"
+              >
+                <el-checkbox
+                  label="8:00"
+                  value="08:00"
+                >
+                  上午 8:00
+                </el-checkbox>
+                <el-checkbox
+                  label="15:00"
+                  value="15:00"
+                >
+                  下午 3:00
+                </el-checkbox>
+                <el-checkbox
+                  label="20:00"
+                  value="20:00"
+                >
+                  晚上 8:00
+                </el-checkbox>
               </el-checkbox-group>
             </div>
           </div>
@@ -106,7 +141,9 @@
           <!-- 全局推送开关 -->
           <div class="preference-item">
             <div class="item-header">
-              <el-icon class="item-icon"><Switch /></el-icon>
+              <el-icon class="item-icon">
+                <Switch />
+              </el-icon>
               <div class="item-info">
                 <h3>全局推送开关</h3>
                 <p>关闭后将不接收任何推送通知</p>
@@ -114,8 +151,8 @@
             </div>
             <el-switch
               v-model="preferences.enablePush"
-              @change="handlePreferenceChange"
               size="large"
+              @change="handlePreferenceChange"
             />
           </div>
         </div>
@@ -155,23 +192,45 @@
         <template #header>
           <div class="card-header">
             <span>最近推送记录</span>
-            <el-button type="primary" text size="small" @click="navigateToPushHistory">
+            <el-button
+              type="primary"
+              text
+              size="small"
+              @click="navigateToPushHistory"
+            >
               查看全部
             </el-button>
           </div>
         </template>
 
         <!-- 加载状态 -->
-        <el-skeleton v-if="loadingRecent" :rows="3" animated />
+        <el-skeleton
+          v-if="loadingRecent"
+          :rows="3"
+          animated
+        />
 
         <!-- 空状态 -->
-        <el-empty v-else-if="recentPushes.length === 0" description="暂无推送记录" />
+        <el-empty
+          v-else-if="recentPushes.length === 0"
+          description="暂无推送记录"
+        />
 
         <!-- 推送记录列表 -->
-        <div v-else class="recent-list">
-          <div v-for="push in recentPushes" :key="push.id" class="recent-item">
+        <div
+          v-else
+          class="recent-list"
+        >
+          <div
+            v-for="push in recentPushes"
+            :key="push.id"
+            class="recent-item"
+          >
             <div class="item-left">
-              <el-icon class="item-icon" :class="getStatusClass(push.status)">
+              <el-icon
+                class="item-icon"
+                :class="getStatusClass(push.status)"
+              >
                 <component :is="getStatusIcon(push.status)" />
               </el-icon>
             </div>
@@ -387,7 +446,7 @@ const getStatusClass = (status: string) => {
 
 // 获取状态图标
 const getStatusIcon = (status: string) => {
-  const iconMap: Record<string, any> = {
+  const iconMap: Record<string, unknown> = {
     success: SuccessFilled,
     failed: CircleCloseFilled,
     pending: CirclePlusFilled

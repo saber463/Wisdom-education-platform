@@ -51,9 +51,10 @@ async function handleToggle(value: boolean) {
       ElMessage.error(response.msg || '操作失败')
       enabled.value = !value // 回滚
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('切换动态调整失败:', error)
-    ElMessage.error(error.response?.data?.msg || '操作失败')
+    const msg = (error as { response?: { data?: { msg?: string } } })?.response?.data?.msg
+    ElMessage.error(msg || '操作失败')
     enabled.value = !value // 回滚
   } finally {
     loading.value = false

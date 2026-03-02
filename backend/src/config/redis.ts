@@ -98,7 +98,7 @@ export async function closeRedisClient(): Promise<void> {
  */
 export async function cacheHotResource(
   key: string,
-  value: any,
+  value: unknown,
   ttl: number = 86400 // 24小时
 ): Promise<boolean> {
   // 优先使用Redis
@@ -126,7 +126,7 @@ export async function cacheHotResource(
  * @param key 缓存键
  * @returns 缓存值或null
  */
-export async function getCachedHotResource(key: string): Promise<any | null> {
+export async function getCachedHotResource(key: string): Promise<unknown | null> {
   // 优先使用Redis
   if (isRedisClientAvailable()) {
     try {

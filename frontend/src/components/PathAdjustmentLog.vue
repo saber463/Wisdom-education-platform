@@ -11,16 +11,30 @@
         <el-card shadow="hover">
           <div class="log-header">
             <h4>{{ getLogTypeText(log.adjustment_type) }}</h4>
-            <el-tag :type="getAbilityTagType(log.learning_ability_tag)" size="small">
+            <el-tag
+              :type="getAbilityTagType(log.learning_ability_tag)"
+              size="small"
+            >
               {{ getAbilityTagText(log.learning_ability_tag) }}
             </el-tag>
           </div>
-          <p class="log-summary">{{ log.adjustment_summary }}</p>
-          <div v-if="log.adjustment_details && log.adjustment_details.length > 0" class="log-details">
+          <p class="log-summary">
+            {{ log.adjustment_summary }}
+          </p>
+          <div
+            v-if="log.adjustment_details && log.adjustment_details.length > 0"
+            class="log-details"
+          >
             <el-collapse>
-              <el-collapse-item title="查看详情" name="details">
+              <el-collapse-item
+                title="查看详情"
+                name="details"
+              >
                 <ul class="details-list">
-                  <li v-for="(detail, index) in log.adjustment_details" :key="index">
+                  <li
+                    v-for="(detail, index) in log.adjustment_details"
+                    :key="index"
+                  >
                     <strong>{{ detail.knowledge_point_name }}</strong>：
                     {{ formatAdjustmentAction(detail.action) }}
                     <span class="reason">（{{ detail.reason }}）</span>

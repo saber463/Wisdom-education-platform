@@ -7,7 +7,7 @@
  * 需求：20.2 - 音频预处理（WASM）
  */
 
-import { initWasm, isWasmInitialized } from './wasm-loader'
+import { initWasm } from './wasm-loader'
 
 /**
  * 音频处理配置
@@ -45,7 +45,7 @@ export class AudioProcessor {
    */
   private initAudioContext(): void {
     try {
-      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext
+      const AudioContextClass = window.AudioContext || (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
       this.audioContext = new AudioContextClass()
     } catch (error) {
       console.error('[音频处理] AudioContext初始化失败:', error)

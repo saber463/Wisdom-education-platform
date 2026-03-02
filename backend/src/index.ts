@@ -95,14 +95,14 @@ app.use('/api/video-quiz', videoQuizRoutes);
 app.use('/api/parent', parentRoutes);
 
 // 端口检测函数 - 修改为严格模式
-async function findAvailablePort(startPort: number, maxAttempts: number = 1): Promise<number> {
+async function findAvailablePort(startPort: number, _maxAttempts: number = 1): Promise<number> {
   const net = await import('net');
   
   const port = startPort;
   await new Promise<number>((resolve, reject) => {
     const server = net.createServer();
     
-    server.once('error', (err: any) => {
+    server.once('error', (err: NodeJS.ErrnoException) => {
       if (err.code === 'EADDRINUSE') {
         reject(new Error(`端口 ${port} 已被占用，请先停止占用该端口的进程`));
       } else {
@@ -122,7 +122,7 @@ async function findAvailablePort(startPort: number, maxAttempts: number = 1): Pr
 }
 
 // 优雅关闭函数
-async function gracefulShutdown(signal: string, server?: any) {
+async function gracefulShutdown(signal: string, server?: import('http').Server) {
   logger.warn(`收到 ${signal} 信号，开始优雅关闭...`);
   
   // 设置超时强制退出
@@ -164,7 +164,7 @@ async function gracefulShutdown(signal: string, server?: any) {
 
 // 启动服务器
 async function startServer() {
-  let server: any;
+  let server: import('http').Server | undefined;
   
   try {
     // 测试数据库连接
@@ -197,7 +197,7 @@ async function startServer() {
       gracefulShutdown('uncaughtException', server);
     });
     
-    process.on('unhandledRejection', (reason: any, promise: Promise<any>) => {
+    process.on('unhandledRejection', (reason: unknown, promise: Promise<unknown>) => {
       logger.error(`未处理的Promise拒绝: ${reason}`);
       logger.error(`Promise: ${promise}`);
       gracefulShutdown('unhandledRejection', server);

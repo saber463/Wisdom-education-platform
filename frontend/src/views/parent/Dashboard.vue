@@ -4,75 +4,142 @@
       <h2>欢迎回来，{{ userStore.displayName }}</h2>
       
       <!-- 孩子选择器（如果有多个孩子） -->
-      <div v-if="children.length > 1" class="child-selector">
-        <el-select v-model="selectedChildId" placeholder="选择孩子" @change="handleChildChange">
-          <el-option v-for="child in children" :key="child.id" :label="child.name" :value="child.id" />
+      <div
+        v-if="children.length > 1"
+        class="child-selector"
+      >
+        <el-select
+          v-model="selectedChildId"
+          placeholder="选择孩子"
+          @change="handleChildChange"
+        >
+          <el-option
+            v-for="child in children"
+            :key="child.id"
+            :label="child.name"
+            :value="child.id"
+          />
         </el-select>
       </div>
       
       <!-- 统计卡片 -->
-      <el-row :gutter="20" class="stat-cards">
+      <el-row
+        :gutter="20"
+        class="stat-cards"
+      >
         <el-col :span="6">
-          <el-card shadow="hover" class="stat-card">
-            <div class="stat-icon" style="background: #409eff;">
+          <el-card
+            shadow="hover"
+            class="stat-card"
+          >
+            <div
+              class="stat-icon"
+              style="background: #409eff;"
+            >
               <el-icon><Document /></el-icon>
             </div>
             <div class="stat-info">
-              <div class="stat-value">{{ stats.latestScore ?? '-' }}</div>
-              <div class="stat-label">最新成绩</div>
+              <div class="stat-value">
+                {{ stats.latestScore ?? '-' }}
+              </div>
+              <div class="stat-label">
+                最新成绩
+              </div>
             </div>
           </el-card>
         </el-col>
         <el-col :span="6">
-          <el-card shadow="hover" class="stat-card">
-            <div class="stat-icon" style="background: #67c23a;">
+          <el-card
+            shadow="hover"
+            class="stat-card"
+          >
+            <div
+              class="stat-icon"
+              style="background: #67c23a;"
+            >
               <el-icon><Trophy /></el-icon>
             </div>
             <div class="stat-info">
-              <div class="stat-value">{{ stats.classRank ?? '-' }}</div>
-              <div class="stat-label">班级排名</div>
+              <div class="stat-value">
+                {{ stats.classRank ?? '-' }}
+              </div>
+              <div class="stat-label">
+                班级排名
+              </div>
             </div>
           </el-card>
         </el-col>
         <el-col :span="6">
-          <el-card shadow="hover" class="stat-card">
-            <div class="stat-icon" style="background: #e6a23c;">
+          <el-card
+            shadow="hover"
+            class="stat-card"
+          >
+            <div
+              class="stat-icon"
+              style="background: #e6a23c;"
+            >
               <el-icon><TrendCharts /></el-icon>
             </div>
             <div class="stat-info">
-              <div class="stat-value">{{ stats.averageScore?.toFixed(1) ?? '-' }}</div>
-              <div class="stat-label">平均分</div>
+              <div class="stat-value">
+                {{ stats.averageScore?.toFixed(1) ?? '-' }}
+              </div>
+              <div class="stat-label">
+                平均分
+              </div>
             </div>
           </el-card>
         </el-col>
         <el-col :span="6">
-          <el-card shadow="hover" class="stat-card">
-            <div class="stat-icon" style="background: #f56c6c;">
+          <el-card
+            shadow="hover"
+            class="stat-card"
+          >
+            <div
+              class="stat-icon"
+              style="background: #f56c6c;"
+            >
               <el-icon><Warning /></el-icon>
             </div>
             <div class="stat-info">
-              <div class="stat-value">{{ stats.weakPointCount ?? 0 }}</div>
-              <div class="stat-label">薄弱知识点</div>
+              <div class="stat-value">
+                {{ stats.weakPointCount ?? 0 }}
+              </div>
+              <div class="stat-label">
+                薄弱知识点
+              </div>
             </div>
           </el-card>
         </el-col>
       </el-row>
 
       <!-- 快捷操作和最近成绩 -->
-      <el-row :gutter="20" class="quick-actions">
+      <el-row
+        :gutter="20"
+        class="quick-actions"
+      >
         <el-col :span="12">
           <el-card>
             <template #header>
               <span>快捷操作</span>
             </template>
             <div class="action-buttons">
-              <el-button type="primary" @click="$router.push('/parent/monitor')">
+              <el-button
+                type="primary"
+                @click="$router.push('/parent/monitor')"
+              >
                 <el-icon><DataAnalysis /></el-icon>学情监控
               </el-button>
-              <el-button type="warning" @click="$router.push('/parent/weak-points')">
+              <el-button
+                type="warning"
+                @click="$router.push('/parent/weak-points')"
+              >
                 <el-icon><Warning /></el-icon>薄弱点详情
               </el-button>
-              <el-button type="success" @click="$router.push('/parent/messages')">
+              <el-button
+                type="success"
+                @click="$router.push('/parent/messages')"
+              >
                 <el-icon><ChatDotRound /></el-icon>家校留言
               </el-button>
             </div>
@@ -83,16 +150,31 @@
             <template #header>
               <span>最近作业成绩</span>
             </template>
-            <el-table :data="recentResults" size="small" style="width: 100%">
-              <el-table-column prop="assignmentTitle" label="作业名称" />
-              <el-table-column prop="score" label="得分" width="100">
+            <el-table
+              :data="recentResults"
+              size="small"
+              style="width: 100%"
+            >
+              <el-table-column
+                prop="assignmentTitle"
+                label="作业名称"
+              />
+              <el-table-column
+                prop="score"
+                label="得分"
+                width="100"
+              >
                 <template #default="{ row }">
                   <span :class="getScoreClass(row.score, row.totalScore)">
                     {{ row.score }} / {{ row.totalScore }}
                   </span>
                 </template>
               </el-table-column>
-              <el-table-column prop="gradingTime" label="批改时间" width="120">
+              <el-table-column
+                prop="gradingTime"
+                label="批改时间"
+                width="120"
+              >
                 <template #default="{ row }">
                   {{ formatDate(row.gradingTime) }}
                 </template>
@@ -109,8 +191,16 @@
             <template #header>
               <div class="card-header">
                 <span>最新通知</span>
-                <el-badge :value="unreadCount" :hidden="unreadCount === 0">
-                  <el-button type="primary" link>查看全部</el-button>
+                <el-badge
+                  :value="unreadCount"
+                  :hidden="unreadCount === 0"
+                >
+                  <el-button
+                    type="primary"
+                    link
+                  >
+                    查看全部
+                  </el-button>
                 </el-badge>
               </div>
             </template>
@@ -127,7 +217,11 @@
                 </div>
               </el-timeline-item>
             </el-timeline>
-            <el-empty v-else description="暂无通知" :image-size="60" />
+            <el-empty
+              v-else
+              description="暂无通知"
+              :image-size="60"
+            />
           </el-card>
         </el-col>
       </el-row>

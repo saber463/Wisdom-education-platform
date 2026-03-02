@@ -4,7 +4,12 @@
       <template #header>
         <div class="card-header">
           <span class="title">缓存管理</span>
-          <el-button type="primary" @click="refreshStats">刷新</el-button>
+          <el-button
+            type="primary"
+            @click="refreshStats"
+          >
+            刷新
+          </el-button>
         </div>
       </template>
 
@@ -12,29 +17,57 @@
       <div class="stats-section">
         <h3>缓存统计</h3>
         <el-row :gutter="20">
-          <el-col :xs="24" :sm="12" :md="6">
+          <el-col
+            :xs="24"
+            :sm="12"
+            :md="6"
+          >
             <div class="stat-card">
-              <div class="stat-label">缓存项数</div>
-              <div class="stat-value">{{ cacheStats.itemCount }}</div>
+              <div class="stat-label">
+                缓存项数
+              </div>
+              <div class="stat-value">
+                {{ cacheStats.itemCount }}
+              </div>
             </div>
           </el-col>
-          <el-col :xs="24" :sm="12" :md="6">
+          <el-col
+            :xs="24"
+            :sm="12"
+            :md="6"
+          >
             <div class="stat-card">
-              <div class="stat-label">缓存大小</div>
-              <div class="stat-value">{{ formatBytes(cacheStats.totalSize) }}</div>
+              <div class="stat-label">
+                缓存大小
+              </div>
+              <div class="stat-value">
+                {{ formatBytes(cacheStats.totalSize) }}
+              </div>
             </div>
           </el-col>
-          <el-col :xs="24" :sm="12" :md="6">
+          <el-col
+            :xs="24"
+            :sm="12"
+            :md="6"
+          >
             <div class="stat-card">
-              <div class="stat-label">最旧项</div>
+              <div class="stat-label">
+                最旧项
+              </div>
               <div class="stat-value">
                 {{ cacheStats.oldestItem ? formatDate(cacheStats.oldestItem.timestamp) : '无' }}
               </div>
             </div>
           </el-col>
-          <el-col :xs="24" :sm="12" :md="6">
+          <el-col
+            :xs="24"
+            :sm="12"
+            :md="6"
+          >
             <div class="stat-card">
-              <div class="stat-label">最新项</div>
+              <div class="stat-label">
+                最新项
+              </div>
               <div class="stat-value">
                 {{ cacheStats.newestItem ? formatDate(cacheStats.newestItem.timestamp) : '无' }}
               </div>
@@ -49,15 +82,15 @@
         <el-space wrap>
           <el-button
             type="warning"
-            @click="cleanupExpiredCache"
             :loading="isCleaningUp"
+            @click="cleanupExpiredCache"
           >
             清理过期缓存（30天以上）
           </el-button>
           <el-button
             type="danger"
-            @click="clearAllCache"
             :loading="isClearing"
+            @click="clearAllCache"
           >
             清空所有缓存
           </el-button>
@@ -73,7 +106,10 @@
       <!-- 缓存配置 -->
       <div class="config-section">
         <h3>缓存配置</h3>
-        <el-form :model="config" label-width="120px">
+        <el-form
+          :model="config"
+          label-width="120px"
+        >
           <el-form-item label="自动同步">
             <el-switch
               v-model="config.enableAutoSync"
@@ -90,10 +126,22 @@
             />
           </el-form-item>
           <el-form-item label="最大缓存大小">
-            <el-select v-model="maxCacheSizeOption" @change="updateMaxCacheSize">
-              <el-option label="1GB" :value="1" />
-              <el-option label="5GB" :value="5" />
-              <el-option label="10GB" :value="10" />
+            <el-select
+              v-model="maxCacheSizeOption"
+              @change="updateMaxCacheSize"
+            >
+              <el-option
+                label="1GB"
+                :value="1"
+              />
+              <el-option
+                label="5GB"
+                :value="5"
+              />
+              <el-option
+                label="10GB"
+                :value="10"
+              />
             </el-select>
           </el-form-item>
           <el-form-item label="缓存过期时间（天）">
@@ -110,15 +158,34 @@
       <!-- 缓存数据类型统计 -->
       <div class="data-types-section">
         <h3>缓存数据类型</h3>
-        <el-table :data="dataTypeStats" stripe style="width: 100%">
-          <el-table-column prop="type" label="数据类型" width="150" />
-          <el-table-column prop="count" label="项数" width="100" />
-          <el-table-column prop="size" label="大小" width="150">
+        <el-table
+          :data="dataTypeStats"
+          stripe
+          style="width: 100%"
+        >
+          <el-table-column
+            prop="type"
+            label="数据类型"
+            width="150"
+          />
+          <el-table-column
+            prop="count"
+            label="项数"
+            width="100"
+          />
+          <el-table-column
+            prop="size"
+            label="大小"
+            width="150"
+          >
             <template #default="{ row }">
               {{ formatBytes(row.size) }}
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="150">
+          <el-table-column
+            label="操作"
+            width="150"
+          >
             <template #default="{ row }">
               <el-button
                 link
@@ -275,14 +342,8 @@ async function clearDataType(type: string): Promise<void> {
       }
     )
 
-    const keys = await getAllCacheKeys()
-    const typeKeys = keys.filter((key) => key.startsWith(type))
-    
-    for (const key of typeKeys) {
-      // 这would require exposing deleteCacheData from the store
-      // For now, we'll just show a message
-    }
-    
+    await getAllCacheKeys()
+    // 清除需在 store 暴露 deleteCacheData 后按 type 过滤删除，此处仅提示
     ElMessage.success(`已清除${type}类型的缓存`)
     await refreshStats()
   } catch (error) {
@@ -298,7 +359,7 @@ async function clearDataType(type: string): Promise<void> {
 async function exportCacheData(): Promise<void> {
   try {
     const keys = await getAllCacheKeys()
-    const data: Record<string, any> = {}
+    const data: Record<string, unknown> = {}
     
     for (const key of keys) {
       data[key] = await getCacheData(key)

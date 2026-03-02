@@ -15,7 +15,7 @@ export interface PushNotification {
   body: string;
   icon?: string;
   badge?: string;
-  data?: Record<string, any>;
+  data?: Record<string, unknown>;
   tag?: string;
   requireInteraction?: boolean;
 }
@@ -52,7 +52,7 @@ export function isHarmonyOSPushSupported(): boolean {
   }
   
   // 检查是否存在鸿蒙推送API
-  // @ts-ignore - 鸿蒙特定API
+  // @ts-expect-error - 鸿蒙特定API
   return !!(window.harmony && window.harmony.push);
 }
 
@@ -113,9 +113,9 @@ async function initHarmonyOSNativePush(): Promise<{
   error?: string;
 }> {
   try {
-    // @ts-ignore - 鸿蒙特定API
+    // @ts-expect-error - 鸿蒙特定API
     if (window.harmony && window.harmony.push) {
-      // @ts-ignore
+      // @ts-expect-error - 鸿蒙推送 subscribe 类型未定义
       const subscription = await window.harmony.push.subscribe();
       
       return {
@@ -243,9 +243,9 @@ async function sendHarmonyOSNotification(notification: PushNotification): Promis
   error?: string;
 }> {
   try {
-    // @ts-ignore - 鸿蒙特定API
+    // @ts-expect-error - 鸿蒙特定API
     if (window.harmony && window.harmony.push) {
-      // @ts-ignore
+      // @ts-expect-error - 鸿蒙推送 notify 类型未定义
       await window.harmony.push.notify({
         title: notification.title,
         body: notification.body,
@@ -291,9 +291,9 @@ export async function unsubscribePush(): Promise<{
     
     // 如果是鸿蒙设备，尝试使用鸿蒙推送API
     if (harmonyInfo.isHarmonyOS && isHarmonyOSPushSupported()) {
-      // @ts-ignore
+      // @ts-expect-error - 鸿蒙推送 API
       if (window.harmony && window.harmony.push) {
-        // @ts-ignore
+        // @ts-expect-error - 鸿蒙推送 unsubscribe 类型未定义
         await window.harmony.push.unsubscribe();
         return { success: true };
       }
@@ -326,9 +326,9 @@ export async function getPushSubscription(): Promise<PushSubscription | null> {
     
     // 如果是鸿蒙设备，尝试使用鸿蒙推送API
     if (harmonyInfo.isHarmonyOS && isHarmonyOSPushSupported()) {
-      // @ts-ignore
+      // @ts-expect-error - 鸿蒙推送 API
       if (window.harmony && window.harmony.push) {
-        // @ts-ignore
+        // @ts-expect-error - 鸿蒙推送 getSubscription 类型未定义
         const subscription = await window.harmony.push.getSubscription();
         if (subscription) {
           return {

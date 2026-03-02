@@ -4,20 +4,34 @@
       <!-- 页面标题 -->
       <div class="page-header">
         <h2>练习推荐</h2>
-        <p class="page-desc">根据您的薄弱知识点，为您推荐针对性练习题</p>
+        <p class="page-desc">
+          根据您的薄弱知识点，为您推荐针对性练习题
+        </p>
       </div>
 
       <!-- 加载状态 -->
-      <el-skeleton v-if="loading" :rows="10" animated />
+      <el-skeleton
+        v-if="loading"
+        :rows="10"
+        animated
+      />
 
-      <el-row v-else :gutter="20">
+      <el-row
+        v-else
+        :gutter="20"
+      >
         <!-- 左侧：薄弱知识点 -->
         <el-col :span="8">
           <el-card class="weak-points-card">
             <template #header>
               <div class="card-header">
                 <span>薄弱知识点</span>
-                <el-button type="primary" link @click="refreshAnalysis" :loading="analyzing">
+                <el-button
+                  type="primary"
+                  link
+                  :loading="analyzing"
+                  @click="refreshAnalysis"
+                >
                   <el-icon><Refresh /></el-icon> 重新分析
                 </el-button>
               </div>
@@ -25,30 +39,53 @@
 
             <div v-if="weakPoints.length > 0">
               <div class="weak-point-summary">
-                <el-tag type="danger">薄弱 {{ summary.weak }}</el-tag>
-                <el-tag type="warning">进步中 {{ summary.improving }}</el-tag>
-                <el-tag type="success">已掌握 {{ summary.mastered }}</el-tag>
+                <el-tag type="danger">
+                  薄弱 {{ summary.weak }}
+                </el-tag>
+                <el-tag type="warning">
+                  进步中 {{ summary.improving }}
+                </el-tag>
+                <el-tag type="success">
+                  已掌握 {{ summary.mastered }}
+                </el-tag>
               </div>
 
-              <div v-for="wp in weakPoints" :key="wp.knowledge_point_id" class="weak-point-item"
-                   :class="getWeakPointClass(wp.status)">
+              <div
+                v-for="wp in weakPoints"
+                :key="wp.knowledge_point_id"
+                class="weak-point-item"
+                :class="getWeakPointClass(wp.status)"
+              >
                 <div class="wp-header">
                   <span class="wp-name">{{ wp.knowledge_point_name }}</span>
-                  <el-tag :type="getStatusType(wp.status)" size="small">
+                  <el-tag
+                    :type="getStatusType(wp.status)"
+                    size="small"
+                  >
                     {{ getStatusLabel(wp.status) }}
                   </el-tag>
                 </div>
                 <div class="wp-info">
                   <span class="wp-subject">{{ wp.subject }}</span>
-                  <span class="wp-rate" :class="{ 'high-rate': wp.error_rate >= 50 }">
+                  <span
+                    class="wp-rate"
+                    :class="{ 'high-rate': wp.error_rate >= 50 }"
+                  >
                     错误率: {{ wp.error_rate }}%
                   </span>
                 </div>
-                <el-progress :percentage="100 - wp.error_rate" :status="getProgressStatus(wp.error_rate)"
-                             :stroke-width="6" />
+                <el-progress
+                  :percentage="100 - wp.error_rate"
+                  :status="getProgressStatus(wp.error_rate)"
+                  :stroke-width="6"
+                />
               </div>
             </div>
-            <el-empty v-else description="暂无薄弱知识点，继续保持！" :image-size="80" />
+            <el-empty
+              v-else
+              description="暂无薄弱知识点，继续保持！"
+              :image-size="80"
+            />
           </el-card>
         </el-col>
 
@@ -58,7 +95,11 @@
             <template #header>
               <div class="card-header">
                 <span>推荐练习题 ({{ exercises.length }})</span>
-                <el-button type="primary" @click="fetchRecommendations" :loading="loadingExercises">
+                <el-button
+                  type="primary"
+                  :loading="loadingExercises"
+                  @click="fetchRecommendations"
+                >
                   <el-icon><Refresh /></el-icon> 刷新推荐
                 </el-button>
               </div>
@@ -67,37 +108,73 @@
             <div v-if="exercises.length > 0">
               <!-- 练习模式切换 -->
               <div class="practice-mode">
-                <el-radio-group v-model="practiceMode" size="small">
-                  <el-radio-button label="view">查看模式</el-radio-button>
-                  <el-radio-button label="practice">练习模式</el-radio-button>
+                <el-radio-group
+                  v-model="practiceMode"
+                  size="small"
+                >
+                  <el-radio-button label="view">
+                    查看模式
+                  </el-radio-button>
+                  <el-radio-button label="practice">
+                    练习模式
+                  </el-radio-button>
                 </el-radio-group>
               </div>
 
               <!-- 练习题列表 -->
-              <div v-for="(exercise, index) in exercises" :key="exercise.id" class="exercise-item">
+              <div
+                v-for="(exercise, index) in exercises"
+                :key="exercise.id"
+                class="exercise-item"
+              >
                 <div class="exercise-header">
                   <span class="exercise-number">第 {{ index + 1 }} 题</span>
-                  <el-tag :type="getDifficultyType(exercise.difficulty)" size="small">
+                  <el-tag
+                    :type="getDifficultyType(exercise.difficulty)"
+                    size="small"
+                  >
                     {{ getDifficultyLabel(exercise.difficulty) }}
                   </el-tag>
-                  <el-tag type="info" size="small">{{ exercise.knowledge_point_name }}</el-tag>
+                  <el-tag
+                    type="info"
+                    size="small"
+                  >
+                    {{ exercise.knowledge_point_name }}
+                  </el-tag>
                 </div>
 
-                <div class="exercise-title">{{ exercise.title }}</div>
-                <div class="exercise-content">{{ exercise.content }}</div>
+                <div class="exercise-title">
+                  {{ exercise.title }}
+                </div>
+                <div class="exercise-content">
+                  {{ exercise.content }}
+                </div>
 
                 <!-- 练习模式：显示答题输入框 -->
-                <div v-if="practiceMode === 'practice'" class="answer-input">
-                  <el-input v-model="userAnswers[exercise.id]" placeholder="请输入您的答案"
-                            :disabled="submitted" />
+                <div
+                  v-if="practiceMode === 'practice'"
+                  class="answer-input"
+                >
+                  <el-input
+                    v-model="userAnswers[exercise.id]"
+                    placeholder="请输入您的答案"
+                    :disabled="submitted"
+                  />
                 </div>
 
                 <!-- 提交后显示结果 -->
-                <div v-if="submitted && gradingResults[exercise.id]" class="grading-result"
-                     :class="gradingResults[exercise.id].is_correct ? 'correct' : 'wrong'">
+                <div
+                  v-if="submitted && gradingResults[exercise.id]"
+                  class="grading-result"
+                  :class="gradingResults[exercise.id].is_correct ? 'correct' : 'wrong'"
+                >
                   <div class="result-header">
-                    <el-icon v-if="gradingResults[exercise.id].is_correct"><CircleCheck /></el-icon>
-                    <el-icon v-else><CircleClose /></el-icon>
+                    <el-icon v-if="gradingResults[exercise.id].is_correct">
+                      <CircleCheck />
+                    </el-icon>
+                    <el-icon v-else>
+                      <CircleClose />
+                    </el-icon>
                     <span>{{ gradingResults[exercise.id].is_correct ? '回答正确' : '回答错误' }}</span>
                   </div>
                   <div class="result-detail">
@@ -111,24 +188,52 @@
               </div>
 
               <!-- 提交按钮 -->
-              <div v-if="practiceMode === 'practice'" class="submit-section">
-                <el-button v-if="!submitted" type="primary" size="large" @click="submitPractice"
-                           :loading="submitting" :disabled="!hasAnswers">
+              <div
+                v-if="practiceMode === 'practice'"
+                class="submit-section"
+              >
+                <el-button
+                  v-if="!submitted"
+                  type="primary"
+                  size="large"
+                  :loading="submitting"
+                  :disabled="!hasAnswers"
+                  @click="submitPractice"
+                >
                   提交练习
                 </el-button>
-                <div v-else class="practice-summary">
-                  <el-result :icon="practiceSummary.accuracy >= 60 ? 'success' : 'warning'"
-                             :title="`正确率: ${practiceSummary.accuracy}%`"
-                             :sub-title="`共${practiceSummary.total_questions}题，正确${practiceSummary.correct_count}题`">
+                <div
+                  v-else
+                  class="practice-summary"
+                >
+                  <el-result
+                    :icon="practiceSummary.accuracy >= 60 ? 'success' : 'warning'"
+                    :title="`正确率: ${practiceSummary.accuracy}%`"
+                    :sub-title="`共${practiceSummary.total_questions}题，正确${practiceSummary.correct_count}题`"
+                  >
                     <template #extra>
-                      <el-button type="primary" @click="resetPractice">继续练习</el-button>
+                      <el-button
+                        type="primary"
+                        @click="resetPractice"
+                      >
+                        继续练习
+                      </el-button>
                     </template>
                   </el-result>
                 </div>
               </div>
             </div>
-            <el-empty v-else description="暂无推荐练习题" :image-size="100">
-              <el-button type="primary" @click="refreshAnalysis">分析薄弱点</el-button>
+            <el-empty
+              v-else
+              description="暂无推荐练习题"
+              :image-size="100"
+            >
+              <el-button
+                type="primary"
+                @click="refreshAnalysis"
+              >
+                分析薄弱点
+              </el-button>
             </el-empty>
           </el-card>
         </el-col>
@@ -212,7 +317,7 @@ async function fetchWeakPoints() {
       weakPoints.value = response.data.weak_points.filter((wp: WeakPoint) => wp.status === 'weak' || wp.status === 'improving')
       summary.value = response.data.summary
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('[练习推荐] 获取薄弱点失败:', error)
   }
 }
@@ -229,9 +334,10 @@ async function fetchRecommendations() {
       weakPoints.value = response.data.weak_points
       exercises.value = response.data.recommended_exercises
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('[练习推荐] 获取推荐失败:', error)
-    ElMessage.error(error.response?.data?.message || '获取推荐失败')
+    const msg = (error as { response?: { data?: { message?: string } } })?.response?.data?.message
+    ElMessage.error(msg || '获取推荐失败')
   } finally {
     loadingExercises.value = false
   }
@@ -244,9 +350,10 @@ async function refreshAnalysis() {
     await request.post(`/recommendations/analyze/${studentId.value}`)
     ElMessage.success('薄弱点分析完成')
     await fetchRecommendations()
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('[练习推荐] 分析失败:', error)
-    ElMessage.error(error.response?.data?.message || '分析失败')
+    const msg = (error as { response?: { data?: { message?: string } } })?.response?.data?.message
+    ElMessage.error(msg || '分析失败')
   } finally {
     analyzing.value = false
   }
@@ -273,9 +380,10 @@ async function submitPractice() {
       ElMessage.success('练习提交成功')
       await fetchWeakPoints()
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('[练习推荐] 提交失败:', error)
-    ElMessage.error(error.response?.data?.message || '提交失败')
+    const msg = (error as { response?: { data?: { message?: string } } })?.response?.data?.message
+    ElMessage.error(msg || '提交失败')
   } finally {
     submitting.value = false
   }

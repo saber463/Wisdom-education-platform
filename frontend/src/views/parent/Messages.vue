@@ -4,8 +4,18 @@
       <div class="page-header">
         <h2>家校留言</h2>
         <div class="header-actions">
-          <el-select v-model="selectedChildId" placeholder="选择孩子" @change="handleChildChange" style="width: 150px">
-            <el-option v-for="child in children" :key="child.id" :label="child.name" :value="child.id" />
+          <el-select
+            v-model="selectedChildId"
+            placeholder="选择孩子"
+            style="width: 150px"
+            @change="handleChildChange"
+          >
+            <el-option
+              v-for="child in children"
+              :key="child.id"
+              :label="child.name"
+              :value="child.id"
+            />
           </el-select>
         </div>
       </div>
@@ -25,27 +35,44 @@
                 :class="{ active: selectedTeacher?.id === teacher.id }"
                 @click="selectTeacher(teacher)"
               >
-                <el-avatar :size="40" :src="teacher.avatarUrl">
+                <el-avatar
+                  :size="40"
+                  :src="teacher.avatarUrl"
+                >
                   {{ teacher.name?.charAt(0) }}
                 </el-avatar>
                 <div class="teacher-info">
                   <span class="teacher-name">{{ teacher.name }}</span>
                   <span class="teacher-subject">{{ teacher.subject }}</span>
                 </div>
-                <el-badge v-if="teacher.unreadCount > 0" :value="teacher.unreadCount" class="unread-badge" />
+                <el-badge
+                  v-if="teacher.unreadCount > 0"
+                  :value="teacher.unreadCount"
+                  class="unread-badge"
+                />
               </div>
-              <el-empty v-if="teachers.length === 0" description="暂无教师" :image-size="60" />
+              <el-empty
+                v-if="teachers.length === 0"
+                description="暂无教师"
+                :image-size="60"
+              />
             </div>
           </el-card>
         </el-col>
 
         <!-- 消息区域 -->
         <el-col :span="18">
-          <el-card v-if="selectedTeacher" class="chat-card">
+          <el-card
+            v-if="selectedTeacher"
+            class="chat-card"
+          >
             <template #header>
               <div class="chat-header">
                 <div class="chat-teacher-info">
-                  <el-avatar :size="36" :src="selectedTeacher.avatarUrl">
+                  <el-avatar
+                    :size="36"
+                    :src="selectedTeacher.avatarUrl"
+                  >
                     {{ selectedTeacher.name?.charAt(0) }}
                   </el-avatar>
                   <div>
@@ -57,22 +84,44 @@
             </template>
 
             <!-- 消息列表 -->
-            <div ref="messagesContainerRef" class="messages-container" v-loading="loadingMessages">
-              <div v-for="message in messages" :key="message.id" class="message-wrapper" :class="{ 'message-self': message.isSelf }">
-                <el-avatar v-if="!message.isSelf" :size="36" :src="selectedTeacher.avatarUrl">
+            <div
+              ref="messagesContainerRef"
+              v-loading="loadingMessages"
+              class="messages-container"
+            >
+              <div
+                v-for="message in messages"
+                :key="message.id"
+                class="message-wrapper"
+                :class="{ 'message-self': message.isSelf }"
+              >
+                <el-avatar
+                  v-if="!message.isSelf"
+                  :size="36"
+                  :src="selectedTeacher.avatarUrl"
+                >
                   {{ selectedTeacher.name?.charAt(0) }}
                 </el-avatar>
                 <div class="message-content">
                   <div class="message-bubble">
                     {{ message.content }}
                   </div>
-                  <div class="message-time">{{ formatTime(message.createdAt) }}</div>
+                  <div class="message-time">
+                    {{ formatTime(message.createdAt) }}
+                  </div>
                 </div>
-                <el-avatar v-if="message.isSelf" :size="36">
+                <el-avatar
+                  v-if="message.isSelf"
+                  :size="36"
+                >
                   {{ userStore.displayName?.charAt(0) }}
                 </el-avatar>
               </div>
-              <el-empty v-if="messages.length === 0 && !loadingMessages" description="暂无消息，发送第一条消息吧" :image-size="80" />
+              <el-empty
+                v-if="messages.length === 0 && !loadingMessages"
+                description="暂无消息，发送第一条消息吧"
+                :image-size="80"
+              />
             </div>
 
             <!-- 输入区域 -->
@@ -87,15 +136,26 @@
               />
               <div class="input-actions">
                 <span class="input-hint">Ctrl + Enter 发送</span>
-                <el-button type="primary" :loading="sending" :disabled="!newMessage.trim()" @click="sendMessage">
+                <el-button
+                  type="primary"
+                  :loading="sending"
+                  :disabled="!newMessage.trim()"
+                  @click="sendMessage"
+                >
                   发送
                 </el-button>
               </div>
             </div>
           </el-card>
 
-          <el-card v-else class="empty-chat-card">
-            <el-empty description="请从左侧选择一位教师开始对话" :image-size="120" />
+          <el-card
+            v-else
+            class="empty-chat-card"
+          >
+            <el-empty
+              description="请从左侧选择一位教师开始对话"
+              :image-size="120"
+            />
           </el-card>
         </el-col>
       </el-row>

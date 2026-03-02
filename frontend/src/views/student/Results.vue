@@ -4,61 +4,125 @@
       <!-- 页面标题 -->
       <div class="page-header">
         <h2>批改结果</h2>
-        <p class="page-desc">查看已批改的作业结果</p>
+        <p class="page-desc">
+          查看已批改的作业结果
+        </p>
       </div>
 
       <!-- 筛选条件 -->
       <el-card class="filter-card">
-        <el-form :inline="true" :model="filterForm">
+        <el-form
+          :inline="true"
+          :model="filterForm"
+        >
           <el-form-item label="状态">
-            <el-select v-model="filterForm.status" placeholder="全部状态" clearable style="width: 120px">
-              <el-option label="已批改" value="graded" />
-              <el-option label="已复核" value="reviewed" />
+            <el-select
+              v-model="filterForm.status"
+              placeholder="全部状态"
+              clearable
+              style="width: 120px"
+            >
+              <el-option
+                label="已批改"
+                value="graded"
+              />
+              <el-option
+                label="已复核"
+                value="reviewed"
+              />
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="fetchResults">查询</el-button>
-            <el-button @click="resetFilter">重置</el-button>
+            <el-button
+              type="primary"
+              @click="fetchResults"
+            >
+              查询
+            </el-button>
+            <el-button @click="resetFilter">
+              重置
+            </el-button>
           </el-form-item>
         </el-form>
       </el-card>
 
       <!-- 结果列表 -->
       <el-card class="results-card">
-        <el-table :data="results" v-loading="loading" stripe>
-          <el-table-column prop="assignment_title" label="作业名称" min-width="200">
+        <el-table
+          v-loading="loading"
+          :data="results"
+          stripe
+        >
+          <el-table-column
+            prop="assignment_title"
+            label="作业名称"
+            min-width="200"
+          >
             <template #default="{ row }">
               <span class="assignment-title">{{ row.assignment_title }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="submit_time" label="提交时间" width="180">
+          <el-table-column
+            prop="submit_time"
+            label="提交时间"
+            width="180"
+          >
             <template #default="{ row }">
               {{ formatDate(row.submit_time) }}
             </template>
           </el-table-column>
-          <el-table-column prop="grading_time" label="批改时间" width="180">
+          <el-table-column
+            prop="grading_time"
+            label="批改时间"
+            width="180"
+          >
             <template #default="{ row }">
               {{ formatDate(row.grading_time) }}
             </template>
           </el-table-column>
-          <el-table-column prop="total_score" label="得分" width="120" align="center">
+          <el-table-column
+            prop="total_score"
+            label="得分"
+            width="120"
+            align="center"
+          >
             <template #default="{ row }">
-              <span class="score" :class="getScoreClass(row.total_score, row.max_score)">
+              <span
+                class="score"
+                :class="getScoreClass(row.total_score, row.max_score)"
+              >
                 {{ row.total_score ?? '-' }}
               </span>
               <span class="max-score">/ {{ row.max_score }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="status" label="状态" width="100" align="center">
+          <el-table-column
+            prop="status"
+            label="状态"
+            width="100"
+            align="center"
+          >
             <template #default="{ row }">
-              <el-tag :type="getStatusType(row.status)" size="small">
+              <el-tag
+                :type="getStatusType(row.status)"
+                size="small"
+              >
                 {{ getStatusLabel(row.status) }}
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="120" align="center" fixed="right">
+          <el-table-column
+            label="操作"
+            width="120"
+            align="center"
+            fixed="right"
+          >
             <template #default="{ row }">
-              <el-button type="primary" link @click="viewDetail(row.id)">
+              <el-button
+                type="primary"
+                link
+                @click="viewDetail(row.id)"
+              >
                 查看详情
               </el-button>
             </template>
@@ -129,9 +193,10 @@ async function fetchResults() {
       results.value = response.data.submissions || []
       pagination.value.total = response.data.total || 0
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('[批改结果] 获取失败:', error)
-    ElMessage.error(error.response?.data?.message || '获取批改结果失败')
+    const msg = (error as { response?: { data?: { message?: string } } })?.response?.data?.message
+    ElMessage.error(msg || '获取批改结果失败')
   } finally {
     loading.value = false
   }

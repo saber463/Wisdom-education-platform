@@ -1,6 +1,9 @@
 <template>
   <div class="weak-points-chart">
-    <div ref="chartContainer" class="chart-container"></div>
+    <div
+      ref="chartContainer"
+      class="chart-container"
+    />
   </div>
 </template>
 

@@ -10,8 +10,13 @@
   >
     <div class="quiz-content">
       <!-- 倒计时 -->
-      <div class="countdown" v-if="countdown > 0">
-        <div class="countdown-text">剩余时间：{{ countdown }}秒</div>
+      <div
+        v-if="countdown > 0"
+        class="countdown"
+      >
+        <div class="countdown-text">
+          剩余时间：{{ countdown }}秒
+        </div>
         <el-progress
           :percentage="(countdown / 60) * 100"
           :status="countdown <= 10 ? 'exception' : ''"
@@ -20,11 +25,19 @@
       </div>
 
       <!-- 题目内容 -->
-      <div v-if="question" class="question-section">
-        <h3 class="question-title">{{ question.question_content }}</h3>
+      <div
+        v-if="question"
+        class="question-section"
+      >
+        <h3 class="question-title">
+          {{ question.question_content }}
+        </h3>
 
         <!-- 单选题 -->
-        <div v-if="question.question_type === 'single_choice'" class="options-list">
+        <div
+          v-if="question.question_type === 'single_choice'"
+          class="options-list"
+        >
           <el-radio-group v-model="userAnswer">
             <el-radio
               v-for="(option, index) in question.options"
@@ -38,7 +51,10 @@
         </div>
 
         <!-- 多选题 -->
-        <div v-if="question.question_type === 'multiple_choice'" class="options-list">
+        <div
+          v-if="question.question_type === 'multiple_choice'"
+          class="options-list"
+        >
           <el-checkbox-group v-model="userAnswer">
             <el-checkbox
               v-for="(option, index) in question.options"
@@ -52,7 +68,10 @@
         </div>
 
         <!-- 填空题 -->
-        <div v-if="question.question_type === 'fill_blank'" class="fill-blank">
+        <div
+          v-if="question.question_type === 'fill_blank'"
+          class="fill-blank"
+        >
           <el-input
             v-model="userAnswer"
             type="textarea"
@@ -63,22 +82,45 @@
       </div>
 
       <!-- 答题结果显示 -->
-      <div v-if="showResult" class="result-section">
-        <div v-if="result" :class="['result-icon', result.is_correct ? 'correct' : 'wrong']">
-          <el-icon v-if="result.is_correct" :size="64" color="#67c23a">
+      <div
+        v-if="showResult"
+        class="result-section"
+      >
+        <div
+          v-if="result"
+          :class="['result-icon', result.is_correct ? 'correct' : 'wrong']"
+        >
+          <el-icon
+            v-if="result.is_correct"
+            :size="64"
+            color="#67c23a"
+          >
             <CircleCheckFilled />
           </el-icon>
-          <el-icon v-else :size="64" color="#f56c6c">
+          <el-icon
+            v-else
+            :size="64"
+            color="#f56c6c"
+          >
             <CircleCloseFilled />
           </el-icon>
         </div>
-        <h3 v-if="result" :class="['result-title', result.is_correct ? 'correct' : 'wrong']">
+        <h3
+          v-if="result"
+          :class="['result-title', result.is_correct ? 'correct' : 'wrong']"
+        >
           {{ result.is_correct ? '回答正确！' : '回答错误' }}
         </h3>
-        <p v-if="result && result.reward > 0" class="reward-text">
+        <p
+          v-if="result && result.reward > 0"
+          class="reward-text"
+        >
           获得 {{ result.reward }} 积分奖励
         </p>
-        <div v-if="question.explanation" class="explanation">
+        <div
+          v-if="question.explanation"
+          class="explanation"
+        >
           <h4>解析：</h4>
           <p>{{ question.explanation }}</p>
         </div>
@@ -90,9 +132,9 @@
         <el-button
           v-if="!showResult"
           type="primary"
-          @click="submitAnswer"
           :disabled="!canSubmit || isSubmitting"
           :loading="isSubmitting"
+          @click="submitAnswer"
         >
           提交答案
         </el-button>
@@ -109,7 +151,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, watch, onBeforeUnmount } from 'vue'
 import { ElMessage } from 'element-plus'
 import { CircleCheckFilled, CircleCloseFilled } from '@element-plus/icons-vue'
 import request, { type ApiResponse } from '@/utils/request'
@@ -118,7 +160,7 @@ interface Props {
   modelValue: boolean
   lessonId: number
   triggerTime: number
-  question: any
+  question: Record<string, unknown>
 }
 
 interface Result {
@@ -205,9 +247,10 @@ async function submitAnswer(isTimeout = false) {
     } else {
       ElMessage.error(response.msg || '提交失败')
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('提交答案失败:', error)
-    ElMessage.error(error.response?.data?.msg || '提交失败')
+    const msg = (error as { response?: { data?: { msg?: string } } })?.response?.data?.msg
+    ElMessage.error(msg || '提交失败')
   } finally {
     isSubmitting.value = false
   }

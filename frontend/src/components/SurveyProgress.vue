@@ -4,7 +4,7 @@
       <div 
         class="progress-fill" 
         :style="{ width: `${(currentStep / totalSteps) * 100}%` }"
-      ></div>
+      />
     </div>
     <div class="progress-text">
       步骤 {{ currentStep }} / {{ totalSteps }}

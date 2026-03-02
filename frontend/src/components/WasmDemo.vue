@@ -8,7 +8,12 @@
       <p>
         <span :class="wasmStatus.class">{{ wasmStatus.text }}</span>
       </p>
-      <button v-if="!isWasmReady" @click="initializeWasm">初始化WASM</button>
+      <button
+        v-if="!isWasmReady"
+        @click="initializeWasm"
+      >
+        初始化WASM
+      </button>
     </div>
 
     <!-- 客观题答案比对演示 -->
@@ -16,17 +21,30 @@
       <h3>客观题答案比对</h3>
       <div class="input-group">
         <label>学生答案：</label>
-        <input v-model="studentAnswer" placeholder="输入学生答案" />
+        <input
+          v-model="studentAnswer"
+          placeholder="输入学生答案"
+        >
       </div>
       <div class="input-group">
         <label>标准答案：</label>
-        <input v-model="standardAnswer" placeholder="输入标准答案" />
+        <input
+          v-model="standardAnswer"
+          placeholder="输入标准答案"
+        >
       </div>
-      <button @click="testCompareAnswers">比对答案</button>
-      <div v-if="compareResult !== null" class="result">
-        <p>比对结果：<strong :class="compareResult ? 'correct' : 'incorrect'">
-          {{ compareResult ? '✓ 正确' : '✗ 错误' }}
-        </strong></p>
+      <button @click="testCompareAnswers">
+        比对答案
+      </button>
+      <div
+        v-if="compareResult !== null"
+        class="result"
+      >
+        <p>
+          比对结果：<strong :class="compareResult ? 'correct' : 'incorrect'">
+            {{ compareResult ? '✓ 正确' : '✗ 错误' }}
+          </strong>
+        </p>
       </div>
     </div>
 
@@ -35,20 +53,31 @@
       <h3>相似度计算</h3>
       <div class="input-group">
         <label>文本1：</label>
-        <input v-model="text1" placeholder="输入第一个文本" />
+        <input
+          v-model="text1"
+          placeholder="输入第一个文本"
+        >
       </div>
       <div class="input-group">
         <label>文本2：</label>
-        <input v-model="text2" placeholder="输入第二个文本" />
+        <input
+          v-model="text2"
+          placeholder="输入第二个文本"
+        >
       </div>
-      <button @click="testSimilarity">计算相似度</button>
-      <div v-if="similarityResult !== null" class="result">
+      <button @click="testSimilarity">
+        计算相似度
+      </button>
+      <div
+        v-if="similarityResult !== null"
+        class="result"
+      >
         <p>相似度：<strong>{{ (similarityResult * 100).toFixed(2) }}%</strong></p>
         <div class="progress-bar">
           <div 
             class="progress-fill" 
             :style="{ width: (similarityResult * 100) + '%' }"
-          ></div>
+          />
         </div>
       </div>
     </div>
@@ -56,10 +85,15 @@
     <!-- 性能测试 -->
     <div class="demo-card">
       <h3>性能测试</h3>
-      <button @click="runPerformanceTest" :disabled="!isWasmReady">
+      <button
+        :disabled="!isWasmReady"
+        @click="runPerformanceTest"
+      >
         运行性能测试
       </button>
-      <p class="hint">测试将在控制台输出结果</p>
+      <p class="hint">
+        测试将在控制台输出结果
+      </p>
     </div>
   </div>
 </template>

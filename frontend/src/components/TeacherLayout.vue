@@ -1,7 +1,10 @@
 <template>
   <el-container class="teacher-layout">
     <!-- 侧边栏 -->
-    <el-aside width="220px" class="sidebar">
+    <el-aside
+      width="220px"
+      class="sidebar"
+    >
       <div class="logo">
         <h2>智慧教育</h2>
         <span>教师端</span>
@@ -48,15 +51,22 @@
       <el-header class="header">
         <div class="header-left">
           <el-breadcrumb separator="/">
-            <el-breadcrumb-item :to="{ path: '/teacher/dashboard' }">首页</el-breadcrumb-item>
-            <el-breadcrumb-item v-if="currentTitle">{{ currentTitle }}</el-breadcrumb-item>
+            <el-breadcrumb-item :to="{ path: '/teacher/dashboard' }">
+              首页
+            </el-breadcrumb-item>
+            <el-breadcrumb-item v-if="currentTitle">
+              {{ currentTitle }}
+            </el-breadcrumb-item>
           </el-breadcrumb>
         </div>
         
         <div class="header-right">
           <el-dropdown @command="handleCommand">
             <span class="user-info">
-              <el-avatar :size="32" :src="userStore.userInfo?.avatarUrl">
+              <el-avatar
+                :size="32"
+                :src="userStore.userInfo?.avatarUrl"
+              >
                 {{ userStore.displayName?.charAt(0) }}
               </el-avatar>
               <span class="username">{{ userStore.displayName }}</span>
@@ -64,8 +74,15 @@
             </span>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item command="profile">个人信息</el-dropdown-item>
-                <el-dropdown-item command="logout" divided>退出登录</el-dropdown-item>
+                <el-dropdown-item command="profile">
+                  个人信息
+                </el-dropdown-item>
+                <el-dropdown-item
+                  command="logout"
+                  divided
+                >
+                  退出登录
+                </el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
@@ -74,7 +91,7 @@
       
       <!-- 内容区 -->
       <el-main class="main-content">
-        <slot></slot>
+        <slot />
       </el-main>
     </el-container>
   </el-container>

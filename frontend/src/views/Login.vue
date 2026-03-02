@@ -50,11 +50,28 @@
       <div class="login-footer">
         <p>测试账号：</p>
         <div class="test-accounts">
-          <el-tag type="primary" @click="fillTestAccount('teacher')">教师: teacher001</el-tag>
-          <el-tag type="success" @click="fillTestAccount('student')">学生: student001</el-tag>
-          <el-tag type="warning" @click="fillTestAccount('parent')">家长: parent001</el-tag>
+          <el-tag
+            type="primary"
+            @click="fillTestAccount('teacher')"
+          >
+            教师: teacher001
+          </el-tag>
+          <el-tag
+            type="success"
+            @click="fillTestAccount('student')"
+          >
+            学生: student001
+          </el-tag>
+          <el-tag
+            type="warning"
+            @click="fillTestAccount('parent')"
+          >
+            家长: parent001
+          </el-tag>
         </div>
-        <p class="password-hint">密码: teacher123 / student123 / parent123</p>
+        <p class="password-hint">
+          密码: teacher123 / student123 / parent123
+        </p>
       </div>
     </div>
   </div>
@@ -139,9 +156,9 @@ async function handleLogin() {
     const homePath = userStore.getHomePath()
     router.push(redirect || homePath)
     
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('[登录] 失败:', error)
-    ElMessage.error(error.message || '登录失败，请检查用户名和密码')
+    ElMessage.error((error instanceof Error ? error.message : null) || '登录失败，请检查用户名和密码')
   } finally {
     loading.value = false
   }

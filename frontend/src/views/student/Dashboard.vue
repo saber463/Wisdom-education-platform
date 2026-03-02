@@ -4,68 +4,123 @@
       <h2>欢迎回来，{{ userStore.displayName }}</h2>
       
       <!-- 统计卡片 -->
-      <el-row :gutter="20" class="stat-cards">
+      <el-row
+        :gutter="20"
+        class="stat-cards"
+      >
         <el-col :span="6">
-          <el-card shadow="hover" class="stat-card">
-            <div class="stat-icon" style="background: #409eff;">
+          <el-card
+            shadow="hover"
+            class="stat-card"
+          >
+            <div
+              class="stat-icon"
+              style="background: #409eff;"
+            >
               <el-icon><Document /></el-icon>
             </div>
             <div class="stat-info">
-              <div class="stat-value">{{ stats.pendingAssignments }}</div>
-              <div class="stat-label">待完成作业</div>
+              <div class="stat-value">
+                {{ stats.pendingAssignments }}
+              </div>
+              <div class="stat-label">
+                待完成作业
+              </div>
             </div>
           </el-card>
         </el-col>
         <el-col :span="6">
-          <el-card shadow="hover" class="stat-card">
-            <div class="stat-icon" style="background: #67c23a;">
+          <el-card
+            shadow="hover"
+            class="stat-card"
+          >
+            <div
+              class="stat-icon"
+              style="background: #67c23a;"
+            >
               <el-icon><Check /></el-icon>
             </div>
             <div class="stat-info">
-              <div class="stat-value">{{ stats.completedAssignments }}</div>
-              <div class="stat-label">已完成作业</div>
+              <div class="stat-value">
+                {{ stats.completedAssignments }}
+              </div>
+              <div class="stat-label">
+                已完成作业
+              </div>
             </div>
           </el-card>
         </el-col>
         <el-col :span="6">
-          <el-card shadow="hover" class="stat-card">
-            <div class="stat-icon" style="background: #e6a23c;">
+          <el-card
+            shadow="hover"
+            class="stat-card"
+          >
+            <div
+              class="stat-icon"
+              style="background: #e6a23c;"
+            >
               <el-icon><TrendCharts /></el-icon>
             </div>
             <div class="stat-info">
-              <div class="stat-value">{{ stats.averageScore }}</div>
-              <div class="stat-label">平均分</div>
+              <div class="stat-value">
+                {{ stats.averageScore }}
+              </div>
+              <div class="stat-label">
+                平均分
+              </div>
             </div>
           </el-card>
         </el-col>
         <el-col :span="6">
-          <el-card shadow="hover" class="stat-card">
-            <div class="stat-icon" style="background: #f56c6c;">
+          <el-card
+            shadow="hover"
+            class="stat-card"
+          >
+            <div
+              class="stat-icon"
+              style="background: #f56c6c;"
+            >
               <el-icon><Warning /></el-icon>
             </div>
             <div class="stat-info">
-              <div class="stat-value">{{ stats.weakPoints }}</div>
-              <div class="stat-label">薄弱知识点</div>
+              <div class="stat-value">
+                {{ stats.weakPoints }}
+              </div>
+              <div class="stat-label">
+                薄弱知识点
+              </div>
             </div>
           </el-card>
         </el-col>
       </el-row>
 
       <!-- 快捷操作和最近作业 -->
-      <el-row :gutter="20" class="quick-actions">
+      <el-row
+        :gutter="20"
+        class="quick-actions"
+      >
         <el-col :span="12">
           <el-card>
             <template #header>
               <span>快捷操作</span>
             </template>
             <div class="action-buttons">
-              <el-button type="primary" @click="$router.push('/student/assignments')">
+              <el-button
+                type="primary"
+                @click="$router.push('/student/assignments')"
+              >
                 <el-icon><Document /></el-icon>查看作业
               </el-button>
-              <el-button type="success" @click="$router.push('/student/recommendations')">
+              <el-button
+                type="success"
+                @click="$router.push('/student/recommendations')"
+              >
                 <el-icon><Star /></el-icon>练习推荐
               </el-button>
-              <el-button type="warning" @click="$router.push('/student/qa')">
+              <el-button
+                type="warning"
+                @click="$router.push('/student/qa')"
+              >
                 <el-icon><ChatDotRound /></el-icon>AI答疑
               </el-button>
             </div>
@@ -76,18 +131,37 @@
             <template #header>
               <span>待完成作业</span>
             </template>
-            <el-table :data="pendingAssignments" size="small" style="width: 100%">
-              <el-table-column prop="title" label="作业名称" />
-              <el-table-column prop="deadline" label="截止时间" width="150">
+            <el-table
+              :data="pendingAssignments"
+              size="small"
+              style="width: 100%"
+            >
+              <el-table-column
+                prop="title"
+                label="作业名称"
+              />
+              <el-table-column
+                prop="deadline"
+                label="截止时间"
+                width="150"
+              >
                 <template #default="{ row }">
                   <span :class="{ 'text-danger': isUrgent(row.deadline) }">
                     {{ formatDeadline(row.deadline) }}
                   </span>
                 </template>
               </el-table-column>
-              <el-table-column label="操作" width="80">
+              <el-table-column
+                label="操作"
+                width="80"
+              >
                 <template #default="{ row }">
-                  <el-button type="primary" size="small" link @click="goToSubmit(row.id)">
+                  <el-button
+                    type="primary"
+                    size="small"
+                    link
+                    @click="goToSubmit(row.id)"
+                  >
                     提交
                   </el-button>
                 </template>
@@ -104,28 +178,55 @@
             <template #header>
               <div class="card-header">
                 <span>最近批改结果</span>
-                <el-button type="primary" link @click="$router.push('/student/results')">
+                <el-button
+                  type="primary"
+                  link
+                  @click="$router.push('/student/results')"
+                >
                   查看全部
                 </el-button>
               </div>
             </template>
-            <el-table :data="recentResults" size="small" style="width: 100%">
-              <el-table-column prop="assignmentTitle" label="作业名称" />
-              <el-table-column prop="score" label="得分" width="100">
+            <el-table
+              :data="recentResults"
+              size="small"
+              style="width: 100%"
+            >
+              <el-table-column
+                prop="assignmentTitle"
+                label="作业名称"
+              />
+              <el-table-column
+                prop="score"
+                label="得分"
+                width="100"
+              >
                 <template #default="{ row }">
                   <span :class="getScoreClass(row.score, row.totalScore)">
                     {{ row.score }} / {{ row.totalScore }}
                   </span>
                 </template>
               </el-table-column>
-              <el-table-column prop="gradingTime" label="批改时间" width="180">
+              <el-table-column
+                prop="gradingTime"
+                label="批改时间"
+                width="180"
+              >
                 <template #default="{ row }">
                   {{ formatDate(row.gradingTime) }}
                 </template>
               </el-table-column>
-              <el-table-column label="操作" width="80">
+              <el-table-column
+                label="操作"
+                width="80"
+              >
                 <template #default="{ row }">
-                  <el-button type="primary" size="small" link @click="goToResult(row.id)">
+                  <el-button
+                    type="primary"
+                    size="small"
+                    link
+                    @click="goToResult(row.id)"
+                  >
                     详情
                   </el-button>
                 </template>
