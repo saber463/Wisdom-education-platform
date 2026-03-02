@@ -160,7 +160,7 @@ interface Props {
   modelValue: boolean
   lessonId: number
   triggerTime: number
-  question: Record<string, unknown>
+  question: { question_type?: string; options?: Array<{ value: string; label: string }>; [key: string]: unknown }
 }
 
 interface Result {

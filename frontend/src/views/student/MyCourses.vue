@@ -13,7 +13,7 @@
         >
           <el-col
             v-for="item in myCourses"
-            :key="item.purchase.id"
+            :key="String(item.purchase?.id ?? item.course?.id ?? '')"
             :xs="24"
             :sm="12"
             :md="8"
@@ -35,12 +35,12 @@
                   v-else
                   class="course-icon-placeholder"
                 >
-                  {{ item.course.language_name.charAt(0) }}
+                  {{ (item.course.language_name ?? '课').charAt(0) }}
                 </div>
               </div>
               <div class="course-content">
                 <h3>{{ item.course.display_name }}</h3>
-                <p v-if="item.branch">
+                <p v-if="item.branch?.branch_name">
                   {{ item.branch.branch_name }}
                 </p>
                 <div class="course-progress">
@@ -52,7 +52,7 @@
                 <div class="course-actions">
                   <el-button
                     type="primary"
-                    @click="goToCourse(item.course.id)"
+                    @click="goToCourse(Number(item.course?.id) || 0)"
                   >
                     继续学习
                   </el-button>
@@ -91,10 +91,16 @@ import { ElMessage } from 'element-plus'
 import request from '@/utils/request'
 import StudentLayout from '@/components/StudentLayout.vue'
 
+interface MyCourseItem {
+  purchase: { id: number; [key: string]: unknown }
+  course: { id: number; icon_url?: string; display_name?: string; language_name?: string; [key: string]: unknown }
+  branch?: { branch_name?: string; [key: string]: unknown }
+}
+
 const router = useRouter()
 
 const loading = ref(false)
-const myCourses = ref<Record<string, unknown>[]>([])
+const myCourses = ref<MyCourseItem[]>([])
 
 const pagination = ref({
   page: 1,
@@ -112,8 +118,9 @@ async function loadMyCourses() {
       }
     })
     if (response.code === 200 && response.data) {
-      myCourses.value = (response.data.courses || []) as typeof myCourses.value
-      pagination.value.total = response.data.pagination?.total || 0
+      const list = response.data.courses
+      myCourses.value = Array.isArray(list) ? (list as MyCourseItem[]) : []
+      pagination.value.total = response.data.pagination?.total ?? 0
     }
   } catch (error) {
     console.error('加载我的课程失败:', error)
@@ -123,12 +130,12 @@ async function loadMyCourses() {
   }
 }
 
-function getProgress(_item: Record<string, unknown>): number {
+function getProgress(_item: MyCourseItem): number {
   // 这里应该从API获取实际进度，暂时返回0
   return 0
 }
 
-function getProgressStatus(item: Record<string, unknown>): string {
+function getProgressStatus(item: MyCourseItem): string {
   const progress = getProgress(item)
   if (progress === 0) return ''
   if (progress === 100) return 'success'

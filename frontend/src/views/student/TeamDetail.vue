@@ -49,7 +49,7 @@
             <div class="members-list">
               <div
                 v-for="member in teamMembers"
-                :key="member.student_id"
+                :key="String(member.student_id)"
                 class="member-item"
               >
                 <el-avatar
@@ -69,8 +69,8 @@
                     </el-tag>
                   </div>
                   <div class="member-stats">
-                    <span>打卡: {{ member.statistics?.check_in_count || 0 }}次</span>
-                    <span>互评: {{ member.statistics?.peer_review_count || 0 }}次</span>
+                    <span>打卡: {{ (member.statistics?.check_in_count ?? 0) }}次</span>
+                    <span>互评: {{ (member.statistics?.peer_review_count ?? 0) }}次</span>
                   </div>
                 </div>
               </div>
@@ -388,6 +388,15 @@ import { ArrowLeft } from '@element-plus/icons-vue'
 import axios from 'axios'
 import TeamReport from './TeamReport.vue'
 
+interface TeamMember {
+  student_id: number | string
+  real_name?: string
+  avatar_url?: string
+  is_creator?: boolean
+  statistics?: { check_in_count?: number; peer_review_count?: number; [key: string]: unknown }
+  [key: string]: unknown
+}
+
 interface TeamInfo {
   team_id: number
   name: string
@@ -397,19 +406,19 @@ interface TeamInfo {
   max_members: number
   current_members: number
   created_at: string
-  members: Record<string, unknown>[]
+  members: TeamMember[]
 }
 
 const router = useRouter()
 const route = useRoute()
 
-const teamId = computed(() => parseInt(route.params.id as string))
+const teamId = computed(() => Number(route.params.id) || 0)
 const currentUserId = ref(0)
 
 // 状态
 const activeTab = ref('info')
 const teamInfo = ref<TeamInfo | null>(null)
-const teamMembers = ref<Record<string, unknown>[]>([])
+const teamMembers = ref<TeamMember[]>([])
 const checkInRecords = ref<Record<string, unknown>[]>([])
 const checkInStats = ref<Record<string, unknown> | null>(null)
 const peerReviews = ref<Record<string, unknown>[]>([])
@@ -445,8 +454,9 @@ const fetchTeamInfo = async () => {
   try {
     const response = await axios.get(`/api/teams/${teamId.value}`)
     if (response.data.success) {
-      teamInfo.value = response.data.data
-      teamMembers.value = response.data.data.members
+      const data = response.data.data as TeamInfo
+      teamInfo.value = data
+      teamMembers.value = Array.isArray(data.members) ? (data.members as TeamMember[]) : []
     }
   } catch (error) {
     console.error('获取小组信息失败:', error)

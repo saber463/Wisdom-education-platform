@@ -62,10 +62,31 @@ import request from '@/utils/request'
 import StudentLayout from '@/components/StudentLayout.vue'
 import PathAdjustmentLog from '@/components/PathAdjustmentLog.vue'
 
+/** 与 PathAdjustmentLog 组件的 logs 类型一致 */
+interface AdjustmentLog {
+  id: string
+  learning_path_id: number
+  adjustment_type: 'knowledge_evaluation' | 'ability_adaptation' | 'progress_optimization'
+  trigger_event: string
+  adjustment_details: Array<{
+    knowledge_point_id?: number
+    knowledge_point_name: string
+    old_mastery_level?: string
+    new_mastery_level?: string
+    action: string
+    reason: string
+    [key: string]: unknown
+  }>
+  learning_ability_tag: string
+  evaluation_score: number
+  adjustment_summary: string
+  created_at: string
+}
+
 const route = useRoute()
 
 const loading = ref(false)
-const logs = ref<Record<string, unknown>[]>([])
+const logs = ref<AdjustmentLog[]>([])
 
 const filters = ref({
   adjustmentType: '',
@@ -88,9 +109,9 @@ async function loadLogs() {
       params.learning_path_id = pathId
     }
 
-    const response = await request.get<{ code?: number; data?: { logs?: unknown[] }; msg?: string }>('/ai-learning-path/adjustment-log', { params })
+    const response = await request.get<{ code?: number; data?: { logs?: AdjustmentLog[] }; msg?: string }>('/ai-learning-path/adjustment-log', { params })
     if (response.code === 200) {
-      logs.value = (response.data?.logs || []) as typeof logs.value
+      logs.value = response.data?.logs ?? []
     }
   } catch (error) {
     console.error('加载调整日志失败:', error)

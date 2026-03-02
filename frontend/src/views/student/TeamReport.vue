@@ -108,8 +108,8 @@
           </div>
           <div class="col score">
             <el-progress
-              :percentage="member.contribution_score"
-              :color="getScoreColor(member.contribution_score)"
+              :percentage="member.contribution_score ?? 0"
+              :color="getScoreColor(member.contribution_score ?? 0)"
             />
           </div>
           <div class="col stats">
@@ -198,7 +198,7 @@
           class="table-row"
         >
           <div class="col date">
-            {{ formatDate(trend.date) }}
+            {{ formatDate(trend.date ?? '') }}
           </div>
           <div class="col active">
             {{ trend.active_members }}
@@ -219,7 +219,7 @@
       <div class="stats-overview">
         <div class="stat-card">
           <div class="stat-value">
-            {{ report?.peer_review_statistics?.total_reviews }}
+            {{ report?.peer_review_statistics?.total_reviews ?? report?.review_statistics?.total_reviews }}
           </div>
           <div class="stat-label">
             总互评数
@@ -227,7 +227,7 @@
         </div>
         <div class="stat-card">
           <div class="stat-value">
-            {{ report?.peer_review_statistics?.active_reviewers }}
+            {{ report?.peer_review_statistics?.active_reviewers ?? report?.review_statistics?.active_reviewers }}
           </div>
           <div class="stat-label">
             参与互评人数
@@ -235,7 +235,7 @@
         </div>
         <div class="stat-card">
           <div class="stat-value">
-            {{ report?.peer_review_statistics?.avg_score }}
+            {{ report?.peer_review_statistics?.avg_score ?? report?.review_statistics?.avg_score }}
           </div>
           <div class="stat-label">
             平均评分
@@ -243,7 +243,7 @@
         </div>
         <div class="stat-card">
           <div class="stat-value">
-            {{ report?.peer_review_statistics?.participation_rate }}%
+            {{ report?.peer_review_statistics?.participation_rate ?? report?.review_statistics?.participation_rate }}%
           </div>
           <div class="stat-label">
             参与率
@@ -254,7 +254,7 @@
 
     <!-- 报告生成时间 -->
     <div class="report-footer">
-      <p>报告生成时间：{{ formatDateTime(report?.generated_at) }}</p>
+      <p>报告生成时间：{{ formatDateTime(report?.generated_at ?? '') }}</p>
     </div>
   </div>
 </template>
@@ -269,10 +269,35 @@ interface Props {
   teamId: number
 }
 
+interface TeamReportMember {
+  student_id: number | string
+  rank?: number
+  avatar_url?: string
+  real_name?: string
+  is_creator?: boolean
+  contribution_score?: number
+  check_in_count?: number
+  peer_review_count?: number
+  [key: string]: unknown
+}
+
+interface TeamReportData {
+  team_info?: { name?: string; current_members?: number; max_members?: number; [key: string]: unknown }
+  progress_ranking?: { current_rank?: number; total_teams?: number; percentile?: number; total_study_duration?: number; total_check_ins?: number; total_completed_tasks?: number; [key: string]: unknown }
+  member_contributions?: TeamReportMember[]
+  check_in_statistics?: { last_7_days?: Array<{ date?: string; check_in_rate?: number }>; avg_check_in_rate?: number; total_check_ins?: number; [key: string]: unknown }
+  learning_trend?: Array<{ date?: string; active_members?: number; total_study_duration?: number; total_completed_tasks?: number; [key: string]: unknown }>
+  review_statistics?: { total_reviews?: number; active_reviewers?: number; avg_score?: number; participation_rate?: number; [key: string]: unknown }
+  peer_review_statistics?: { total_reviews?: number; active_reviewers?: number; avg_score?: number; participation_rate?: number; [key: string]: unknown }
+  activity_score?: number
+  generated_at?: string
+  [key: string]: unknown
+}
+
 const props = defineProps<Props>()
 
 const loading = ref(false)
-const report = ref<Record<string, unknown> | null>(null)
+const report = ref<TeamReportData | null>(null)
 let checkInChart: echarts.ECharts | null = null
 let trendChart: echarts.ECharts | null = null
 
@@ -282,7 +307,7 @@ const fetchReport = async () => {
     loading.value = true
     const response = await axios.get(`/api/teams/${props.teamId}/report`)
     if (response.data.success) {
-      report.value = response.data.data
+      report.value = (response.data.data ?? null) as TeamReportData | null
       // 延迟绘制图表，确保DOM已准备好
       setTimeout(() => {
         drawCharts()
@@ -309,12 +334,13 @@ const drawCheckInChart = () => {
 
   checkInChart = echarts.init(chartDom)
 
-  const dates = report.value?.check_in_statistics?.last_7_days?.map((d: { date: string }) => {
-    const date = new Date(d.date)
+  const last7 = report.value?.check_in_statistics?.last_7_days ?? []
+  const dates = last7.map((d: { date?: string }) => {
+    const date = new Date(d.date ?? '')
     return `${date.getMonth() + 1}/${date.getDate()}`
-  }) || []
+  })
 
-  const rates = report.value?.check_in_statistics?.last_7_days?.map((d: { check_in_rate?: number }) => d.check_in_rate) || []
+  const rates = last7.map((d: { check_in_rate?: number }) => d.check_in_rate ?? 0)
 
   const option = {
     title: {
@@ -359,13 +385,14 @@ const drawTrendChart = () => {
 
   trendChart = echarts.init(chartDom)
 
-  const dates = report.value?.learning_trend?.map((t: { date: string }) => {
-    const date = new Date(t.date)
+  const trend = report.value?.learning_trend ?? []
+  const dates = trend.map((t: { date?: string }) => {
+    const date = new Date(t.date ?? '')
     return `${date.getMonth() + 1}/${date.getDate()}`
-  }) || []
+  })
 
-  const durations = report.value?.learning_trend?.map((t: { total_study_duration?: number }) => t.total_study_duration) || []
-  const tasks = report.value?.learning_trend?.map((t: { total_completed_tasks?: number }) => t.total_completed_tasks) || []
+  const durations = trend.map((t: { total_study_duration?: number }) => t.total_study_duration ?? 0)
+  const tasks = trend.map((t: { total_completed_tasks?: number }) => t.total_completed_tasks ?? 0)
 
   const option = {
     title: {

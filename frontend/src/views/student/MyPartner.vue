@@ -25,7 +25,7 @@
                 <template #header>
                   <h3>与{{ partner.partner_name }}聊天</h3>
                 </template>
-                <PartnerChatPanel :partner-avatar="partner.partner_avatar" />
+                <PartnerChatPanel :partner-avatar="partner.partner_avatar ?? ''" />
               </el-card>
             </el-col>
 
@@ -41,7 +41,7 @@
                 <div v-if="tasks.length > 0">
                   <CollaborativeTaskCard
                     v-for="task in tasks"
-                    :key="task.task_id"
+                    :key="String(task.task_id)"
                     :task="task"
                     @updated="loadTasks"
                   />
@@ -111,19 +111,55 @@ import CollaborativeTaskCard from '@/components/CollaborativeTaskCard.vue'
 import ProgressComparison from '@/components/ProgressComparison.vue'
 import CollaborationLeaderboard from '@/components/CollaborationLeaderboard.vue'
 
+interface Partner {
+  partner_id: number
+  partner_name: string
+  partner_avatar: string
+  partner_signature: string
+  learning_ability_tag: 'efficient' | 'steady' | 'basic'
+  partner_level?: number
+  [key: string]: unknown
+}
+
+interface Task {
+  task_id: number
+  task_description: string
+  user_progress: number
+  partner_progress: number
+  target_count: number
+  completed: boolean
+  reward?: { points: number; badge_fragment: string }
+  [key: string]: unknown
+}
+
+interface LeaderboardItem {
+  user_id: number
+  partner_name: string
+  completed_tasks: number
+  rank: number
+  [key: string]: unknown
+}
+
+interface ProgressData {
+  userProgress: number
+  partnerProgress: number
+  progressDiff: number
+}
+
 const loading = ref(false)
-const partner = ref<Record<string, unknown> | null>(null)
-const tasks = ref<Record<string, unknown>[]>([])
-const progressData = ref<Record<string, unknown> | null>(null)
-const leaderboard = ref<Record<string, unknown>[]>([])
+const partner = ref<Partner | null>(null)
+const tasks = ref<Task[]>([])
+const progressData = ref<ProgressData | null>(null)
+const leaderboard = ref<LeaderboardItem[]>([])
 
 async function loadPartner() {
   loading.value = true
   try {
     const response = await request.get<{ code?: number; data?: unknown; msg?: string }>('/virtual-partner/info')
-    const data = response.data as { partner?: unknown } | undefined
+    const data = response.data as { partner?: Record<string, unknown> } | undefined
     if (response.code === 200 && data?.partner) {
-      partner.value = data.partner
+      const tag = (data.partner.learning_ability_tag ?? 'steady') as 'efficient' | 'steady' | 'basic'
+      partner.value = { ...data.partner, learning_ability_tag: tag } as Partner
       loadTasks()
       loadProgressComparison()
       loadLeaderboard()
@@ -138,9 +174,16 @@ async function loadPartner() {
 async function loadTasks() {
   try {
     const response = await request.get<{ code?: number; data?: unknown; msg?: string }>('/virtual-partner/tasks')
-    const data = response.data as { tasks?: unknown[] } | undefined
+    const data = response.data as { tasks?: Task[] } | undefined
     if (response.code === 200) {
-      tasks.value = (data?.tasks || []) as typeof tasks.value
+      const list = (data?.tasks ?? []) as Array<Record<string, unknown>>
+      tasks.value = list.map(t => {
+        const r = t.reward as Record<string, unknown> | undefined
+        return {
+          ...t,
+          reward: r ? { points: Number(r.points) || 0, badge_fragment: String(r.badge_fragment ?? '') } : undefined
+        }
+      }) as Task[]
     }
   } catch (error) {
     console.error('加载任务失败:', error)
@@ -149,11 +192,10 @@ async function loadTasks() {
 
 async function loadProgressComparison() {
   try {
-    const response = await request.get<{ code?: number; data?: unknown; msg?: string }>('/virtual-partner/leaderboard')
-    const data = response.data as { progress_diff?: number } | undefined
-    if (response.code === 200) {
-      const diff = data?.progress_diff || 0
-      // 模拟用户和伙伴进度
+    const response = await request.get<{ code?: number; data?: { progress_diff?: number }; msg?: string }>('/virtual-partner/leaderboard')
+    const data = response.data
+    if (response.code === 200 && data) {
+      const diff = data.progress_diff ?? 0
       const userProgress = 50
       const partnerProgress = userProgress + (diff > 0 ? diff : -diff)
       progressData.value = {
@@ -170,9 +212,9 @@ async function loadProgressComparison() {
 async function loadLeaderboard() {
   try {
     const response = await request.get<{ code?: number; data?: unknown; msg?: string }>('/virtual-partner/leaderboard')
-    const lbData = response.data as { leaderboard?: unknown[] } | undefined
+    const lbData = response.data as { leaderboard?: LeaderboardItem[] } | undefined
     if (response.code === 200) {
-      leaderboard.value = (lbData?.leaderboard || []) as typeof leaderboard.value
+      leaderboard.value = Array.isArray(lbData?.leaderboard) ? lbData.leaderboard : []
     }
   } catch (error) {
     console.error('加载排行榜失败:', error)
@@ -187,7 +229,7 @@ async function generatePartner() {
       inputPattern: /^\d+$/,
       inputErrorMessage: '请输入有效的路径ID'
     })
-    const pathId = parseInt(value || '0')
+    const pathId = parseInt(value ?? '0', 10)
     const response = await request.post<{ code?: number; data?: unknown; msg?: string }>('/virtual-partner/generate', {
       learning_path_id: pathId
     })

@@ -422,7 +422,8 @@ async function fetchTieredData() {
     studentsByTier.basic = students.filter(s => s.tier === 'basic')
     studentsByTier.medium = students.filter(s => s.tier === 'medium')
     studentsByTier.advanced = students.filter(s => s.tier === 'advanced')
-    updateEffectChart(data.effectData)
+    const effectPayload = (data.effectData ?? {}) as { basic?: unknown[]; medium?: unknown[]; advanced?: unknown[]; dates?: unknown[] }
+    updateEffectChart(effectPayload)
   } catch (error) {
     console.error('[分层教学] 获取数据失败:', error)
     ElMessage.error('获取分层数据失败')

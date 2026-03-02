@@ -60,10 +60,13 @@ jobs:
         run: npm ci
       
       - name: 安装 MySQL 客户端并初始化测试库
+        env:
+          MYSQL_PWD: test_password
         run: |
           sudo apt-get update -qq && sudo apt-get install -y default-mysql-client
-          for i in $(seq 1 30); do mysql -h 127.0.0.1 -P 3306 -u root -ptest_password -e "SELECT 1" 2>/dev/null && break; sleep 2; done
-          sed 's/edu_education_platform/edu_education_platform_test/g' backend/sql/learning-platform-integration-tables.sql | mysql -h 127.0.0.1 -P 3306 -u root -ptest_password
+          for i in $(seq 1 30); do mysql -h 127.0.0.1 -P 3306 -u root -e "SELECT 1" 2>/dev/null && break; sleep 2; done
+          sed 's/edu_education_platform/edu_education_platform_test/g' docs/sql/schema.sql | mysql -h 127.0.0.1 -P 3306 -u root edu_education_platform_test
+          sed 's/edu_education_platform/edu_education_platform_test/g' backend/sql/learning-platform-integration-tables.sql | mysql -h 127.0.0.1 -P 3306 -u root edu_education_platform_test
       
       - name: 代码检查
         working-directory: ./backend

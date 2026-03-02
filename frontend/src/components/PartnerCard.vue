@@ -34,7 +34,7 @@ interface Partner {
   partner_avatar: string
   partner_signature: string
   learning_ability_tag: 'efficient' | 'steady' | 'basic'
-  partner_level: number
+  partner_level?: number
 }
 
 interface Props {

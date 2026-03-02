@@ -37,9 +37,9 @@
           <!-- 视频答题弹窗 -->
           <VideoQuizModal
             v-model="showQuizModal"
-            :lesson-id="parseInt(route.params.id as string)"
+            :lesson-id="Number(route.params.id) || 0"
             :trigger-time="quizTriggerTime"
-            :question="quizQuestion"
+            :question="quizQuestion || { options: [] }"
             @submitted="handleQuizSubmitted"
           />
 
@@ -50,7 +50,7 @@
             </template>
             <div
               class="lesson-content"
-              v-html="formatContent(lesson.content)"
+              v-html="formatContent(lesson.content ?? '')"
             />
             
             <!-- 代码示例 -->
@@ -89,10 +89,29 @@ import request from '@/utils/request'
 import StudentLayout from '@/components/StudentLayout.vue'
 import VideoQuizModal from '@/components/VideoQuizModal.vue'
 
+interface LessonData {
+  video_poster?: string
+  video_url?: string
+  video_duration?: number
+  title?: string
+  description?: string
+  content?: string
+  code_example?: string
+  exercise_content?: string
+  [key: string]: unknown
+}
+
+/** VideoQuizModal 需要的题目类型 */
+interface QuizQuestion {
+  question_type?: string
+  options?: Array<{ value: string; label: string }>
+  [key: string]: unknown
+}
+
 const route = useRoute()
 
 const loading = ref(false)
-const lesson = ref<Record<string, unknown> | null>(null)
+const lesson = ref<LessonData | null>(null)
 const videoPlayer = ref<HTMLVideoElement | null>(null)
 let player: ReturnType<typeof videojs> | null = null
 
@@ -101,7 +120,7 @@ let quizCheckTimer: number | null = null
 
 const showQuizModal = ref(false)
 const quizTriggerTime = ref(0)
-const quizQuestion = ref<Record<string, unknown> | null>(null)
+const quizQuestion = ref<QuizQuestion | null>(null)
 const lastQuizCheckTime = ref(0)
 
 async function loadLesson() {
@@ -110,8 +129,8 @@ async function loadLesson() {
     const lessonId = route.params.id
     // 这里需要根据实际的API调整
     // 假设有GET /api/lessons/:id接口
-    const response = await request.get<{ code?: number; data?: unknown; msg?: string }>(`/lessons/${lessonId}`)
-    if (response.code === 200) {
+    const response = await request.get<{ code?: number; data?: LessonData; msg?: string }>(`/lessons/${lessonId}`)
+    if (response.code === 200 && response.data) {
       lesson.value = response.data
       initVideoPlayer()
     }
@@ -169,8 +188,8 @@ async function loadVideoProgress() {
     const lessonId = route.params.id
     const response = await request.get<{ code?: number; data?: unknown; msg?: string }>(`/video-progress/${lessonId}`)
     if (response.code === 200 && response.data) {
-      const progress = response.data as { current_position?: number }
-      if (player && progress.current_position != null) {
+      const progress = response.data as { current_position?: number } | undefined
+      if (player && progress?.current_position != null) {
         player.currentTime(progress.current_position)
       }
     }
@@ -183,13 +202,15 @@ async function recordProgress(isPause = false) {
   if (!player || !lesson.value) return
 
   try {
-    const currentTime = player.currentTime()
-    const duration = player.duration()
-    const playbackRate = player.playbackRate()
+    const currentTime = player.currentTime() ?? 0
+    const duration = player.duration() ?? 0
+    const playbackRate = player.playbackRate() ?? 1
 
+    const lessonId = Number(route.params.id) || 0
+    const videoUrl = lesson.value.video_url ?? ''
     await request.post('/video-progress/record', {
-      lesson_id: parseInt(route.params.id as string),
-      video_url: lesson.value.video_url,
+      lesson_id: lessonId,
+      video_url: videoUrl,
       current_position: Math.floor(currentTime),
       duration: Math.floor(duration),
       playback_speed: playbackRate,
@@ -204,7 +225,7 @@ async function recordProgress(isPause = false) {
 async function checkQuizTrigger() {
   if (!player || !lesson.value || showQuizModal.value) return
 
-  const currentTime = Math.floor(player.currentTime())
+  const currentTime = Math.floor(player.currentTime() ?? 0)
   
   // 每10秒检查一次，避免频繁请求
   if (currentTime - lastQuizCheckTime.value < 10) return
@@ -216,12 +237,12 @@ async function checkQuizTrigger() {
 
   try {
     const response = await request.get<{ code?: number; data?: { should_trigger?: boolean; trigger_time?: number; question?: unknown }; msg?: string }>(`/video-quiz/trigger/${route.params.id}`)
-    const data = response.data as { should_trigger?: boolean; trigger_time?: number; question?: unknown } | undefined
+    const data = response.data as { should_trigger?: boolean; trigger_time?: number; question?: QuizQuestion } | undefined
     if (response.code === 200 && data?.should_trigger) {
       const triggerTime = data.trigger_time ?? 0
       if (Math.abs(currentTime - triggerTime) <= 5) {
         quizTriggerTime.value = currentTime
-        quizQuestion.value = data.question
+        quizQuestion.value = (data.question ?? null) as QuizQuestion | null
         player.pause() // 暂停播放
         showQuizModal.value = true
       }

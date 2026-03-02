@@ -83,19 +83,20 @@ request.interceptors.request.use(
   }
 )
 
-// 响应拦截器 - 统一错误处理；GET 成功响应写入短时缓存
+// 响应拦截器 - 统一错误处理；GET 成功响应写入短时缓存（返回 data 供业务直接使用）
+function onResponseFulfilled(response: AxiosResponse<unknown>): unknown {
+  const cfg = response.config as AxiosRequestConfig & { _getCacheKey?: string }
+  if ((cfg.method ?? 'get').toLowerCase() === 'get' && cfg._getCacheKey && response.status === 200) {
+    const store = getCacheStore()
+    store.set(cfg._getCacheKey, {
+      data: response.data,
+      expireAt: Date.now() + GET_CACHE_TTL_MS
+    })
+  }
+  return response.data
+}
 request.interceptors.response.use(
-  (response: AxiosResponse<unknown>) => {
-    const cfg = response.config as AxiosRequestConfig & { _getCacheKey?: string }
-    if ((cfg.method ?? 'get').toLowerCase() === 'get' && cfg._getCacheKey && response.status === 200) {
-      const store = getCacheStore()
-      store.set(cfg._getCacheKey, {
-        data: response.data,
-        expireAt: Date.now() + GET_CACHE_TTL_MS
-      })
-    }
-    return response.data
-  },
+  onResponseFulfilled as (value: AxiosResponse<unknown>) => AxiosResponse<unknown>,
   (error: AxiosError<ApiResponse>) => {
     // 处理HTTP错误
     const status = error.response?.status

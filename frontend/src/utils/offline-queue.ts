@@ -321,8 +321,8 @@ export function mergeConflictingOperations(
     case 'merge':
       // 合并策略：保留服务器的基础数据，覆盖客户端的修改
       return {
-        ...serverData,
-        ...localItem.data,
+        ...(typeof serverData === 'object' && serverData !== null ? serverData : {}),
+        ...(typeof localItem.data === 'object' && localItem.data !== null ? localItem.data : {}),
         _mergedAt: Date.now()
       }
     

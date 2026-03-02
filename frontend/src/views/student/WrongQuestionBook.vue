@@ -60,7 +60,7 @@
         <div v-loading="loading">
           <WrongQuestionCard
             v-for="question in wrongQuestions"
-            :key="question.id"
+            :key="String(question.id)"
             :question="question"
             @view-detail="viewDetail(question.id)"
             @retry="retryQuestion(question.id)"
@@ -86,16 +86,35 @@ import WrongQuestionCard from '@/components/WrongQuestionCard.vue'
 import WrongQuestionFilter from '@/components/WrongQuestionFilter.vue'
 import WeakPointsChart from '@/components/WeakPointsChart.vue'
 
+interface WeakPoint {
+  knowledge_point_id: number
+  knowledge_point_name: string
+  error_count: number
+  error_rate: number
+  [key: string]: unknown
+}
+
+interface WrongQuestion {
+  id: number
+  question_content: string
+  user_answer: string
+  correct_answer: string
+  lesson_title: string
+  created_at: string
+  mastered: boolean
+  [key: string]: unknown
+}
+
 const router = useRouter()
 
 const loading = ref(false)
-const wrongQuestions = ref<Record<string, unknown>[]>([])
+const wrongQuestions = ref<WrongQuestion[]>([])
 const statistics = ref({
   total: 0,
   correct_rate: 0,
   pending_count: 0
 })
-const weakPoints = ref<Record<string, unknown>[]>([])
+const weakPoints = ref<WeakPoint[]>([])
 const filters = ref<{ lesson_id?: number; knowledge_point_id?: number; start_date?: string; end_date?: string }>({})
 
 async function loadWrongQuestions() {
@@ -107,9 +126,10 @@ async function loadWrongQuestions() {
     if (filters.value.start_date) params.start_date = filters.value.start_date
     if (filters.value.end_date) params.end_date = filters.value.end_date
 
-    const response = await request.get<{ code?: number; data?: { wrong_questions?: unknown[] }; msg?: string }>('/video-quiz/wrong-book', { params })
+    const response = await request.get<{ code?: number; data?: { wrong_questions?: WrongQuestion[] }; msg?: string }>('/video-quiz/wrong-book', { params })
     if (response.code === 200) {
-      wrongQuestions.value = (response.data?.wrong_questions || []) as typeof wrongQuestions.value
+      const list = response.data?.wrong_questions
+      wrongQuestions.value = Array.isArray(list) ? list : []
     }
   } catch (error) {
     console.error('加载错题本失败:', error)
@@ -121,9 +141,14 @@ async function loadWrongQuestions() {
 
 async function loadStatistics() {
   try {
-    const response = await request.get<{ code?: number; data?: { statistics?: unknown }; msg?: string }>('/video-quiz/statistics')
-    if (response.code === 200) {
-      statistics.value = (response.data?.statistics ?? statistics.value) as typeof statistics.value
+    const response = await request.get<{ code?: number; data?: { statistics?: { total?: number; correct_rate?: number; pending_count?: number } }; msg?: string }>('/video-quiz/statistics')
+    if (response.code === 200 && response.data?.statistics) {
+      const s = response.data.statistics
+      statistics.value = {
+        total: s.total ?? 0,
+        correct_rate: s.correct_rate ?? 0,
+        pending_count: s.pending_count ?? 0
+      }
     }
   } catch (error) {
     console.error('加载统计失败:', error)
@@ -132,9 +157,10 @@ async function loadStatistics() {
 
 async function loadWeakPoints() {
   try {
-    const response = await request.get<{ code?: number; data?: { weak_points?: unknown[] }; msg?: string }>('/video-quiz/weak-points')
+    const response = await request.get<{ code?: number; data?: { weak_points?: WeakPoint[] }; msg?: string }>('/video-quiz/weak-points')
     if (response.code === 200) {
-      weakPoints.value = (response.data?.weak_points || []) as typeof weakPoints.value
+      const list = response.data?.weak_points
+      weakPoints.value = Array.isArray(list) ? list : []
     }
   } catch (error) {
     console.error('加载薄弱点失败:', error)
@@ -153,9 +179,10 @@ function viewDetail(questionId: number) {
 async function retryQuestion(questionId: number) {
   try {
     const response = await request.post<{ code?: number; data?: { lesson_id?: number }; msg?: string }>(`/video-quiz/retry/${questionId}`)
-    if (response.code === 200 && response.data?.lesson_id != null) {
+    const lessonId = response.data?.lesson_id
+    if (response.code === 200 && lessonId != null) {
       ElMessage.success('已开始重做')
-      router.push(`/student/lessons/${response.data.lesson_id}`)
+      router.push(`/student/lessons/${String(lessonId)}`)
     } else {
       ElMessage.error(response.msg || '操作失败')
     }

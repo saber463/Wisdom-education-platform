@@ -18,8 +18,8 @@
                   {{ course.description }}
                 </p>
                 <div class="course-meta">
-                  <el-tag :type="difficultyType[course.difficulty]">
-                    {{ difficultyText[course.difficulty] }}
+                  <el-tag :type="difficultyType[course.difficulty ?? '']">
+                    {{ difficultyText[course.difficulty ?? ''] }}
                   </el-tag>
                   <span>👥 {{ course.total_students }} 人学习</span>
                   <span>📚 {{ course.total_lessons }} 个课节</span>
@@ -133,14 +133,42 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
 import StudentLayout from '@/components/StudentLayout.vue'
 
+interface Course {
+  display_name?: string
+  description?: string
+  difficulty?: string
+  total_students?: number
+  total_lessons?: number
+  avg_rating?: number
+  price?: number
+  [key: string]: unknown
+}
+
+interface Branch {
+  id: number
+  branch_name?: string
+  lesson_count?: number
+  [key: string]: unknown
+}
+
+interface Lesson {
+  id: number
+  lesson_number?: number
+  title?: string
+  description?: string
+  video_duration?: number
+  is_free?: boolean
+  [key: string]: unknown
+}
+
 const route = useRoute()
 const router = useRouter()
 
 const loading = ref(false)
 const purchasing = ref(false)
-const course = ref<Record<string, unknown> | null>(null)
-const branches = ref<Record<string, unknown>[]>([])
-const lessons = ref<Record<string, unknown>[]>([])
+const course = ref<Course | null>(null)
+const branches = ref<Branch[]>([])
+const lessons = ref<Lesson[]>([])
 const activeBranchId = ref('')
 const isPurchased = ref(false)
 
@@ -160,8 +188,8 @@ async function loadCourse() {
   loading.value = true
   try {
     const courseId = route.params.id
-    const response = await request.get<{ code?: number; data?: unknown; msg?: string }>(`/courses/${courseId}`)
-    if (response.code === 200) {
+    const response = await request.get<{ code?: number; data?: Course; msg?: string }>(`/courses/${courseId}`)
+    if (response.code === 200 && response.data) {
       course.value = response.data
     }
   } catch (error) {
@@ -175,11 +203,11 @@ async function loadCourse() {
 async function loadBranches() {
   try {
     const courseId = route.params.id
-    const response = await request.get<{ code?: number; data?: unknown; msg?: string }>(`/courses/${courseId}/branches`)
+    const response = await request.get<{ code?: number; data?: Branch[]; msg?: string }>(`/courses/${courseId}/branches`)
     if (response.code === 200) {
-      branches.value = (response.data ?? []) as typeof branches.value
+      branches.value = Array.isArray(response.data) ? response.data : []
       if (branches.value.length > 0) {
-        activeBranchId.value = branches.value[0].id.toString()
+        activeBranchId.value = String(branches.value[0].id)
         loadLessons(activeBranchId.value)
       }
     }
@@ -190,9 +218,9 @@ async function loadBranches() {
 
 async function loadLessons(branchId: string) {
   try {
-    const response = await request.get<{ code?: number; data?: unknown; msg?: string }>(`/branches/${branchId}/lessons`)
+    const response = await request.get<{ code?: number; data?: Lesson[]; msg?: string }>(`/branches/${branchId}/lessons`)
     if (response.code === 200) {
-      lessons.value = (response.data ?? []) as typeof lessons.value
+      lessons.value = Array.isArray(response.data) ? response.data : []
     }
   } catch (error) {
     console.error('加载课节失败:', error)
@@ -206,7 +234,8 @@ async function checkPurchaseStatus() {
       params: { course_id: courseId }
     })
     if (response.code === 200) {
-      isPurchased.value = (response.data?.courses || []).length > 0
+      const courses = response.data?.courses
+      isPurchased.value = Array.isArray(courses) && courses.length > 0
     }
   } catch (error) {
     console.error('检查购买状态失败:', error)
@@ -218,10 +247,11 @@ async function handlePurchase() {
     ElMessage.info('您已购买此课程')
     return
   }
-
+  const c = course.value
+  if (!c) return
   try {
     await ElMessageBox.confirm(
-      `确定要购买《${course.value.display_name}》吗？`,
+      `确定要购买《${c.display_name ?? ''}》吗？`,
       '确认购买',
       {
         confirmButtonText: '确认',
@@ -233,7 +263,7 @@ async function handlePurchase() {
     purchasing.value = true
     const courseId = route.params.id
     const response = await request.post<{ code?: number; msg?: string }>(`/courses/${courseId}/purchase`, {
-      payment_method: course.value.price === 0 ? 'free' : 'balance'
+      payment_method: (c.price === 0 ? 'free' : 'balance') as string
     })
 
     if (response.code === 200) {

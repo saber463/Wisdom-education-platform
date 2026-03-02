@@ -51,10 +51,10 @@
 
 <script setup lang="ts">
 interface AdjustmentDetail {
-  knowledge_point_id: number
+  knowledge_point_id?: number
   knowledge_point_name: string
-  old_mastery_level: string
-  new_mastery_level: string
+  old_mastery_level?: string
+  new_mastery_level?: string
   action: string
   reason: string
 }
@@ -65,7 +65,7 @@ interface AdjustmentLog {
   adjustment_type: 'knowledge_evaluation' | 'ability_adaptation' | 'progress_optimization'
   trigger_event: string
   adjustment_details: AdjustmentDetail[]
-  learning_ability_tag: 'efficient' | 'steady' | 'basic'
+  learning_ability_tag: string
   evaluation_score: number
   adjustment_summary: string
   created_at: string
