@@ -1,0 +1,299 @@
+name: ErrorCN CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop, release/*, hotfix/*]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '流水线.md'
+  pull_request:
+    branches: [main, develop]
+  release:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: '部署环境 (dev/staging/prod)'
+        required: true
+        default: 'dev'
+      skip_tests:
+        description: '跳过测试'
+        required: false
+        default: 'false'
+        type: boolean
+
+env:
+  NODE_VERSION: '20'
+  JAVA_VERSION: '17'
+
+jobs:
+  # 阶段1: 代码质量检查
+  quality-check:
+    name: Code Quality Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: core/package-lock.json
+
+      - name: Install dependencies
+        run: |
+          cd core
+          npm ci
+
+      - name: ESLint Check
+        run: |
+          cd core
+          npm run lint || true
+        continue-on-error: true
+
+      - name: TypeScript Compile
+        run: |
+          cd core
+          npm run typecheck || true
+        continue-on-error: true
+
+      - name: Build Core Module
+        run: |
+          cd core
+          npm run build
+
+      - name: Build VSCode Plugin
+        run: |
+          cd vscode
+          npm install
+          npm run compile
+
+  # 阶段2: 单元测试 - Core模块
+  test-core:
+    name: Unit Tests (Core)
+    runs-on: ubuntu-latest
+    needs: quality-check
+    strategy:
+      matrix:
+        node-version: ['18', '20', '22']
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: core/package-lock.json
+
+      - name: Install dependencies
+        run: |
+          cd core
+          npm ci
+
+      - name: Run unit tests
+        run: |
+          cd core
+          npm run test:unit -- --coverage --forceExit
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+        with:
+          directory: ./core/coverage/
+          fail_ci_if_error: false
+
+  # 阶段3: VSCode插件打包
+  package-vscode:
+    name: Package VSCode Plugin
+    runs-on: ubuntu-latest
+    needs: test-core
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: |
+          cd core
+          npm ci
+          npm run build
+
+          cd ../vscode
+          npm install
+          npm run compile
+
+      - name: Generate version
+        id: version
+        run: |
+          VERSION=$(git describe --tags --always --dirty 2>/dev/null || echo "0.0.0-dev")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Package VSCode plugin
+        working-directory: ./vscode
+        run: |
+          npx vsce package \
+            --packagePath error-cn-${{ steps.version.outputs.version }}.vsix \
+            --no-dependency-validation
+
+      - name: Upload VSCode artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vscode-plugin
+          path: vscode/error-cn-*.vsix
+
+      - name: Validate package size
+        run: |
+          FILE_SIZE=$(stat -c%s vscode/error-cn-${{ steps.version.outputs.version }}.vsix)
+          if [ $FILE_SIZE -lt 100000 ]; then
+            echo "Error: Package too small ($FILE_SIZE bytes)"
+            exit 1
+          fi
+
+  # 阶段4: PyCharm插件打包
+  package-pycharm:
+    name: Package PyCharm Plugin
+    runs-on: ubuntu-latest
+    needs: test-core
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: 'gradle'
+
+      - name: Grant execute permission
+        run: chmod +x gradlew
+
+      - name: Build PyCharm plugin
+        working-directory: ./pycharm
+        run: |
+          ../gradlew buildPlugin -q
+
+      - name: Find JAR file
+        id: jar
+        run: |
+          JAR_FILE=$(find build/distributions -name "*.jar" 2>/dev/null | head -1)
+          echo "jar_file=$JAR_FILE" >> $GITHUB_OUTPUT
+
+      - name: Upload PyCharm artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pycharm-plugin
+          path: pycharm/build/distributions/*.jar
+
+  # 阶段5: IDEA插件打包
+  package-idea:
+    name: Package IDEA Plugin
+    runs-on: ubuntu-latest
+    needs: test-core
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: 'gradle'
+
+      - name: Grant execute permission
+        run: chmod +x gradlew
+
+      - name: Build IDEA plugin
+        working-directory: ./idea
+        run: |
+          ../gradlew buildPlugin -q
+
+      - name: Find JAR file
+        id: jar
+        run: |
+          JAR_FILE=$(find build/distributions -name "*.jar" 2>/dev/null | head -1)
+          echo "jar_file=$JAR_FILE" >> $GITHUB_OUTPUT
+
+      - name: Upload IDEA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: idea-plugin
+          path: idea/build/distributions/*.jar
+
+  # 阶段6: 发布到插件市场
+  publish:
+    name: Publish to Marketplace
+    runs-on: ubuntu-latest
+    needs: [package-vscode, package-pycharm, package-idea]
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+    environment:
+      name: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download VSCode artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: vscode-plugin
+          path: artifacts/
+
+      - name: Download PyCharm artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: pycharm-plugin
+          path: artifacts/
+
+      - name: Download IDEA artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: idea-plugin
+          path: artifacts/
+
+      - name: List artifacts
+        run: ls -la artifacts/
+
+      - name: Publish to VSCode Marketplace
+        if: startsWith(github.ref, 'refs/tags/v')
+        working-directory: ./vscode
+        run: |
+          npx vsce publish --pat ${{ secrets.VSCE_PAT }} || echo "VSCode publish skipped"
+        continue-on-error: true
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: artifacts/*.vsix
+          draft: false
+          prerelease: ${{ contains(github.ref, 'alpha') || contains(github.ref, 'beta') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # 阶段7: 构建失败通知
+  notify-failure:
+    name: Notify Failure
+    runs-on: ubuntu-latest
+    needs: [quality-check, test-core, package-vscode, package-pycharm, package-idea]
+    if: failure()
+    steps:
+      - name: Send failure notification
+        run: |
+          echo "Build failed! Please check the workflow logs."
+          echo "Commit: ${{ github.sha }}"
+          echo "Branch: ${{ github.ref }}"

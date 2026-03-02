@@ -14,9 +14,7 @@
     <!-- 性能优化：预连接（关键API服务器） -->
     <link rel="preconnect" href="http://localhost:3000" crossorigin />
     
-    <!-- 性能优化：预加载关键资源 -->
-    <link rel="preload" href="/src/main.ts" as="script" />
-    <link rel="preload" href="/src/router/index.ts" as="script" />
+    <!-- 性能优化：预加载由 Vite 在构建时注入，此处不写死路径避免生产构建 404 -->
     
     <!-- 性能优化：关键CSS内联（可选） -->
     <style>

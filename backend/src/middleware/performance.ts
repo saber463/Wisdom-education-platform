@@ -7,6 +7,9 @@ import { Request, Response, NextFunction } from 'express';
 // @ts-expect-error - compression类型定义可能缺失
 import compression from 'compression';
 
+// 慢请求阈值（毫秒），可通过环境变量 SLOW_REQUEST_MS 调整，默认 1000
+const SLOW_REQUEST_MS = parseInt(process.env.SLOW_REQUEST_MS || '1000', 10);
+
 // 响应时间监控
 export function performanceMonitor(req: Request, res: Response, next: NextFunction): void {
   const startTime = Date.now();
@@ -16,12 +19,10 @@ export function performanceMonitor(req: Request, res: Response, next: NextFuncti
     const duration = Date.now() - startTime;
     const path = req.path;
     
-    // 记录慢请求（超过1秒）
-    if (duration > 1000) {
-      console.warn(`[性能警告] 慢请求: ${req.method} ${path} - ${duration}ms`);
+    if (duration > SLOW_REQUEST_MS) {
+      console.warn(`[性能警告] 慢请求: ${req.method} ${path} - ${duration}ms (阈值: ${SLOW_REQUEST_MS}ms)`);
     }
     
-    // 设置响应时间头
     res.setHeader('X-Response-Time', `${duration}ms`);
   });
   
@@ -38,7 +39,7 @@ export const compressionMiddleware = compression({
     return compression.filter(req, res);
   },
   level: 6, // 压缩级别（1-9，6是平衡点）
-  threshold: 1024, // 只压缩大于1KB的响应
+  threshold: 512, // 只压缩大于512B的响应（降低阈值可略减小 JSON 体积）
 });
 
 // 缓存头中间件
@@ -50,14 +51,16 @@ export function cacheHeaders(req: Request, res: Response, next: NextFunction): v
     res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
     res.setHeader('Expires', new Date(Date.now() + 31536000000).toUTCString());
   }
-  // API响应缓存（根据路径决定）
+  // API响应缓存（根据路径决定，仅用于公开只读数据）
   else if (path.startsWith('/api/')) {
-    // 只读API可以缓存短时间
-    if (req.method === 'GET' && (
-      path.includes('/courses') ||
-      path.includes('/statistics') ||
-      path.includes('/recommendations')
-    )) {
+    const readOnlyCachePaths = [
+      '/courses',
+      '/statistics',
+      '/recommendations',
+      '/branches'  // 课程分支列表（公开结构）
+    ];
+    const isCacheableGet = req.method === 'GET' && readOnlyCachePaths.some(p => path.includes(p));
+    if (isCacheableGet) {
       res.setHeader('Cache-Control', 'public, max-age=300'); // 5分钟
     } else {
       // 其他API不缓存

@@ -98,6 +98,17 @@ SHOW TABLES;
 -- 应该能看到很多表，如 users, courses, learning_paths 等
 ```
 
+#### 2.4 执行索引脚本（推荐，提升查询性能）
+
+在数据量较大或首次部署后执行一次，可加速课程、作业、提交等常用查询：
+
+```bash
+# 在项目根目录执行（需已安装 MySQL 客户端）
+mysql -u root -p edu_education_platform < backend/scripts/mysql-indexes.sql
+```
+
+若部分索引已存在会报错，可忽略。详见 `docs/数据库索引与性能.md`。
+
 ### 步骤3: 配置环境变量 ⏱️ 1分钟
 
 #### 3.1 后端配置

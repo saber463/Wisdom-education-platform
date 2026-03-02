@@ -1,0 +1,896 @@
+# ErrorCN CI/CD 自动化流水线配置
+
+**版本**：v1.0.0  
+**日期**：2026年2月1日  
+**技术栈**：GitHub Actions、Node.js、Java、Inno Setup
+
+---
+
+## 一、流水线概述
+
+### 1.1 流水线目标
+
+本流水线旨在为 ErrorCN 多语言报错插件提供完整的持续集成与持续部署解决方案，实现从代码提交到插件发布的全流程自动化。流水线覆盖代码质量检查、自动化测试、插件打包、多环境部署、版本管理等关键环节，确保插件在各个阶段的质量可控、发布流程规范化。通过本流水线，开发团队可以专注于代码开发，而部署和发布工作则由自动化流程完成，大幅提升开发效率和发布可靠性。
+
+流水线设计遵循以下核心原则：
+1. **质量门禁**：每个阶段设置质量关卡，不通过则阻断后续流程
+2. **快速反馈**：自动化测试在 5 分钟内完成，提供即时质量反馈
+3. **安全发布**：生产环境发布需手动确认，支持一键回滚
+4. **多端同步**：VS Code 和 PyCharm 插件同步发布
+
+### 1.2 适用场景
+
+本流水线适用于以下开发场景：
+
+| 场景类型 | 触发条件 | 执行内容 |
+|---------|---------|---------|
+| 特性开发 | 推送至 feature/* 分支 | 代码检查、单元测试、预览构建 |
+| 测试验证 | 推送至 develop 分支 | 完整测试、预览打包、测试环境部署 |
+| 正式发布 | 推送至 release/* 分支或打标签 | 完整构建、生产打包、正式发布 |
+| 快速修复 | 推送 hotfix/* 分支 | 加速测试、紧急打包、热修复发布 |
+
+### 1.3 技术架构
+
+流水线采用 GitHub Actions 作为核心调度引擎，配合多种构建工具实现多平台插件打包：
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                         GitHub Actions                               │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐            │
+│  │ Checkout │→│ Install  │→│  Lint    │→│  Build   │            │
+│  └──────────┘  └──────────┘  └──────────┘  └──────────┘            │
+│       ↓                                                    ↓         │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐            │
+│  │  Test    │→│ Package  │→│ Deploy   │→│ Release  │            │
+│  └──────────┘  └──────────┘  └──────────┘  └──────────┘            │
+└─────────────────────────────────────────────────────────────────────┘
+       ↓               ↓               ↓               ↓
+  ┌─────────┐    ┌─────────┐    ┌─────────┐    ┌─────────┐
+  │ Node.js │    │  vsce   │    │ S3/GCS  │    │ GitHub  │
+  │ Jest    │    │ Gradle  │    │ Upload  │    │ Releases│
+  │ ESLint  │    │ Inno    │    │         │    │ Market  │
+  └─────────┘    └─────────┘    └─────────┘    └─────────┘
+```
+
+**核心技术栈**：
+
+| 技术组件 | 用途说明 | 版本要求 |
+|---------|---------|---------|
+| Node.js | Core 模块构建环境 | v20.10.0 LTS |
+| TypeScript | 核心代码编写与编译 | v5.3.3 |
+| Java | PyCharm 插件构建 | v17 LTS |
+| Gradle | PyCharm 插件打包 | v8.5+ |
+| vsce | VS Code 插件打包与发布 | latest |
+| GitHub Actions | 流水线调度 | - |
+| Inno Setup | Windows 安装包制作 | 6.2+ |
+
+---
+
+## 二、流水线流程
+
+### 2.1 整体流程图
+
+```
+                        ┌─────────────────┐
+                        │   代码提交      │
+                        │  (Push/Merge)   │
+                        └────────┬────────┘
+                                 ↓
+                        ┌─────────────────┐
+                        │   分支判断      │
+                        │ (main/develop)  │
+                        └────────┬────────┘
+                                 ↓
+              ┌──────────────────┴──────────────────┐
+              ↓                                      ↓
+     ┌─────────────────┐                   ┌─────────────────┐
+     │   特性开发流程   │                   │   发布流程      │
+     │  (feature/*)    │                   │  (main/release) │
+     └────────┬────────┘                   └────────┬────────┘
+              ↓                                      ↓
+     ┌─────────────────┐                   ┌─────────────────┐
+     │ 代码拉取与安装   │                   │ 代码拉取与安装   │
+     └────────┬────────┘                   └────────┬────────┘
+              ↓                                      ↓
+     ┌─────────────────┐                   ┌─────────────────┐
+     │ 代码检查        │                   │ 代码检查        │
+     │ (ESLint/TS)     │                   │ (ESLint/TS)     │
+     └────────┬────────┘                   └────────┬────────┘
+              ↓                                      ↓
+     ┌─────────────────┐                   ┌─────────────────┐
+     │ 单元测试        │                   │ 单元测试        │
+     │ (Jest)          │                   │ (Jest)          │
+     └────────┬────────┘                   └────────┬────────┘
+              ↓                                      ↓
+     ┌─────────────────┐                   ┌─────────────────┐
+     │ 预览构建        │                   │ 验收测试        │
+     └────────┬────────┘                   └────────┬────────┘
+              ↓                                      ↓
+     ┌─────────────────┐                   ┌─────────────────┐
+     │ 开发环境部署    │                   │ VS Code 插件    │
+     └─────────────────┘                   │ 打包与发布      │
+                                            └────────┬────────┘
+                                                     ↓
+                                            ┌─────────────────┐
+                                            │ PyCharm 插件    │
+                                            │ 打包与发布      │
+                                            └────────┬────────┘
+                                                     ↓
+                                            ┌─────────────────┐
+                                            │ GitHub Release  │
+                                            │ 与市场同步      │
+                                            └─────────────────┘
+```
+
+### 2.2 各阶段说明
+
+| 阶段名称 | 执行内容 | 执行时间 | 输出产物 |
+|---------|---------|---------|---------|
+| 代码拉取 | 检出代码、安装依赖 | 30-60s | node_modules/ |
+| 代码检查 | ESLint 校验、TypeScript 编译 | 20-40s | 质量报告 |
+| 单元测试 | Jest 测试执行 | 60-120s | 测试报告 |
+| 验收测试 | 自动化验收脚本执行 | 120-180s | 验收报告 |
+| 插件打包 | vsce/Gradle 打包 | 60-120s | .vsix/.jar 文件 |
+| 环境部署 | 开发/测试环境部署 | 30-60s | 部署记录 |
+| 市场发布 | 插件市场上传 | 60-120s | 发布记录 |
+
+---
+
+## 三、GitHub Actions 配置
+
+### 3.1 主配置文件
+
+```yaml
+# .github/workflows/ci-cd.yml
+name: ErrorCN CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop, release/*, hotfix/*]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+  pull_request:
+    branches: [main, develop]
+  release:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: '部署环境 (dev/staging/prod)'
+        required: true
+        default: 'dev'
+      skip_tests:
+        description: '跳过测试 (true/false)'
+        required: false
+        default: 'false'
+
+env:
+  NODE_VERSION: '20'
+  JAVA_VERSION: '17'
+  ERROR_CN_VERSION: ${{ github.run_id }}-${{ github.sha }}
+
+jobs:
+  # 第一阶段：代码质量检查
+  quality-check:
+    name: 代码质量检查
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GH_TOKEN }}
+
+      - name: 设置 Node.js 环境
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: core/package-lock.json
+
+      - name: 安装依赖
+        working-directory: ./core
+        run: |
+          npm ci
+          npm run install:all
+
+      - name: ESLint 检查
+        working-directory: ./core
+        run: npm run lint
+        continue-on-error: true
+
+      - name: TypeScript 编译检查
+        working-directory: ./core
+        run: npm run typecheck
+
+      - name: 生成代码质量报告
+        uses: github/codeql-action/analyze@v2
+        with:
+          category: '/language:typescript'
+          query-packed: security-extended
+
+      - name: 上传质量报告
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-report
+          path: core/reports/
+
+    outputs:
+      lint_result: ${{ steps.lint.outputs.exit_code }}
+
+  # 第二阶段：单元测试
+  unit-test:
+    name: 单元测试
+    runs-on: ubuntu-latest
+    needs: quality-check
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node-version: ['18', '20', '22']
+        exclude:
+          - os: windows-latest
+            node-version: '22'
+          - os: macos-latest
+            node-version: '18'
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Node.js 环境
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: core/package-lock.json
+
+      - name: 安装依赖
+        working-directory: ./core
+        run: npm ci
+
+      - name: 执行单元测试
+        working-directory: ./core
+        run: npm run test:unit -- --coverage --detectOpenHandles --forceExit
+
+      - name: 上传测试报告
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report-${{ matrix.os }}-${{ matrix.node-version }}
+          path: core/coverage/
+
+      - name: 上传失败截图
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-screenshots-failure
+          path: core/test-results/
+
+  # 第三阶段：验收测试
+  acceptance-test:
+    name: 验收测试
+    runs-on: ubuntu-latest
+    needs: unit-test
+    if: github.ref == 'refs/heads/main' || github.event.inputs.environment == 'staging'
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Node.js 环境
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: core/package-lock.json
+
+      - name: 安装依赖
+        working-directory: ./core
+        run: npm ci
+
+      - name: 执行验收测试
+        working-directory: ./core
+        run: |
+          npm run test:acceptance
+          EXIT_CODE=$?
+          if [ $EXIT_CODE -ne 0 ]; then
+            echo "验收测试未通过，查看报告：cat reports/acceptance-report.md"
+            exit 1
+          fi
+
+      - name: 生成验收报告
+        uses: actions/upload-artifact@v4
+        with:
+          name: acceptance-report
+          path: core/reports/acceptance/
+
+      - name: 通知验收结果
+        if: always()
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "text": "ErrorCN 验收测试结果",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "验收测试 *{{ job.status }}*\n> 结果: ${{ job.status }}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  # 第四阶段：VS Code 插件打包
+  package-vscode:
+    name: 打包 VS Code 插件
+    runs-on: ubuntu-latest
+    needs: acceptance-test
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+    outputs:
+      vsix_file: ${{ steps.package.outputs.vsix_file }}
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Node.js 环境
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: 安装依赖
+        working-directory: ./core
+        run: npm ci
+
+      - name: 生成版本号
+        id: version
+        run: |
+          VERSION=$(git describe --tags --always --dirty 2>/dev/null || echo "0.0.0-dev")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: 构建插件
+        working-directory: ./vscode-extension
+        run: |
+          npm run compile
+          npm run vscode:prepublish
+
+      - name: 打包插件
+        id: package
+        working-directory: ./vscode-extension
+        run: |
+          npx vsce package \
+            --packagePath error-cn-${{ steps.version.outputs.version }}.vsix \
+            --no-dependency-validation
+          echo "vsix_file=error-cn-${{ steps.version.outputs.version }}.vsix" >> $GITHUB_OUTPUT
+
+      - name: 上传插件包
+        uses: actions/upload-artifact@v4
+        with:
+          name: vsix-package
+          path: vscode-extension/error-cn-*.vsix
+
+      - name: 验证插件包
+        run: |
+          FILE_SIZE=$(stat -c%s vscode-extension/error-cn-${{ steps.version.outputs.version }}.vsix)
+          if [ $FILE_SIZE -lt 1000000 ]; then
+            echo "错误：插件包过小 (${FILE_SIZE} bytes)，可能打包失败"
+            exit 1
+          fi
+          echo "插件包大小: $(du -h vscode-extension/error-cn-${{ steps.version.outputs.version }}.vsix | cut -f1)"
+
+  # 第五阶段：PyCharm 插件打包
+  package-idea:
+    name: 打包 PyCharm 插件
+    runs-on: ubuntu-latest
+    needs: acceptance-test
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+    outputs:
+      jar_file: ${{ steps.package.outputs.jar_file }}
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Java 环境
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: 'gradle'
+
+      - name: 设置 Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: wrapper
+
+      - name: 构建插件
+        working-directory: ./idea-extension
+        run: ./gradlew buildPlugin
+
+      - name: 打包插件
+        id: package
+        working-directory: ./idea-extension
+        run: |
+          ./gradlew packagePlugin
+          JAR_FILE=$(find build/distributions -name "*.jar" | head -1)
+          echo "jar_file=$JAR_FILE" >> $GITHUB_OUTPUT
+
+      - name: 上传插件包
+        uses: actions/upload-artifact@v4
+        with:
+          name: jar-package
+          path: idea-extension/build/distributions/*.jar
+
+  # 第六阶段：发布到插件市场
+  publish-marketplace:
+    name: 发布到插件市场
+    runs-on: ubuntu-latest
+    needs: [package-vscode, package-idea]
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+    environment:
+      name: production
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 下载 VS Code 插件
+        uses: actions/download-artifact@v4
+        with:
+          name: vsix-package
+          path: artifacts/
+
+      - name: 下载 PyCharm 插件
+        uses: actions/download-artifact@v4
+        with:
+          name: jar-package
+          path: artifacts/
+
+      - name: 发布到 VS Code 市场
+        if: startsWith(github.ref, 'refs/tags/v')
+        working-directory: ./vscode-extension
+        run: |
+          npx vsce publish \
+            --packagePath ../artifacts/error-cn-*.vsix \
+            --pat ${{ secrets.VSCE_PAT }}
+        continue-on-error: true
+
+      - name: 发布到 PyCharm 市场
+        if: startsWith(github.ref, 'refs/tags/v')
+        working-directory: ./idea-extension
+        run: |
+          curl -X POST \
+            "https://plugins.jetbrains.com/plugin/upload" \
+            -H "Authorization: Bearer ${{ secrets.JETBRAINS_TOKEN }}" \
+            -F "file=@artifacts/*.jar"
+        continue-on-error: true
+
+      - name: 创建 GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: artifacts/*.vsix
+          files: artifacts/*.jar
+          body_path: CHANGELOG.md
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # 第七阶段：开发环境部署
+  deploy-dev:
+    name: 部署到开发环境
+    runs-on: ubuntu-latest
+    needs: [package-vscode, package-idea]
+    if: github.ref == 'refs/heads/develop' || github.event.inputs.environment == 'dev'
+    environment:
+      name: development
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 下载插件包
+        uses: actions/download-artifact@v4
+        with:
+          name: vsix-package
+          path: artifacts/
+        continue-on-error: true
+
+      - name: 部署到开发服务器
+        run: |
+          echo "部署到开发环境..."
+          # SCP 上传插件包到开发服务器
+          scp -o StrictHostKeyChecking=no artifacts/*.vsix user@dev-server:/var/www/error-cn/
+          # 发送部署通知
+          curl -X POST "https://hooks.example.com/deploy" \
+            -H "Content-Type: application/json" \
+            -d '{"environment": "dev", "version": "${{ env.ERROR_CN_VERSION }}"}'
+
+      - name: 验证部署
+        run: |
+          echo "验证开发环境部署..."
+          curl -f https://dev.error-cn.example.com/health
+
+  # 异常处理：构建失败通知
+  notify-failure:
+    name: 构建失败通知
+    runs-on: ubuntu-latest
+    needs: [quality-check, unit-test, acceptance-test]
+    if: failure()
+    steps:
+      - name: 发送失败通知
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "text": "ErrorCN 构建失败",
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "⚠️ ErrorCN 构建失败"
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*工作流:*\n${{ github.workflow }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*分支:*\n${{ github.ref_name }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*失败任务:*\n${{ needs.*.result }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*提交:*\n${{ github.sha }}"
+                    }
+                  ]
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "查看构建"
+                      },
+                      "url": "${{ github.run_url }}"
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+```
+
+### 3.2 版本管理配置
+
+```yaml
+# .github/workflows/versioning.yml
+name: 版本管理
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'core/src/**'
+      - 'core/package.json'
+  workflow_dispatch:
+    inputs:
+      version_type:
+        description: '版本类型 (major/minor/patch)'
+        required: true
+        default: 'patch'
+
+jobs:
+  version-management:
+    name: 版本号管理
+    runs-on: ubuntu-latest
+    outputs:
+      new_version: ${{ steps.version.outputs.new_version }}
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GH_TOKEN }}
+
+      - name: 设置 Node.js 环境
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: 安装依赖
+        working-directory: ./core
+        run: npm ci
+
+      - name: 生成语义化版本号
+        id: version
+        working-directory: ./core
+        run: |
+          VERSION=$(npm run version:bump -- ${{ github.event.inputs.version_type || 'patch' }})
+          echo "new_version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: 更新版本号
+        run: |
+          echo "新版本号: ${{ steps.version.outputs.new_version }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add package.json
+          git commit -m "chore: bump version to ${{ steps.version.outputs.new_version }}"
+          git tag "v${{ steps.version.outputs.new_version }}"
+          git push
+          git push origin "v${{ steps.version.outputs.new_version }}"
+
+      - name: 生成更新日志
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: commits } = await github.request(
+              'GET /repos/{owner}/{repo}/commits',
+              {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                since: '1d ago'
+              }
+            );
+            
+            const changelog = commits.map(c => {
+              const msg = c.commit.message.split('\n')[0];
+              const type = msg.match(/^[a-z]+/)?.[0] || 'other';
+              return `- ${msg}`;
+            }).join('\n');
+            
+            console.log('更新日志:\n' + changelog);
+```
+
+### 3.3 自动化验收测试配置
+
+```yaml
+# .github/workflows/acceptance.yml
+name: 自动化验收测试
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # 每周日执行一次完整验收测试
+  workflow_dispatch:
+    inputs:
+      test_suite:
+        description: '测试套件 (full/quick/regression)'
+        required: true
+        default: 'full'
+
+jobs:
+  acceptance-test:
+    name: 自动化验收测试
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        test_env:
+          - os: ubuntu-latest
+            browser: vscode
+          - os: ubuntu-latest
+            browser: idea
+          - os: windows-latest
+            browser: vscode
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Node.js 环境
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 安装 Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: 执行验收测试
+        run: |
+          cd core
+          npm run test:acceptance -- --test-suite=${{ github.event.inputs.test_suite }}
+
+      - name: 生成验收报告
+        run: |
+          cd core
+          npm run report:generate -- --format=markdown --output=reports/acceptance-report.md
+
+      - name: 上传验收报告
+        uses: actions/upload-artifact@v4
+        with:
+          name: acceptance-report-${{ matrix.test_env.os }}-${{ matrix.test_env.browser }}
+          path: core/reports/acceptance/
+
+      - name: 发布验收结果
+        if: github.event_name == 'schedule'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: 1,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '## 自动化验收测试报告\n\n查看完整报告: [验收报告](docs/验收报告.md)'
+            })
+```
+
+---
+
+## 四、异常处理
+
+### 4.1 构建失败告警
+
+流水线配置了多层告警机制，确保构建问题能够及时发现和处理：
+
+| 告警级别 | 触发条件 | 通知渠道 | 响应时间 |
+|---------|---------|---------|---------|
+| P0 - 紧急 | 主流程失败、测试全部失败 | Slack + 短信 + 邮件 | 5 分钟内 |
+| P1 - 高 | 单个关键任务失败 | Slack + 邮件 | 30 分钟内 |
+| P2 - 中 | 测试覆盖率下降 | Slack | 2 小时内 |
+| P3 - 低 | 警告信息累积 | 每日汇总邮件 | 24 小时内 |
+
+### 4.2 回滚机制
+
+```yaml
+# .github/workflows/rollback.yml
+name: 回滚操作
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_version:
+        description: '目标回滚版本号'
+        required: true
+      reason:
+        description: '回滚原因'
+        required: true
+
+jobs:
+  rollback:
+    name: 执行回滚
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://error-cn.example.com
+    steps:
+      - name: 确认回滚
+        run: |
+          echo "确认回滚到版本: ${{ github.event.inputs.target_version }}"
+          echo "回滚原因: ${{ github.event.inputs.reason }}"
+          read -p "确认执行回滚? (y/n) " -n 1 -r
+          echo
+          if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            exit 1
+          fi
+
+      - name: 回滚 Git 标签
+        run: |
+          git checkout main
+          git pull
+          git tag -d "v${{ github.event.inputs.target_version }}" 2>/dev/null || true
+          git push origin --delete "v${{ github.event.inputs.target_version }}" 2>/dev/null || true
+
+      - name: 回滚插件市场
+        run: |
+          echo "从 ${{ github.event.inputs.target_version }} 恢复插件..."
+          # 调用市场 API 回滚版本
+          curl -X POST "https://api.vscode.com/rollback" \
+            -H "Authorization: Bearer ${{ secrets.VSCE_PAT }}" \
+            -d '{"version": "${{ github.event.inputs.target_version }}"}'
+
+      - name: 通知回滚结果
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "text": "ErrorCN 回滚通知",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "✅ *回滚成功*\n> 版本: ${{ github.event.inputs.target_version }}\n> 原因: ${{ github.event.inputs.reason }}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+```
+
+### 4.3 日志收集
+
+流水线自动收集并归档以下日志：
+
+| 日志类型 | 收集位置 | 保留时间 | 存储方式 |
+|---------|---------|---------|---------|
+| 构建日志 | workflow 运行日志 | 90 天 | GitHub Artifacts |
+| 测试报告 | core/reports/ | 180 天 | GitHub Artifacts |
+| 性能数据 | core/reports/perf/ | 365 天 | S3 存储 |
+| 部署记录 | deployments/ | 永久 | 数据库 |
+
+---
+
+## 五、使用说明
+
+### 5.1 本地调试
+
+在本地环境中调试流水线配置：
+
+```bash
+# 1. 安装 GitHub Actions CLI
+npm install -g @actions/core
+
+# 2. 模拟流水线运行
+cd core
+npm run test:unit              # 运行单元测试
+npm run test:acceptance        # 运行验收测试
+npm run build                  # 构建项目
+npm run lint                   # 代码检查
+
+# 3. 本地模拟 vsce 打包
+cd vscode-extension
+npx vsce package --dry-run     # 模拟打包
+
+# 4. 验证配置文件语法
+yamllint .github/workflows/
+```
+
+### 5.2 流水线触发方式
+
+| 触发方式 | 触发条件 | 执行内容 |
+|---------|---------|---------|
+| 自动触发 | 推送代码至 main/develop/release/* | 根据分支执行对应流程 |
+| 标签触发 | git tag v* | 完整构建 + 生产发布 |
+| 手动触发 | workflow_dispatch | 自定义参数执行 |
+| 定时触发 | schedule (每周日) | 完整验收测试 |
+
+### 5.3 分支管理规范
+
+```
+main          ─────────────────────────────────────────►
+              ↑                    ↑                    ↑
+develop       ───────► (合并) ───────► (合并) ─────────►
+              ↑        ↑          ↑        ↑
+feature/*     ─► 完成 ─┘    完成 ─┘
+              ↑
+hotfix/*      ───────► 紧急修复 ─────────► (合并)
+```
+
+| 分支类型 | 命名规范 | 生命周期 | 合并目标 |
+|---------|---------|---------|---------|
+| main | main | 永久 | - |
+| develop | develop | 永久 | main |
+| feature | feature/* | 1-4 周 | develop |
+| release | release/v*.*.* | 2-4 周 | main + develop |
+| hotfix | hotfix/* | 1-7 天 | main + develop |
+
+### 5.4 环境变量配置
+
+在 GitHub 仓库 Settings > Secrets and variables 中配置以下密钥：
+
+| 密钥名称 | 用途说明 | 必需性 |
+|---------|---------|-------|
+| GH_TOKEN | GitHub 认证令牌 | 必需 |
+| VSCE_PAT | VS Code 市场发布令牌 | 发布必需 |
+| JETBRAINS_TOKEN | JetBrains 市场发布令牌 | 发布必需 |
+| SLACK_WEBHOOK_URL | Slack 通知 Webhook | 推荐 |
+| NPM_TOKEN | NPM 仓库认证令牌 | 可选 |
+| AWS_ACCESS_KEY_ID | S3 存储访问密钥 | 可选 |
+
+---
+
+**文档维护**：ErrorCN DevOps 团队  
+**最后更新**：2026年2月1日  
+**版本**：v1.0.0

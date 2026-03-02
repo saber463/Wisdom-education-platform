@@ -7,8 +7,12 @@
 import { Router, Response } from 'express';
 import { authenticateToken, requireRole, AuthRequest } from '../middleware/auth.js';
 import { executeQuery } from '../config/database.js';
+import { getCachedHotResource, cacheHotResource } from '../config/redis.js';
 
 const router = Router();
+
+/** 课程列表缓存 TTL（秒），2 分钟 */
+const COURSES_LIST_CACHE_TTL = 120;
 
 // 所有课程路由都需要认证
 router.use(authenticateToken);
@@ -251,6 +255,19 @@ router.get('/', async (req: AuthRequest, res: Response): Promise<void> => {
 
     const offset = (pageNum - 1) * limitNum;
 
+    // 性能优化：课程列表 Redis 短时缓存（按查询参数）
+    const cacheKey = 'courses:list:' + Object.keys(req.query)
+      .sort()
+      .map(k => `${k}=${String(req.query[k] ?? '')}`)
+      .join('&');
+    const cached = await getCachedHotResource(cacheKey);
+    if (cached) {
+      const duration = Date.now() - startTime;
+      console.log(`[${new Date().toISOString()}] 课程列表命中缓存`, { cacheKey: cacheKey.substring(0, 60), duration: `${duration}ms` });
+      res.json(cached);
+      return;
+    }
+
     const whereConditions: string[] = [];
     const queryParams: any[] = [];
 
@@ -321,7 +338,7 @@ router.get('/', async (req: AuthRequest, res: Response): Promise<void> => {
       params: { difficulty, is_hot, min_price, max_price, search, page: pageNum, limit: limitNum }
     });
 
-    res.json({
+    const responseData = {
       code: 200,
       msg: '查询成功',
       data: {
@@ -333,7 +350,9 @@ router.get('/', async (req: AuthRequest, res: Response): Promise<void> => {
           totalPages: Math.ceil(total / limitNum)
         }
       }
-    });
+    };
+    await cacheHotResource(cacheKey, responseData, COURSES_LIST_CACHE_TTL);
+    res.json(responseData);
 
   } catch (error) {
     const duration = Date.now() - startTime;
