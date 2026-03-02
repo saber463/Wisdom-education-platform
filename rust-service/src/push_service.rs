@@ -96,8 +96,8 @@ impl PushServiceState {
  * - poor: 学习评分 < 50
  */
 pub fn analyze_student_status(
-    student_id: i32,
-    check_in_count: i32,
+    _student_id: i32,
+    _check_in_count: i32,
     completed_tasks: i32,
     total_tasks: i32,
 ) -> (f32, String) {
@@ -139,7 +139,7 @@ pub fn determine_status_level(score: f32) -> String {
  * 基于学生学习状态生成个性化推送内容
  */
 pub fn generate_push_content(
-    student_id: i32,
+    _student_id: i32,
     push_type: &str,
     status: &StudentStatus,
 ) -> (String, String) {
@@ -261,13 +261,7 @@ pub async fn generate_push_content_handler(
     let (title, content) = generate_push_content(
         req.student_id,
         &req.push_type,
-        &StudentStatus {
-            student_id: req.student_id,
-            check_in_count: 0,
-            completed_tasks: req.completed_tasks,
-            total_tasks: req.total_tasks,
-            learning_score: req.learning_score,
-        },
+        &req.status,
     );
 
     let push_content = PushContent {

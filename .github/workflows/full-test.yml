@@ -262,7 +262,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**测试时间**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
           
-          # 仅当核心模块为 failure 时失败（skipped 不视为失败）
+          # 仅当核心模块结果为 failure 时 exit 1；skipped / success 不触发失败
           if [ "${{ needs.backend-full-test.result }}" = "failure" ] || [ "${{ needs.frontend-full-test.result }}" = "failure" ]; then
             echo "❌ **核心模块测试失败，请立即检查！**" >> $GITHUB_STEP_SUMMARY
             exit 1

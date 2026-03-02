@@ -1,5 +1,6 @@
 use actix_web::{web, App, HttpResponse, HttpServer};
 use actix_cors::Cors;
+use base64::{engine::general_purpose::STANDARD as BASE64, Engine};
 use std::env;
 use edu_rust_service::grpc_server::start_grpc_server_with_fallback;
 
@@ -95,7 +96,7 @@ async fn encrypt_handler(req: web::Json<EncryptRequest>) -> HttpResponse {
     
     match encrypt_data(req.data.as_bytes(), &req.key) {
         Ok(encrypted) => {
-            let encoded = base64::encode(&encrypted);
+            let encoded = BASE64.encode(&encrypted);
             HttpResponse::Ok().json(EncryptResponse {
                 encrypted_data: encoded,
             })
@@ -120,7 +121,7 @@ struct DecryptResponse {
 async fn decrypt_handler(req: web::Json<DecryptRequest>) -> HttpResponse {
     use edu_rust_service::crypto::decrypt_data;
     
-    match base64::decode(&req.encrypted_data) {
+    match BASE64.decode(&req.encrypted_data) {
         Ok(encrypted_bytes) => {
             match decrypt_data(&encrypted_bytes, &req.key) {
                 Ok(decrypted) => {

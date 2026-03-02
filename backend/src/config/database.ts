@@ -62,11 +62,8 @@ export const dbConfig = {
   waitForConnections: true,
   enableKeepAlive: true,
   keepAliveInitialDelay: 0,
-  // 性能优化：连接超时
+  // mysql2 Pool 支持的获取连接超时（毫秒）；已移除 timeout、reconnect（createPool 不支持，会触发警告）
   acquireTimeout: 60000,
-  timeout: 60000,
-  // 性能优化：启用连接复用
-  reconnect: true
 };
 
 // 创建连接池

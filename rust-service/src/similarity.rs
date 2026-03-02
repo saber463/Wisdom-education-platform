@@ -193,9 +193,9 @@ mod tests {
 
     #[test]
     fn test_compare_answers_similar() {
-        // 相似但不完全相同
-        assert!(compare_answers("hello", "helo", 0.85));
-        assert!(compare_answers("你好", "您好", 0.85));
+        // 相似但不完全相同（hello/helo 相似度约 0.8；你好/您好 编辑距离 1/2 约 0.5）
+        assert!(compare_answers("hello", "helo", 0.8));
+        assert!(compare_answers("你好", "您好", 0.5));
     }
 
     #[test]

@@ -78,8 +78,8 @@ mod password_properties {
             let hash = hash_password(&password)
                 .expect("密码哈希应该成功");
             
-            // 哈希值不应该等于明文密码
-            prop_assert_ne!(hash, password, "哈希值不应该等于明文密码");
+            // 哈希值不应该等于明文密码（clone 避免 move 后借用）
+            prop_assert_ne!(hash.clone(), password.clone(), "哈希值不应该等于明文密码");
             
             // 哈希值应该以$2b$开头（bcrypt格式）
             prop_assert!(hash.starts_with("$2b$"), "哈希值应该是bcrypt格式");
@@ -118,8 +118,8 @@ mod password_properties {
             let hash2 = hash_password(&password)
                 .expect("第二次哈希应该成功");
             
-            // 两次哈希结果应该不同（因为使用了随机盐）
-            prop_assert_ne!(hash1, hash2, "相同密码的多次哈希应该产生不同结果");
+            // 两次哈希结果应该不同（因为使用了随机盐）；clone 避免 move 后借用
+            prop_assert_ne!(hash1.clone(), hash2.clone(), "相同密码的多次哈希应该产生不同结果");
             
             // 但两个哈希都应该能验证原始密码
             prop_assert!(verify_password(&password, &hash1).unwrap());

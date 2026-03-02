@@ -46,9 +46,6 @@ fn generate_nonce() -> Vec<u8> {
 
 /// 将字符串密钥转换为32字节密钥（使用SHA-256哈希）
 fn key_from_string(key_str: &str) -> Vec<u8> {
-    use std::collections::hash_map::DefaultHasher;
-    use std::hash::{Hash, Hasher};
-    
     // 简单的密钥派生：重复密钥字符串直到32字节
     let mut key = Vec::with_capacity(32);
     let key_bytes = key_str.as_bytes();
@@ -178,13 +175,13 @@ mod tests {
 
     #[test]
     fn test_encrypt_decrypt_roundtrip() {
-        let data = b"Hello, World! 你好世界！";
+        let data = "Hello, World! 你好世界！".as_bytes();
         let key = "my-secret-key-123";
         
         let encrypted = encrypt_data(data, key).expect("加密失败");
         let decrypted = decrypt_data(&encrypted, key).expect("解密失败");
         
-        assert_eq!(data.to_vec(), decrypted);
+        assert_eq!(data, decrypted.as_slice());
     }
 
     #[test]

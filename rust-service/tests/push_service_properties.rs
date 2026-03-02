@@ -93,9 +93,9 @@ mod push_service_property_tests {
                 "状态等级应有效，实际: {}", level
             );
             
-            // 验证评分与等级一致
+            // 验证评分与等级一致（clone 避免 move 后用于 format）
             let expected_level = determine_status_level(score);
-            prop_assert_eq!(level, expected_level,
+            prop_assert_eq!(level.clone(), expected_level.clone(),
                 "状态等级应与评分对应，评分: {}, 等级: {}, 期望: {}", 
                 score, level, expected_level);
         }
@@ -243,22 +243,22 @@ mod push_service_property_tests {
         /// 对于边界情况（0任务、100%完成等），系统应正确处理
         #[test]
         fn prop_boundary_cases_handling(
-            completed_tasks in vec![0i32, 1, 50, 99, 100],
-            total_tasks in vec![1i32, 50, 100]
+            completed_tasks in prop_oneof![Just(0i32), Just(1), Just(50), Just(99), Just(100)],
+            total_tasks in prop_oneof![Just(1i32), Just(50), Just(100)]
         ) {
             prop_assume!(completed_tasks <= total_tasks);
             
             let (score, level) = analyze_student_status(1, 0, completed_tasks, total_tasks);
             
-            // 验证边界情况下的评分
+            // 验证边界情况下的评分（clone level 避免多次使用 move）
             if completed_tasks == 0 {
                 prop_assert_eq!(score, 0.0, "完成数为0时评分应为0");
-                prop_assert_eq!(level, "poor", "完成数为0时等级应为poor");
+                prop_assert_eq!(level.as_str(), "poor", "完成数为0时等级应为poor");
             }
             
             if completed_tasks == total_tasks {
                 prop_assert_eq!(score, 100.0, "完成数等于总数时评分应为100");
-                prop_assert_eq!(level, "excellent", "完成数等于总数时等级应为excellent");
+                prop_assert_eq!(level.as_str(), "excellent", "完成数等于总数时等级应为excellent");
             }
         }
 
@@ -305,10 +305,10 @@ mod push_service_property_tests {
             let (title2, content2) = generate_push_content(student_id, "task_reminder", &status);
             let (title3, content3) = generate_push_content(student_id, "class_notification", &status);
             
-            // 验证不同推送类型的文案不同
-            prop_assert_ne!(title1, title2, "不同推送类型的标题应不同");
+            // 验证不同推送类型的文案不同（clone 避免 move 后复用）
+            prop_assert_ne!(title1, title2.clone(), "不同推送类型的标题应不同");
             prop_assert_ne!(title2, title3, "不同推送类型的标题应不同");
-            prop_assert_ne!(content1, content2, "不同推送类型的内容应不同");
+            prop_assert_ne!(content1, content2.clone(), "不同推送类型的内容应不同");
             prop_assert_ne!(content2, content3, "不同推送类型的内容应不同");
         }
     }
@@ -444,41 +444,6 @@ mod push_service_unit_tests {
     }
 }
 
-/// 说明文档
-/// 
-/// 运行这些测试的步骤：
-/// 
-/// 1. 运行所有单元测试：
-///    ```
-///    cd rust-service
-///    cargo test --test push_service_properties
-///    ```
-/// 
-/// 2. 运行属性测试（100次迭代）：
-///    ```
-///    cargo test --test push_service_properties prop_ -- --nocapture
-///    ```
-/// 
-/// 3. 运行特定的属性测试：
-///    ```
-///    cargo test --test push_service_properties prop_learning_score_calculation -- --nocapture
-///    ```
-/// 
-/// 属性测试覆盖：
-/// - 属性90.1：学习评分计算准确性
-/// - 属性90.2：状态等级划分准确性
-/// - 属性90.3：学生状态分析完整性
-/// - 属性90.4：推送文案生成准确性
-/// - 属性90.5：打卡提醒文案准确性
-/// - 属性90.6：任务提醒文案准确性
-/// - 属性90.7：班级通知文案准确性
-/// - 属性90.8：边界情况处理
-/// - 属性90.9：数据一致性
-/// - 属性90.10：推送文案多样性
-/// 
-/// 单元测试覆盖：
-/// - 学习评分计算（0任务、满分、半分）
-/// - 状态等级划分（excellent、good、fair、poor）
-/// - 学生状态分析
-/// - 推送文案生成（打卡、任务、班级通知）
-/// - 推送文案长度限制
+// 说明文档：
+// 运行这些测试：cd rust-service && cargo test --test push_service_properties
+// 属性测试覆盖：学习评分、状态等级、推送文案等；单元测试覆盖评分计算、等级划分、文案生成与长度限制。

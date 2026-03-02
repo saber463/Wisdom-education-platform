@@ -115,8 +115,8 @@ mod grpc_property_tests {
         #[test]
         #[ignore] // 需要服务器运行
         fn prop_grpc_communication_available(
-            data in prop::collection::vec(any::<u8>(), 0..100),
-            key in "[a-zA-Z0-9]{8,32}"
+            _data in prop::collection::vec(any::<u8>(), 0..100),
+            _key in "[a-zA-Z0-9]{8,32}"
         ) {
             // 这个测试需要异步运行时，实际实现需要使用tokio::test
             // 这里提供测试结构，实际运行需要服务器
@@ -195,28 +195,5 @@ mod grpc_performance_tests {
     }
 }
 
-/// 说明文档
-/// 
-/// 运行这些测试的步骤：
-/// 
-/// 1. 启动Rust gRPC服务器：
-///    ```
-///    cd rust-service
-///    cargo run --release
-///    ```
-/// 
-/// 2. 在另一个终端运行测试：
-///    ```
-///    cargo test --test grpc_properties -- --ignored --nocapture
-///    ```
-/// 
-/// 3. 运行属性测试（100次迭代）：
-///    ```
-///    cargo test --test grpc_properties prop_ -- --ignored --nocapture
-///    ```
-/// 
-/// 注意：
-/// - 所有测试默认被标记为 #[ignore]，因为它们需要运行的服务器
-/// - 使用 --ignored 参数来运行这些测试
-/// - 确保端口50052未被占用
-/// - 测试会验证响应时间是否满足需求13.2（< 50ms）
+// 说明：先启动 gRPC 服务器 (cargo run --release)，再 cargo test --test grpc_properties -- --ignored。
+// 测试会验证响应时间是否满足需求13.2（< 50ms），确保端口50052未被占用。

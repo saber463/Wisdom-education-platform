@@ -16,10 +16,7 @@ use rust_service::{
 
 use crate::crypto::{encrypt_data, decrypt_data, hash_password};
 use crate::similarity::calculate_similarity;
-use crate::push_service::{
-    analyze_student_status, generate_push_content, determine_status_level,
-    StudentStatus,
-};
+use crate::push_service::{analyze_student_status, generate_push_content, StudentStatus};
 
 /// Rust高性能服务实现
 pub struct RustServiceImpl;
