@@ -35,7 +35,7 @@ export function authenticateToken(req: AuthRequest, res: Response, next: NextFun
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as { id: number; username: string; role: string };
+    const decoded = jwt.verify(token, JWT_SECRET) as { id: number; username: string; role: UserRole };
     req.user = {
       id: decoded.id,
       username: decoded.username,
@@ -108,7 +108,7 @@ export function optionalAuth(req: AuthRequest, _res: Response, next: NextFunctio
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as { id: number; username: string; role: string };
+    const decoded = jwt.verify(token, JWT_SECRET) as { id: number; username: string; role: UserRole };
     req.user = {
       id: decoded.id,
       username: decoded.username,

@@ -8,6 +8,9 @@ import { executeQuery } from '../config/database.js';
 import { LearningDataCollection } from '../models/mongodb/learning-data-collection.model.js';
 import { AILearningPathDynamic } from '../models/mongodb/ai-learning-path-dynamic.model.js';
 
+/** MySQL 查询行类型（用于 executeQuery 返回的数组） */
+type SqlRow = Record<string, unknown>;
+
 // 学习数据采集请求接口
 export interface LearningDataCollectionRequest {
   user_id: number;
@@ -250,16 +253,16 @@ export class AILearningPathService {
       const startTime = Date.now();
 
       // 1. 获取知识点信息
-      const knowledgePoints = await executeQuery(
+      const knowledgePoints = (await executeQuery(
         'SELECT id, name FROM knowledge_points WHERE id = ?',
         [knowledgePointId]
-      );
+      )) as SqlRow[];
 
       if (knowledgePoints.length === 0) {
         throw new Error(`知识点 ${knowledgePointId} 不存在`);
       }
 
-      const knowledgePointName = knowledgePoints[0].name;
+      const knowledgePointName = knowledgePoints[0].name as string;
 
       // 2. 从MongoDB获取该知识点的练习数据
       const practiceData = await LearningDataCollection.find({
@@ -286,15 +289,15 @@ export class AILearningPathService {
 
       // 4. 从MongoDB获取该知识点相关课节的视频数据
       // 首先获取包含该知识点的课节
-      const lessons = await executeQuery(
+      const lessons = (await executeQuery(
         `SELECT DISTINCT cl.id, cl.estimated_minutes 
          FROM course_lessons cl
          JOIN lesson_knowledge_points lkp ON cl.id = lkp.lesson_id
          WHERE lkp.knowledge_point_id = ?`,
         [knowledgePointId]
-      );
+      )) as { id: number; estimated_minutes: number }[];
 
-      const lessonIds = lessons.map((l: any) => l.id);
+      const lessonIds = lessons.map((l) => l.id);
       
       // 获取视频回看数据
       let videoRewatchCount = 0;
@@ -324,7 +327,7 @@ export class AILearningPathService {
             return sum + (record.completion_data?.completion_time || 0);
           }, 0);
 
-          const totalExpectedTime = lessons.reduce((sum: number, lesson: any) => {
+          const totalExpectedTime = lessons.reduce((sum: number, lesson) => {
             return sum + (lesson.estimated_minutes * 60);
           }, 0);
 
@@ -359,10 +362,10 @@ export class AILearningPathService {
       const masteryLevel = this.mapMasteryLevel(comprehensiveScore);
 
       // 9. 保存评估结果到MySQL
-      const existingMastery = await executeQuery(
+      const existingMastery = (await executeQuery(
         'SELECT id FROM knowledge_mastery WHERE user_id = ? AND knowledge_point_id = ?',
         [userId, knowledgePointId]
-      );
+      )) as SqlRow[];
 
       if (existingMastery.length > 0) {
         // 更新现有记录
@@ -479,24 +482,24 @@ export class AILearningPathService {
    */
   async getUserKnowledgeMastery(userId: number): Promise<KnowledgeMastery[]> {
     try {
-      const masteryRecords = await executeQuery(
+      const masteryRecords = (await executeQuery(
         `SELECT km.*, kp.name as knowledge_point_name
          FROM knowledge_mastery km
          JOIN knowledge_points kp ON km.knowledge_point_id = kp.id
          WHERE km.user_id = ?
          ORDER BY km.last_evaluated_at DESC`,
         [userId]
-      );
+      )) as SqlRow[];
 
-      return masteryRecords.map((record: any) => ({
-        knowledge_point_id: record.knowledge_point_id,
-        knowledge_point_name: record.knowledge_point_name,
-        mastery_level: record.mastery_level,
-        practice_correct_rate: record.practice_correct_rate,
-        code_error_count: record.code_error_count,
-        video_rewatch_count: record.video_rewatch_count,
-        lesson_completion_time: record.lesson_completion_time,
-        comprehensive_score: record.comprehensive_score
+      return masteryRecords.map((record) => ({
+        knowledge_point_id: record.knowledge_point_id as number,
+        knowledge_point_name: record.knowledge_point_name as string,
+        mastery_level: record.mastery_level as KnowledgeMastery['mastery_level'],
+        practice_correct_rate: record.practice_correct_rate as number,
+        code_error_count: record.code_error_count as number,
+        video_rewatch_count: record.video_rewatch_count as number,
+        lesson_completion_time: record.lesson_completion_time as number,
+        comprehensive_score: record.comprehensive_score as number
       }));
     } catch (error) {
       console.error('获取用户知识点掌握度失败:', error);
@@ -664,13 +667,13 @@ export class AILearningPathService {
       if (completionRecords.length > 0) {
         // 获取课节的预期时间（从数据库）
         const lessonIds = [...new Set(completionRecords.map(r => r.lesson_id))];
-        const lessons = await executeQuery(
+        const lessons = (await executeQuery(
           `SELECT id, estimated_minutes FROM course_lessons WHERE id IN (${lessonIds.join(',')})`,
           []
-        );
+        )) as { id: number; estimated_minutes: number }[];
 
         const lessonTimeMap = new Map<number, number>(
-          lessons.map((l: any) => [l.id, l.estimated_minutes * 60]) // 转换为秒
+          lessons.map((l) => [l.id, l.estimated_minutes * 60]) // 转换为秒
         );
 
         // 计算每个完成记录的时间比率
@@ -810,11 +813,11 @@ export class AILearningPathService {
       // 获取知识点名称
       const kpNames: string[] = [];
       if (pattern.knowledge_point_ids.length > 0) {
-        const kps = await executeQuery(
+        const kps = (await executeQuery(
           `SELECT name FROM knowledge_points WHERE id IN (${pattern.knowledge_point_ids.join(',')})`,
           []
-        );
-        kpNames.push(...kps.map((kp: any) => kp.name));
+        )) as { name: string }[];
+        kpNames.push(...kps.map((kp) => kp.name));
       }
 
       // 根据错误类型生成建议
@@ -882,32 +885,32 @@ export class AILearningPathService {
       const startTime = Date.now();
 
       // 1. 获取原始学习路径和步骤
-      const pathInfo = await executeQuery(
+      const pathInfo = (await executeQuery(
         'SELECT * FROM learning_paths WHERE id = ?',
         [pathId]
-      );
+      )) as SqlRow[];
 
       if (pathInfo.length === 0) {
         throw new Error(`学习路径 ${pathId} 不存在`);
       }
 
-      const originalSteps = await executeQuery(
+      const originalSteps = (await executeQuery(
         `SELECT * FROM learning_path_steps 
          WHERE learning_path_id = ? 
          ORDER BY step_number ASC`,
         [pathId]
-      );
+      )) as SqlRow[];
 
       // 2. 获取用户的学习进度
-      const progressInfo = await executeQuery(
+      const progressInfo = (await executeQuery(
         `SELECT * FROM learning_progress 
          WHERE user_id = ? AND learning_path_id = ?`,
         [userId, pathId]
-      );
+      )) as SqlRow[];
 
-      const currentStep = progressInfo.length > 0 ? progressInfo[0].current_step : 1;
+      const currentStep = progressInfo.length > 0 ? (progressInfo[0].current_step as number) : 1;
       const completedSteps: number[] = progressInfo.length > 0 
-        ? JSON.parse(progressInfo[0].completed_steps || '[]') 
+        ? JSON.parse((progressInfo[0].completed_steps as string) || '[]') 
         : [];
 
       // 3. 获取用户的知识点掌握度
@@ -919,7 +922,7 @@ export class AILearningPathService {
       const abilityProfile = await this.generateLearningAbilityProfile(userId);
 
       // 5. 分析每个步骤关联的知识点
-      const stepKnowledgePoints = await executeQuery(
+      const stepKnowledgePoints = (await executeQuery(
         `SELECT lps.id as step_id, lps.step_number, lps.title, 
                 lps.resource_type, lps.estimated_minutes,
                 GROUP_CONCAT(DISTINCT lkp.knowledge_point_id) as kp_ids,
@@ -931,7 +934,7 @@ export class AILearningPathService {
          GROUP BY lps.id, lps.step_number, lps.title, lps.resource_type, lps.estimated_minutes
          ORDER BY lps.step_number ASC`,
         [pathId]
-      );
+      )) as { step_id: number; step_number: number; title?: string; resource_type?: string; estimated_minutes?: number; kp_ids?: string; kp_names?: string }[];
 
       // 6. 执行路径调整算法
       const adjustedSteps: number[] = [];
@@ -1278,12 +1281,12 @@ export class AILearningPathService {
   }> {
     try {
       // 1. 检查学习进度记录是否存在
-      const progressRecords = await executeQuery(
+      const progressRecords = (await executeQuery(
         `SELECT id, current_step, completed_steps, dynamic_adjustment_enabled
          FROM learning_progress
          WHERE user_id = ? AND learning_path_id = ?`,
         [userId, learningPathId]
-      );
+      )) as SqlRow[];
 
       if (progressRecords.length === 0) {
         return {
@@ -1298,7 +1301,7 @@ export class AILearningPathService {
       }
 
       const progressRecord = progressRecords[0];
-      const currentState = progressRecord.dynamic_adjustment_enabled;
+      const currentState = progressRecord.dynamic_adjustment_enabled as boolean;
 
       // 2. 如果状态相同，无需更新
       if (currentState === enabled) {
@@ -1327,17 +1330,17 @@ export class AILearningPathService {
       // 4. 如果关闭动态调整，恢复默认路径
       if (!enabled) {
         // 获取原始学习路径的所有步骤
-        const originalSteps = await executeQuery(
+        const originalSteps = (await executeQuery(
           `SELECT step_number
            FROM learning_path_steps
            WHERE learning_path_id = ?
            ORDER BY step_number ASC`,
           [learningPathId]
-        );
+        )) as { step_number: number }[];
 
         // 获取已完成的步骤
         const completedSteps: number[] = progressRecord.completed_steps 
-          ? JSON.parse(progressRecord.completed_steps) 
+          ? JSON.parse(String(progressRecord.completed_steps)) 
           : [];
 
         // 恢复默认路径：所有未完成的步骤都应该可见
@@ -1423,12 +1426,12 @@ export class AILearningPathService {
     learning_path_id: number;
   }> {
     try {
-      const progressRecords = await executeQuery(
+      const progressRecords = (await executeQuery(
         `SELECT dynamic_adjustment_enabled
          FROM learning_progress
          WHERE user_id = ? AND learning_path_id = ?`,
         [userId, learningPathId]
-      );
+      )) as { dynamic_adjustment_enabled?: boolean }[];
 
       if (progressRecords.length === 0) {
         // 如果没有进度记录，返回默认值（启用）
