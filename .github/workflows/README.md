@@ -162,6 +162,8 @@ services:
     image: redis:6-alpine
 ```
 
+后端 job 会先安装 MySQL 客户端，将 `backend/sql/learning-platform-integration-tables.sql` 中的库名替换为 `edu_education_platform_test` 后导入，保证测试有完整表结构。前端在 CI 中使用 `npm run build:ci`（仅 `vite build`），避免类型检查阻塞流水线；本地仍可使用 `npm run build`（含 `vue-tsc`）。
+
 ## 📝 测试报告
 
 ### 覆盖率报告
