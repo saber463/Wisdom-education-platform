@@ -1,31 +1,26 @@
 /**
- * Tailwind CSS 基础样式
- * 
- * 注意：已禁用preflight以避免与Element Plus冲突
- * 如需使用Tailwind的基础样式，请手动引入需要的部分
+ * Tailwind CSS 基础样式 (v3)
+ * 已禁用 preflight 以避免与 Element Plus 冲突
  */
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* 自定义组件样式 - 使用@apply指令 */
+/* 自定义组件样式 - 使用 @apply 指令 */
 @layer components {
-  /* 教育平台通用按钮样式 */
   .btn-primary {
     @apply px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors;
   }
-  
+
   .btn-secondary {
     @apply px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors;
   }
-  
-  /* 卡片样式 */
+
   .card {
     @apply bg-white rounded-xl shadow-md p-6;
   }
-  
-  /* 输入框样式 */
+
   .input-primary {
     @apply w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
   }
@@ -33,20 +28,17 @@
 
 /* 响应式工具类 */
 @layer utilities {
-  /* 移动端适配 */
   .mobile-padding {
     @apply px-4 py-2;
   }
-  
+
   @media (min-width: 640px) {
     .mobile-padding {
       @apply px-6 py-4;
     }
   }
-  
-  /* 触摸目标优化（与鸿蒙样式兼容） */
+
   .touch-target {
     @apply min-h-[48px] min-w-[48px];
   }
 }
-
