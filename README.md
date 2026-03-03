@@ -632,9 +632,9 @@ edu-ai-platform-web/
 | `backend-ci.yml` | 仅后端（backend/ 变更或手动） |
 | `frontend-ci.yml` | 仅前端（frontend/ 变更或手动） |
 | `python-ai-ci.yml` | 仅 Python AI（python-ai/ 变更或手动） |
-| `deploy.yml` | 部署流水线（需配置 GitHub Secrets） |
+| `deploy.yml` | 部署流水线（需配置 GitHub Secrets：SSH_PRIVATE_KEY、DEPLOY_HOST、DEPLOY_USER 等） |
 
-更多细节见 [.github/workflows/README.md](.github/workflows/README.md)。
+部署前请先按 [.github/workflows/DEPLOY-SETUP.md](.github/workflows/DEPLOY-SETUP.md) 配置服务器与 Secrets；更多 CI/CD 说明见 [.github/workflows/README.md](.github/workflows/README.md)。
 
 ---
 

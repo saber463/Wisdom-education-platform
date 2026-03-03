@@ -78,6 +78,36 @@
 - 测试总结报告
 - 自动上传测试报告到 Artifact
 
+### 7. 部署工作流 (`deploy.yml`)
+**触发条件**: 
+- Push 到 `main` 或 `master` 分支
+- 推送以 `v` 开头的 tag（如 `v1.0.0`）
+- 手动触发（Actions → 选择「部署到生产服务器」→ Run workflow）
+
+**功能**:
+- 构建后端与前端产物
+- 通过 SSH 将产物同步到部署服务器（rsync/scp）
+- 可选：PM2/systemd 重启后端、Nginx 重载
+- 健康检查（后端 / 前端可访问性）
+
+**⚠️ 部署前必须配置 GitHub Secrets**，否则会报错 `The ssh-private-key argument is empty`。完整配置步骤见 [部署服务器配置与 GitHub Secrets](DEPLOY-SETUP.md)。
+
+## 🔐 配置部署服务器与 GitHub Secrets（deploy 必读）
+
+部署流水线依赖以下 **Repository Secrets**（Settings → Secrets and variables → Actions）：
+
+| Secret 名称 | 必填 | 说明 |
+|-------------|------|------|
+| **SSH_PRIVATE_KEY** | ✅ | 部署用 SSH 私钥完整内容（见 [DEPLOY-SETUP.md](DEPLOY-SETUP.md) 生成与配置） |
+| **DEPLOY_HOST** | ✅ | 部署服务器 IP 或域名 |
+| **DEPLOY_USER** | ✅ | SSH 登录用户名 |
+| **DEPLOY_PATH** | 否 | 服务器上的项目根目录，默认 `/var/www/edu-platform` |
+| **DEPLOY_PORT** | 否 | SSH 端口，默认 `22` |
+| **VITE_API_BASE_URL** | 否 | 前端构建时的后端 API 地址 |
+| **VITE_AI_SERVICE_URL** | 否 | 前端构建时的 AI 服务地址 |
+
+生成密钥、将公钥写入服务器 `authorized_keys`、以及安全建议，请按 [DEPLOY-SETUP.md](DEPLOY-SETUP.md) 操作。
+
 ## 🚀 使用方法
 
 ### 本地测试
@@ -108,17 +138,27 @@ cargo test --release
    - 推送到 main/develop/master 分支时：主 CI (`ci.yml`) 与完整测试套件 (`full-test.yml`) 会自动运行
    - 创建 Pull Request 到上述分支时同样自动运行
    - 仅修改某目录时，对应模块 CI（如 `backend-ci.yml`）会按路径自动触发
+   - 推送到 main/master 或推送 `v*` tag 时：部署工作流 (`deploy.yml`) 会自动运行（需已配置 Secrets）
 
 2. **手动触发**:
-   - 进入 GitHub Actions 页面
-   - 选择对应的工作流
-   - 点击 "Run workflow"
+   - 进入 GitHub 仓库 **Actions** 页面
+   - 左侧选择对应工作流（如「部署到生产服务器」）
+   - 点击 **Run workflow**，选择分支后运行
 
 3. **查看结果**:
    - 在 Actions 页面查看运行状态
    - 下载测试报告和构建产物
    - 查看测试覆盖率
    - 测试报告包含详细的测试输出、覆盖率摘要等信息
+
+### CI/CD 常用命令速查
+
+| 目的 | 操作 / 命令 |
+|------|----------------|
+| 仅跑测试（不部署） | 推送分支 → 由 `ci.yml` / `full-test.yml` 自动运行；或本地：`cd backend && npm run test:fast`、`cd frontend && npm test` |
+| 仅构建（不部署） | 本地：`cd backend && npm run build`；`cd frontend && npm run build:ci` |
+| 触发部署 | 推送 to `main`/`master`，或推送 tag `v*`，或在 Actions 页手动运行「部署到生产服务器」 |
+| 配置部署 | 在仓库 Settings → Secrets and variables → Actions 中添加 `SSH_PRIVATE_KEY`、`DEPLOY_HOST`、`DEPLOY_USER` 等，详见 [DEPLOY-SETUP.md](DEPLOY-SETUP.md) |
 
 ## 📊 测试环境
 
@@ -241,6 +281,7 @@ services:
 
 ## 📚 相关文档
 
+- [部署服务器配置与 GitHub Secrets](DEPLOY-SETUP.md)（解决 `ssh-private-key argument is empty` 等部署问题）
 - [后端测试文档](../backend/tests/README.md)
 - [前端测试文档](../frontend/TEST_README.md)
 - [项目 README](../README.md)
