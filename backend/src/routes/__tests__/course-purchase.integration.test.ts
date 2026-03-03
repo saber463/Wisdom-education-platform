@@ -375,21 +375,22 @@ describe('课程购买和班级分配集成测试', () => {
         ]
       );
       
-      // 验证通知已创建
-      const notifications = await executeQuery<any[]>(
+      // 验证通知已创建（默认 [] 避免 query 返回非数组时 forEach 报错）
+      const notifications = (await executeQuery<any[]>(
         `SELECT * FROM notifications 
          WHERE user_id = ? AND type = ? AND title = ?
          ORDER BY created_at DESC
          LIMIT 1`,
         [testUserId, 'system', '课程购买成功']
-      );
+      )) || [];
       
+      expect(notifications.length).toBeGreaterThan(0);
       expect(notifications.length).toBe(1);
       expect(notifications[0].user_id).toBe(testUserId);
       expect(notifications[0].priority).toBe('medium');
       expect(notifications[0].action_url).toBe(`/learning/courses/${testCourseId}`);
       
-      const metadata = JSON.parse(notifications[0].metadata);
+      const metadata = JSON.parse(notifications[0].metadata || '{}');
       expect(metadata.course_id).toBe(testCourseId);
       expect(metadata.class_id).toBe(testClassIds[0]);
     });
@@ -415,32 +416,33 @@ describe('课程购买和班级分配集成测试', () => {
         ]
       );
       
-      // 验证通知已创建
-      const notifications = await executeQuery<any[]>(
+      // 验证通知已创建（默认 [] 避免返回非数组）
+      const notifications = (await executeQuery<any[]>(
         `SELECT * FROM notifications 
          WHERE user_id = ? AND type = ? AND title = ?
          ORDER BY created_at DESC
          LIMIT 1`,
         [testTeacherId, 'system', '新学生加入班级']
-      );
+      )) || [];
       
+      expect(notifications.length).toBeGreaterThan(0);
       expect(notifications.length).toBe(1);
       expect(notifications[0].user_id).toBe(testTeacherId);
       expect(notifications[0].priority).toBe('low');
       
-      const metadata = JSON.parse(notifications[0].metadata);
+      const metadata = JSON.parse(notifications[0].metadata || '{}');
       expect(metadata.student_id).toBe(testUserId);
     });
     
     test('发布班级公告应该通知所有学生', async () => {
-      // 查询班级所有学生
-      const students = await executeQuery<any[]>(
+      // 查询班级所有学生（依赖前置测试已产生至少一条购买并分配到 testClassIds[0]）
+      const studentsRaw = await executeQuery<any[]>(
         `SELECT DISTINCT cp.user_id
          FROM course_purchases cp
          WHERE cp.assigned_class_id = ? AND cp.payment_status = ?`,
         [testClassIds[0], 'paid']
       );
-      
+      const students = Array.isArray(studentsRaw) ? studentsRaw : [];
       const studentCount = students.length;
       expect(studentCount).toBeGreaterThan(0);
       
@@ -468,21 +470,21 @@ describe('课程购买和班级分配集成测试', () => {
         );
       }
       
-      // 验证所有学生都收到了通知
-      const notifications = await executeQuery<any[]>(
+      // 验证所有学生都收到了通知（默认 [] 避免 query 返回非数组时 forEach 报错）
+      const notifications = (await executeQuery<any[]>(
         `SELECT * FROM notifications 
          WHERE title = ? AND type = ?`,
         [`【班级公告】${announcementTitle}`, 'system']
-      );
+      )) || [];
       
       expect(notifications.length).toBeGreaterThanOrEqual(studentCount);
+      expect(notifications.length).toBeGreaterThan(0);
       
       // 验证通知内容正确
       notifications.forEach(notification => {
         expect(notification.content).toBe(announcementContent);
         expect(notification.priority).toBe('high');
-        
-        const metadata = JSON.parse(notification.metadata);
+        const metadata = JSON.parse(notification.metadata || '{}');
         expect(metadata.class_id).toBe(testClassIds[0]);
         expect(metadata.teacher_id).toBe(testTeacherId);
       });

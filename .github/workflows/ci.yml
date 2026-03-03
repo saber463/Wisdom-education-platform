@@ -92,7 +92,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: backend-test-results
-          path: backend/coverage
+          path: |
+            backend/coverage
+            backend/test-reports/
           retention-days: 7
           if-no-files-found: ignore
 
@@ -141,7 +143,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: frontend-coverage
-          path: frontend/coverage
+          path: |
+            frontend/coverage
+            frontend/test-reports/
           retention-days: 7
           if-no-files-found: ignore
 

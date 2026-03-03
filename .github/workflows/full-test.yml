@@ -121,7 +121,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: backend-full-coverage
-          path: backend/coverage
+          path: |
+            backend/coverage
+            backend/test-reports/
           retention-days: 90
           if-no-files-found: ignore
 
@@ -158,7 +160,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: frontend-full-coverage
-          path: frontend/coverage
+          path: |
+            frontend/coverage
+            frontend/test-reports/
           retention-days: 90
           if-no-files-found: ignore
 
@@ -199,7 +203,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: python-full-coverage
-          path: python-ai/coverage.xml
+          path: |
+            python-ai/coverage.xml
+            python-ai/test-reports/
           retention-days: 90
           if-no-files-found: ignore
 

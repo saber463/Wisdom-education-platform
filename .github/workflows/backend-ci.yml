@@ -98,6 +98,56 @@ jobs:
           JWT_SECRET: test_jwt_secret_key_for_ci
         run: npm run test:coverage || true
       
+      - name: 生成测试报告
+        if: always()
+        working-directory: ./backend
+        run: |
+          if [ -d "coverage" ]; then
+            mkdir -p test-reports
+            echo "# 后端测试报告" > test-reports/TEST_REPORT.md
+            echo "" >> test-reports/TEST_REPORT.md
+            echo "## 测试概览" >> test-reports/TEST_REPORT.md
+            echo "" >> test-reports/TEST_REPORT.md
+            echo "- **报告生成时间**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> test-reports/TEST_REPORT.md
+            echo "- **Node.js 版本**: $(node --version)" >> test-reports/TEST_REPORT.md
+            echo "- **npm 版本**: $(npm --version)" >> test-reports/TEST_REPORT.md
+            echo "- **测试环境**: ${{ env.NODE_ENV }}" >> test-reports/TEST_REPORT.md
+            echo "" >> test-reports/TEST_REPORT.md
+            echo "## 测试结果" >> test-reports/TEST_REPORT.md
+            echo "" >> test-reports/TEST_REPORT.md
+            if [ -f "coverage/coverage-summary.json" ]; then
+              echo "### 覆盖率摘要" >> test-reports/TEST_REPORT.md
+              echo "" >> test-reports/TEST_REPORT.md
+              echo '\`\`\`json' >> test-reports/TEST_REPORT.md
+              cat coverage/coverage-summary.json >> test-reports/TEST_REPORT.md
+              echo '\`\`\`' >> test-reports/TEST_REPORT.md
+              echo "" >> test-reports/TEST_REPORT.md
+            fi
+            if [ -f "coverage/lcov-report/index.html" ]; then
+              echo "### 详细覆盖率报告" >> test-reports/TEST_REPORT.md
+              echo "" >> test-reports/TEST_REPORT.md
+              echo "[查看详细覆盖率报告](coverage/lcov-report/index.html)" >> test-reports/TEST_REPORT.md
+              echo "" >> test-reports/TEST_REPORT.md
+            fi
+            if [ -f ".nyc_output/coverage.json" ]; then
+              echo "### 原始覆盖率数据" >> test-reports/TEST_REPORT.md
+              echo "" >> test-reports/TEST_REPORT.md
+              echo '\`\`\`json' >> test-reports/TEST_REPORT.md
+              cat .nyc_output/coverage.json | head -n 100 >> test-reports/TEST_REPORT.md
+              echo "... (省略)" >> test-reports/TEST_REPORT.md
+              echo '\`\`\`' >> test-reports/TEST_REPORT.md
+              echo "" >> test-reports/TEST_REPORT.md
+            fi
+            echo "## 测试输出" >> test-reports/TEST_REPORT.md
+            echo "" >> test-reports/TEST_REPORT.md
+            echo '\`\`\`' >> test-reports/TEST_REPORT.md
+            npm run test:coverage 2>&1 | tail -n 100 >> test-reports/TEST_REPORT.md || true
+            echo '\`\`\`' >> test-reports/TEST_REPORT.md
+            echo "" >> test-reports/TEST_REPORT.md
+            echo "---" >> test-reports/TEST_REPORT.md
+            echo "*此报告由 CI/CD 系统自动生成*" >> test-reports/TEST_REPORT.md
+          fi
+      
       - name: 构建项目
         working-directory: ./backend
         run: npm run build
@@ -117,5 +167,14 @@ jobs:
           name: backend-coverage
           path: backend/coverage
           retention-days: 30
+          if-no-files-found: ignore
+      
+      - name: 上传测试报告
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-test-reports
+          path: backend/test-reports/
+          retention-days: 90
           if-no-files-found: ignore
 

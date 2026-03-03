@@ -17,6 +17,7 @@
 - Python AI 服务测试
 - Rust 服务测试（可选）
 - 生成测试总结报告
+- 自动上传测试报告到 Artifact
 
 ### 2. 后端模块工作流 (`backend-ci.yml`)
 **触发条件**: 
@@ -27,6 +28,7 @@
 - 代码检查（ESLint）
 - 快速测试（Jest）
 - 测试覆盖率生成
+- 测试报告生成
 - TypeScript 构建
 
 ### 3. 前端模块工作流 (`frontend-ci.yml`)
@@ -38,6 +40,7 @@
 - 代码检查（ESLint）
 - 单元测试（Vitest）
 - 类型检查（vue-tsc）
+- 测试报告生成
 - 构建生产版本
 
 ### 4. Python AI 服务工作流 (`python-ai-ci.yml`)
@@ -48,6 +51,7 @@
 **功能**:
 - 代码质量检查（flake8, pylint）
 - 单元测试（pytest）
+- 测试报告生成
 - 服务启动验证
 
 ### 5. Rust 服务工作流 (`rust-service-ci.yml`)
@@ -59,6 +63,7 @@
 - 代码格式化检查（cargo fmt）
 - 代码检查（cargo clippy）
 - 单元测试（cargo test）
+- 测试报告生成
 - Release 构建
 
 ### 6. 完整测试套件 (`full-test.yml`)
@@ -71,6 +76,7 @@
 - 运行所有模块的完整测试套件
 - 生成详细的覆盖率报告
 - 测试总结报告
+- 自动上传测试报告到 Artifact
 
 ## 🚀 使用方法
 
@@ -112,6 +118,7 @@ cargo test --release
    - 在 Actions 页面查看运行状态
    - 下载测试报告和构建产物
    - 查看测试覆盖率
+   - 测试报告包含详细的测试输出、覆盖率摘要等信息
 
 ## 📊 测试环境
 
@@ -176,6 +183,15 @@ services:
 - `frontend-coverage/` - 前端测试覆盖率
 - `python-ai-coverage/` - Python 测试覆盖率
 
+### 测试报告
+
+所有模块的详细测试报告会自动上传为 Artifact（包含测试输出、覆盖率摘要等）：
+
+- `backend-test-reports/` - 后端测试报告
+- `frontend-test-reports/` - 前端测试报告
+- `python-ai-test-reports/` - Python 测试报告
+- `rust-service-test-reports/` - Rust 测试报告
+
 ### 构建产物
 
 构建成功的产物也会上传为 Artifact：
@@ -228,8 +244,10 @@ services:
 - [后端测试文档](../backend/tests/README.md)
 - [前端测试文档](../frontend/TEST_README.md)
 - [项目 README](../README.md)
+- [测试报告系统说明](TEST_REPORT_SUMMARY.md)
 
 ## 🔄 更新日志
 
+- **2026-03-03**: 添加测试报告生成功能，测试失败时自动生成详细报告
 - **2026-01-23**: 初始版本，包含所有模块的 CI/CD 配置
 

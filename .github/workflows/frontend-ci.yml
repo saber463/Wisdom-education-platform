@@ -47,6 +47,48 @@ jobs:
         working-directory: ./frontend
         run: npm run test:coverage || true
       
+      - name: 生成测试报告
+        if: always()
+        working-directory: ./frontend
+        run: |
+          if [ -d "coverage" ]; then
+            mkdir -p test-reports
+            echo "# 前端测试报告" > test-reports/TEST_REPORT.md
+            echo "" >> test-reports/TEST_REPORT.md
+            echo "## 测试概览" >> test-reports/TEST_REPORT.md
+            echo "" >> test-reports/TEST_REPORT.md
+            echo "- **报告生成时间**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> test-reports/TEST_REPORT.md
+            echo "- **Node.js 版本**: $(node --version)" >> test-reports/TEST_REPORT.md
+            echo "- **npm 版本**: $(npm --version)" >> test-reports/TEST_REPORT.md
+            echo "- **Vitest 版本**: $(npx vitest --version 2>/dev/null || echo '未知')" >> test-reports/TEST_REPORT.md
+            echo "- **测试环境**: ${{ env.NODE_ENV }}" >> test-reports/TEST_REPORT.md
+            echo "" >> test-reports/TEST_REPORT.md
+            echo "## 测试结果" >> test-reports/TEST_REPORT.md
+            echo "" >> test-reports/TEST_REPORT.md
+            if [ -f "coverage/coverage-summary.json" ]; then
+              echo "### 覆盖率摘要" >> test-reports/TEST_REPORT.md
+              echo "" >> test-reports/TEST_REPORT.md
+              echo '\`\`\`json' >> test-reports/TEST_REPORT.md
+              cat coverage/coverage-summary.json >> test-reports/TEST_REPORT.md
+              echo '\`\`\`' >> test-reports/TEST_REPORT.md
+              echo "" >> test-reports/TEST_REPORT.md
+            fi
+            if [ -f "coverage/lcov-report/index.html" ]; then
+              echo "### 详细覆盖率报告" >> test-reports/TEST_REPORT.md
+              echo "" >> test-reports/TEST_REPORT.md
+              echo "[查看详细覆盖率报告](coverage/lcov-report/index.html)" >> test-reports/TEST_REPORT.md
+              echo "" >> test-reports/TEST_REPORT.md
+            fi
+            echo "## 测试输出" >> test-reports/TEST_REPORT.md
+            echo "" >> test-reports/TEST_REPORT.md
+            echo '\`\`\`' >> test-reports/TEST_REPORT.md
+            npm run test:coverage 2>&1 | tail -n 100 >> test-reports/TEST_REPORT.md || true
+            echo '\`\`\`' >> test-reports/TEST_REPORT.md
+            echo "" >> test-reports/TEST_REPORT.md
+            echo "---" >> test-reports/TEST_REPORT.md
+            echo "*此报告由 CI/CD 系统自动生成*" >> test-reports/TEST_REPORT.md
+          fi
+      
       - name: 类型检查
         working-directory: ./frontend
         run: npx vue-tsc --noEmit || true
@@ -70,5 +112,14 @@ jobs:
           name: frontend-coverage
           path: frontend/coverage
           retention-days: 30
+          if-no-files-found: ignore
+      
+      - name: 上传测试报告
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-test-reports
+          path: frontend/test-reports/
+          retention-days: 90
           if-no-files-found: ignore
 

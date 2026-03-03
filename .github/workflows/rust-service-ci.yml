@@ -58,6 +58,37 @@ jobs:
         run: |
           cargo test --release --verbose || echo "测试完成"
       
+      - name: 生成测试报告
+        if: always()
+        working-directory: ./rust-service
+        run: |
+          mkdir -p test-reports
+          echo "# Rust 服务测试报告" > test-reports/TEST_REPORT.md
+          echo "" >> test-reports/TEST_REPORT.md
+          echo "## 测试概览" >> test-reports/TEST_REPORT.md
+          echo "" >> test-reports/TEST_REPORT.md
+          echo "- **报告生成时间**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> test-reports/TEST_REPORT.md
+          echo "- **Rust 版本**: $(rustc --version)" >> test-reports/TEST_REPORT.md
+          echo "- **Cargo 版本**: $(cargo --version)" >> test-reports/TEST_REPORT.md
+          echo "- **测试环境**: ${{ env.RUST_VERSION }}" >> test-reports/TEST_REPORT.md
+          echo "" >> test-reports/TEST_REPORT.md
+          echo "## 测试结果" >> test-reports/TEST_REPORT.md
+          echo "" >> test-reports/TEST_REPORT.md
+          echo "### 测试输出" >> test-reports/TEST_REPORT.md
+          echo "" >> test-reports/TEST_REPORT.md
+          echo '\`\`\`' >> test-reports/TEST_REPORT.md
+          cargo test --release --verbose 2>&1 | tail -n 200 >> test-reports/TEST_REPORT.md || true
+          echo '\`\`\`' >> test-reports/TEST_REPORT.md
+          echo "" >> test-reports/TEST_REPORT.md
+          echo "### 构建输出" >> test-reports/TEST_REPORT.md
+          echo "" >> test-reports/TEST_REPORT.md
+          echo '\`\`\`' >> test-reports/TEST_REPORT.md
+          cargo build --release 2>&1 | tail -n 100 >> test-reports/TEST_REPORT.md || true
+          echo '\`\`\`' >> test-reports/TEST_REPORT.md
+          echo "" >> test-reports/TEST_REPORT.md
+          echo "---" >> test-reports/TEST_REPORT.md
+          echo "*此报告由 CI/CD 系统自动生成*" >> test-reports/TEST_REPORT.md
+      
       - name: 构建 Release 版本
         working-directory: ./rust-service
         run: |
@@ -70,5 +101,14 @@ jobs:
           name: rust-service-binary
           path: rust-service/target/release/*
           retention-days: 30
+          if-no-files-found: ignore
+      
+      - name: 上传测试报告
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rust-service-test-reports
+          path: rust-service/test-reports/
+          retention-days: 90
           if-no-files-found: ignore
 
