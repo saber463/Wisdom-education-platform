@@ -161,20 +161,33 @@ export async function executeQuery<T = unknown>(
 ): Promise<T> {
   const startTime = Date.now();
   const connection = await connectWithRetry();
-  
+
   try {
     // 使用 query 而不是 execute，因为 execute 在某些 MySQL 版本中
     // 对 LIMIT ? OFFSET ? 参数绑定有问题
     const [results] = await connection.query(sql, params);
-    
+
     const duration = Date.now() - startTime;
-    
+
     // 性能监控：记录慢查询（阈值可由 DB_SLOW_QUERY_MS 配置，默认 500ms）
     const slowThreshold = parseInt(process.env.DB_SLOW_QUERY_MS || '500', 10);
     if (duration > slowThreshold) {
       console.warn(`[数据库性能] 慢查询 (${duration}ms): ${sql.substring(0, 100)}...`);
     }
-    
+
+    // 统一结果结构：
+    // - 对于 SELECT 查询，始终返回数组（即使没有记录或驱动返回了非数组）
+    //   这样调用方在直接使用 forEach / length 时不会因为类型不一致而报错
+    const isSelectQuery = /^\s*select/i.test(sql);
+    if (isSelectQuery) {
+      if (Array.isArray(results)) {
+        return results as T;
+      }
+      // 极端情况下（驱动或中间层返回了非数组 / undefined），强制包装成空数组
+      return [] as T;
+    }
+
+    // 非 SELECT（INSERT/UPDATE/DELETE 等）保持原有返回结构（OkPacket 等）
     return results as T;
   } finally {
     connection.release();
