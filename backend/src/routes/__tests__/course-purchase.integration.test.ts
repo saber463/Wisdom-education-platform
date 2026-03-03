@@ -222,12 +222,15 @@ describe('课程购买和班级分配集成测试', () => {
   describe('班级分配均衡性', () => {
     
     test('应该将学生分配到学生数最少的班级', async () => {
-      // 设置不同的学生数
+      // 设置不同的学生数，确保仅有一个班级人数最少（避免 0 与 5 并列导致断言不稳定）
       await executeQuery('UPDATE course_classes SET student_count = 10 WHERE id = ?', [testClassIds[0]]);
       await executeQuery('UPDATE course_classes SET student_count = 5 WHERE id = ?', [testClassIds[1]]);
       await executeQuery('UPDATE course_classes SET student_count = 8 WHERE id = ?', [testClassIds[2]]);
+      await executeQuery('UPDATE course_classes SET student_count = 7 WHERE id = ?', [testClassIds[3]]);
+      await executeQuery('UPDATE course_classes SET student_count = 9 WHERE id = ?', [testClassIds[4]]);
+      await executeQuery('UPDATE course_classes SET student_count = 6 WHERE id = ?', [testClassIds[5]]);
       
-      // 查询学生数最少的班级
+      // 查询学生数最少的班级（应与 assignClassBalanced 逻辑一致）
       const classes = await executeQuery<any[]>(
         `SELECT * FROM course_classes 
          WHERE course_id = ? AND branch_id = ?
@@ -237,7 +240,7 @@ describe('课程购买和班级分配集成测试', () => {
       );
       
       const targetClass = classes[0];
-      expect(targetClass.id).toBe(testClassIds[1]); // 学生数为5的班级
+      expect(targetClass.id).toBe(testClassIds[1]); // 学生数为 5 的班级为唯一最少
       expect(targetClass.student_count).toBe(5);
     });
     

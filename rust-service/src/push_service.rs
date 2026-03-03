@@ -109,14 +109,14 @@ pub fn analyze_student_status(
 
 /**
  * 计算学习评分
- * 基于任务完成率计算
+ * 基于任务完成率计算；当 completed > total 时限制为 total，保证结果在 0–100 之间
  */
 pub fn calculate_learning_score(completed: i32, total: i32) -> f32 {
-    if total == 0 {
-        0.0
-    } else {
-        (completed as f32 / total as f32) * 100.0
+    if total <= 0 {
+        return 0.0;
     }
+    let completed = completed.clamp(0, total);
+    (completed as f32 / total as f32) * 100.0
 }
 
 /**
