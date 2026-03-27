@@ -20,6 +20,15 @@ export default defineConfig({
     }
   },
   
+  css: {
+    // 使用现代编译器（避免Sass弃用警告）
+    preprocessorOptions: {
+      scss: {
+        api: 'modern-compiler'
+      }
+    }
+  },
+  
   server: {
     // 固定端口5173
     port: 5173,
@@ -77,35 +86,26 @@ export default defineConfig({
       output: {
         // 手动分包策略
         manualChunks: (id) => {
-          // node_modules中的包
+          // Vendor 拆分，去除循环依赖警告
           if (id.includes('node_modules')) {
-            // Vue核心库（最小化，优先加载）
-            if (id.includes('vue') && !id.includes('vue-router') && !id.includes('pinia')) {
+            if (id.includes('element-plus')) {
+              return 'element-plus';
+            }
+            if (id.includes('vue') || id.includes('@vue') || id.includes('pinia')) {
               return 'vue-core';
+            }
+            if (id.includes('video.js')) {
+              return 'videojs';
+            }
+            if (id.includes('echarts')) {
+              return 'echarts';
+            }
+            if (id.includes('axios')) {
+              return 'axios';
             }
             if (id.includes('vue-router')) {
               return 'vue-router';
             }
-            if (id.includes('pinia')) {
-              return 'pinia';
-            }
-            // Element Plus（按需加载）
-            if (id.includes('element-plus')) {
-              return 'element-plus';
-            }
-            // 图表库（按需加载）
-            if (id.includes('echarts')) {
-              return 'echarts';
-            }
-            // Video.js（按需加载）
-            if (id.includes('video.js')) {
-              return 'videojs';
-            }
-            // Axios（常用，但可以延迟加载）
-            if (id.includes('axios')) {
-              return 'axios';
-            }
-            // 其他第三方库
             return 'vendor';
           }
           // 按功能模块分包（进一步细化）
@@ -149,8 +149,7 @@ export default defineConfig({
       'element-plus',
       'echarts',
       'axios',
-      'video.js',
-      '@videojs/themes'
+      'video.js'
     ],
     // 性能优化：排除不需要预构建的包
     exclude: []

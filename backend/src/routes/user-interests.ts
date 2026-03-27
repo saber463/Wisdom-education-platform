@@ -58,6 +58,18 @@ interface PathRecommendation {
   match_reason: string;
 }
 
+// 安全解析JSON的辅助函数
+const safeJsonParse = (data: any): any => {
+  if (typeof data === 'string') {
+    try {
+      return JSON.parse(data);
+    } catch (e) {
+      return [];
+    }
+  }
+  return data || [];
+};
+
 /**
  * POST /api/user-interests
  * 提交用户兴趣问卷
@@ -168,11 +180,11 @@ router.post('/', authenticateToken, async (req: Request, res: Response): Promise
         id: interest.id,
         user_id: interest.user_id,
         learning_goal: interest.learning_goal,
-        interested_languages: JSON.parse(interest.interested_languages as any),
-        interested_directions: JSON.parse(interest.interested_directions as any),
+        interested_languages: safeJsonParse(interest.interested_languages),
+        interested_directions: safeJsonParse(interest.interested_directions),
         skill_level: interest.skill_level,
         weekly_hours: interest.weekly_hours,
-        learning_style: JSON.parse(interest.learning_style as any),
+        learning_style: safeJsonParse(interest.learning_style),
         survey_completed: interest.survey_completed,
         survey_completed_at: interest.survey_completed_at,
         created_at: interest.created_at,
@@ -229,11 +241,11 @@ router.get('/status', authenticateToken, async (req: Request, res: Response): Pr
         id: interest.id,
         user_id: interest.user_id,
         learning_goal: interest.learning_goal,
-        interested_languages: JSON.parse(interest.interested_languages as any),
-        interested_directions: JSON.parse(interest.interested_directions as any),
+        interested_languages: safeJsonParse(interest.interested_languages),
+        interested_directions: safeJsonParse(interest.interested_directions),
         skill_level: interest.skill_level,
         weekly_hours: interest.weekly_hours,
-        learning_style: JSON.parse(interest.learning_style as any),
+        learning_style: safeJsonParse(interest.learning_style),
         survey_completed: interest.survey_completed,
         survey_completed_at: interest.survey_completed_at,
         created_at: interest.created_at,
@@ -286,11 +298,11 @@ router.get('/', authenticateToken, async (req: Request, res: Response): Promise<
         id: interest.id,
         user_id: interest.user_id,
         learning_goal: interest.learning_goal,
-        interested_languages: JSON.parse(interest.interested_languages as any),
-        interested_directions: JSON.parse(interest.interested_directions as any),
+        interested_languages: safeJsonParse(interest.interested_languages),
+        interested_directions: safeJsonParse(interest.interested_directions),
         skill_level: interest.skill_level,
         weekly_hours: interest.weekly_hours,
-        learning_style: JSON.parse(interest.learning_style as any),
+        learning_style: safeJsonParse(interest.learning_style),
         survey_completed: interest.survey_completed,
         survey_completed_at: interest.survey_completed_at,
         created_at: interest.created_at,
@@ -395,11 +407,11 @@ router.put('/', authenticateToken, async (req: Request, res: Response): Promise<
         id: interest.id,
         user_id: interest.user_id,
         learning_goal: interest.learning_goal,
-        interested_languages: JSON.parse(interest.interested_languages as any),
-        interested_directions: JSON.parse(interest.interested_directions as any),
+        interested_languages: safeJsonParse(interest.interested_languages),
+        interested_directions: safeJsonParse(interest.interested_directions),
         skill_level: interest.skill_level,
         weekly_hours: interest.weekly_hours,
-        learning_style: JSON.parse(interest.learning_style as any),
+        learning_style: safeJsonParse(interest.learning_style),
         survey_completed: interest.survey_completed,
         survey_completed_at: interest.survey_completed_at,
         created_at: interest.created_at,
@@ -452,8 +464,8 @@ router.get('/recommendations', authenticateToken, async (req: Request, res: Resp
     }
 
     const interest = interests[0];
-    const interestedLanguages = JSON.parse(interest.interested_languages as any) as string[];
-    const interestedDirections = JSON.parse(interest.interested_directions as any) as string[];
+    const interestedLanguages = safeJsonParse(interest.interested_languages) as string[];
+    const interestedDirections = safeJsonParse(interest.interested_directions) as string[];
     const skillLevel = interest.skill_level;
     const learningGoal = interest.learning_goal;
 

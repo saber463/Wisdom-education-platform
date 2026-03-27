@@ -53,6 +53,8 @@ temp/
 .Python
 pip-log.txt
 pip-delete-this-directory.txt
+venv/
+venv2/
 
 # Rust
 Cargo.lock

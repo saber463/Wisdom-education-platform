@@ -23,7 +23,7 @@ export function performanceMonitor(req: Request, res: Response, next: NextFuncti
       console.warn(`[性能警告] 慢请求: ${req.method} ${path} - ${duration}ms (阈值: ${SLOW_REQUEST_MS}ms)`);
     }
     
-    res.setHeader('X-Response-Time', `${duration}ms`);
+    // res.setHeader('X-Response-Time', `${duration}ms`); // Cannot set headers after finish
   });
   
   next();

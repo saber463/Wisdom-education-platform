@@ -390,7 +390,9 @@ describe('课程购买和班级分配集成测试', () => {
       expect(notifications[0].priority).toBe('medium');
       expect(notifications[0].action_url).toBe(`/learning/courses/${testCourseId}`);
       
-      const metadata = JSON.parse(notifications[0].metadata || '{}');
+      const metadata = typeof notifications[0].metadata === 'string' 
+        ? JSON.parse(notifications[0].metadata || '{}') 
+        : (notifications[0].metadata || {});
       expect(metadata.course_id).toBe(testCourseId);
       expect(metadata.class_id).toBe(testClassIds[0]);
     });
@@ -430,7 +432,9 @@ describe('课程购买和班级分配集成测试', () => {
       expect(notifications[0].user_id).toBe(testTeacherId);
       expect(notifications[0].priority).toBe('low');
       
-      const metadata = JSON.parse(notifications[0].metadata || '{}');
+      const metadata = typeof notifications[0].metadata === 'string' 
+        ? JSON.parse(notifications[0].metadata || '{}') 
+        : (notifications[0].metadata || {});
       expect(metadata.student_id).toBe(testUserId);
     });
     
@@ -484,7 +488,9 @@ describe('课程购买和班级分配集成测试', () => {
       notifications.forEach(notification => {
         expect(notification.content).toBe(announcementContent);
         expect(notification.priority).toBe('high');
-        const metadata = JSON.parse(notification.metadata || '{}');
+        const metadata = typeof notification.metadata === 'string' 
+          ? JSON.parse(notification.metadata || '{}') 
+          : (notification.metadata || {});
         expect(metadata.class_id).toBe(testClassIds[0]);
         expect(metadata.teacher_id).toBe(testTeacherId);
       });

@@ -27,7 +27,14 @@ echo ✅ 后端服务已启动 (端口3000)
 echo.
 
 echo [4/5] 启动Python AI服务...
-start "Python AI Service" cmd /k "cd /d %~dp0python-ai && python app.py"
+if exist "%~dp0python-ai\venv2\Scripts\activate.bat" (
+    start "Python AI Service" cmd /k "cd /d %~dp0python-ai && venv2\Scripts\activate.bat && python app.py"
+) else if exist "%~dp0python-ai\venv\Scripts\activate.bat" (
+    start "Python AI Service" cmd /k "cd /d %~dp0python-ai && venv\Scripts\activate.bat && python app.py"
+) else (
+    echo [警告] 未找到Python虚拟环境，跳过启动AI服务。
+    echo 请先进入python-ai目录运行: python -m venv venv2 ^& venv2\Scripts\pip install -r requirements.txt
+)
 timeout /t 3 /nobreak >nul
 echo ✅ AI服务已启动 (端口5000/50051)
 echo.

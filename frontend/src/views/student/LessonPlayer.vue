@@ -84,7 +84,7 @@ import { useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import videojs from 'video.js'
 import 'video.js/dist/video-js.css'
-import '@videojs/themes/dist/city/index.css'
+
 import request from '@/utils/request'
 import StudentLayout from '@/components/StudentLayout.vue'
 import VideoQuizModal from '@/components/VideoQuizModal.vue'

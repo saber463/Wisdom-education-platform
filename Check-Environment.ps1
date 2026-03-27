@@ -1,4 +1,4 @@
-# 智慧教育平台 - 环境检查脚本 (PowerShell版本)
+﻿# 智慧教育平台 - 环境检查脚本 (PowerShell版本)
 # 使用方法: .\Check-Environment.ps1
 
 Write-Host "========================================" -ForegroundColor Cyan
