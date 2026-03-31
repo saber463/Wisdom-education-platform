@@ -42,6 +42,23 @@ interface AnnouncementRequest {
 }
 
 /**
+ * GET /api/classes
+ * 获取教师负责的班级列表（前端下拉选择用）
+ */
+router.get('/', requireRole('teacher'), async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const teacherId = req.user?.id;
+    const rows = await executeQuery<CourseClass[]>(
+      `SELECT id, name, student_count FROM classes WHERE teacher_id = ? ORDER BY created_at DESC`,
+      [teacherId]
+    );
+    res.json({ code: 200, msg: '查询成功', classes: rows });
+  } catch (err) {
+    res.status(500).json({ code: 500, msg: '服务器错误' });
+  }
+});
+
+/**
  * GET /api/classes/:id/students
  * 获取班级学生列表
  * 

@@ -266,10 +266,10 @@ async function fetchAssignments() {
       params.status = filterForm.status
     }
     
-    const response = await request.get<{ 
+    const response = await request.get<{
       assignments?: Assignment[]
-      total?: number 
-    }>('/student/assignments', { params })
+      total?: number
+    }>('/assignments', { params })
     
     assignmentList.value = response.assignments || []
     pagination.total = response.total || 0

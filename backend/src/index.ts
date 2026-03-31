@@ -35,6 +35,9 @@ import faceVerifyRoutes from './routes/face-verify.js';
 import codeAnalysisRoutes from './routes/code-analysis.js';
 import pushRoutes from './routes/push-routes.js';
 
+import { authenticateToken, requireRole } from './middleware/auth.js';
+import { executeQuery } from './config/database.js';
+
 // 加载环境变量
 dotenv.config();
 
@@ -88,9 +91,45 @@ app.use('/api/offline', offlineRoutes);
 app.use('/api/teams', teamsRoutes);
 app.use('/api/speech', speechAssessmentRoutes);
 app.use('/api/courses', coursesRoutes);
+app.use('/api/classes', classesRoutes);  // Must be before app.use('/api', coursesRoutes) to avoid wildcard clash
 app.use('/api', coursesRoutes); // For /api/branches/:id/lessons routes
-app.use('/api/classes', classesRoutes);
 app.use('/api/video-progress', videoProgressRoutes);
+// Teacher dashboard — must be registered BEFORE /api/teacher -> videoProgressRoutes (which has /:lessonId wildcard)
+app.get('/api/teacher/dashboard', authenticateToken, requireRole('teacher'), async (req: any, res: any): Promise<void> => {
+  try {
+    const teacherId = req.user?.id;
+    const [totalsRows, studentsRows, recent] = await Promise.all([
+      executeQuery<any[]>(
+        `SELECT
+           COUNT(*) AS totalAssignments,
+           SUM(CASE WHEN status='graded' THEN 1 ELSE 0 END) AS gradedCount,
+           SUM(CASE WHEN status='published' THEN 1 ELSE 0 END) AS pendingCount
+         FROM assignments WHERE teacher_id = ?`,
+        [teacherId]
+      ),
+      executeQuery<any[]>(
+        `SELECT COUNT(DISTINCT cp.user_id) AS totalStudents
+         FROM course_purchases cp
+         JOIN courses c ON cp.course_id = c.id
+         WHERE c.teacher_id = ?`,
+        [teacherId]
+      ),
+      executeQuery<any[]>(
+        `SELECT id, title, status FROM assignments WHERE teacher_id = ? ORDER BY created_at DESC LIMIT 5`,
+        [teacherId]
+      ),
+    ]);
+    res.json({
+      totalAssignments: totalsRows?.[0]?.totalAssignments || 0,
+      gradedCount:      totalsRows?.[0]?.gradedCount || 0,
+      pendingCount:     totalsRows?.[0]?.pendingCount || 0,
+      totalStudents:    studentsRows?.[0]?.totalStudents || 0,
+      recentAssignments: recent || [],
+    });
+  } catch {
+    res.json({ totalAssignments: 0, gradedCount: 0, pendingCount: 0, totalStudents: 0, recentAssignments: [] });
+  }
+});
 app.use('/api/teacher', videoProgressRoutes); // For teacher endpoints
 app.use('/api/user-interests', userInterestsRoutes);
 app.use('/api/ai-learning-path', aiLearningPathRoutes);
