@@ -12,7 +12,10 @@
         >
           <!-- 视频播放器 -->
           <el-card class="video-card">
-            <div class="video-wrapper">
+            <div
+              class="video-wrapper"
+              style="position:relative"
+            >
               <video
                 ref="videoPlayer"
                 class="video-js vjs-big-play-centered"
@@ -25,6 +28,15 @@
                   type="video/mp4"
                 >
               </video>
+              <!-- FaceGuard 人脸核验覆盖层 -->
+              <FaceGuard
+                :lesson-id="Number(route.params.id) || 0"
+                :course-id="currentCourseId"
+                :video-ref="videoPlayer"
+                @pause="pauseVideo"
+                @resume="resumeVideo"
+                @force-exit="handleForceExit"
+              />
             </div>
             <div class="video-info">
               <h2>{{ lesson.title }}</h2>
@@ -79,8 +91,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import videojs from 'video.js'
 import 'video.js/dist/video-js.css'
@@ -88,6 +100,7 @@ import 'video.js/dist/video-js.css'
 import request from '@/utils/request'
 import StudentLayout from '@/components/StudentLayout.vue'
 import VideoQuizModal from '@/components/VideoQuizModal.vue'
+import FaceGuard from '@/components/FaceGuard.vue'
 
 interface LessonData {
   video_poster?: string
@@ -109,11 +122,18 @@ interface QuizQuestion {
 }
 
 const route = useRoute()
+const router = useRouter()
 
 const loading = ref(false)
 const lesson = ref<LessonData | null>(null)
 const videoPlayer = ref<HTMLVideoElement | null>(null)
 let player: ReturnType<typeof videojs> | null = null
+
+// 从课节数据中提取 course_id，供 FaceGuard 使用
+const currentCourseId = computed(() => {
+  const data = lesson.value as (LessonData & { course_id?: number }) | null
+  return data?.course_id ?? 0
+})
 
 let progressTimer: number | null = null
 let quizCheckTimer: number | null = null
@@ -272,6 +292,20 @@ function formatContent(content: string): string {
     .replace(/\n/g, '<br>')
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.*?)\*/g, '<em>$1</em>')
+}
+
+// FaceGuard 事件处理
+function pauseVideo() {
+  if (player) player.pause()
+}
+
+function resumeVideo() {
+  if (player) player.play()
+}
+
+function handleForceExit() {
+  ElMessage.error('身份核验失败次数过多，已退出课程')
+  router.push('/student/courses')
 }
 
 onMounted(() => {

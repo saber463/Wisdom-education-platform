@@ -4,7 +4,7 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-// @ts-expect-error - compression类型定义可能缺失
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 import compression from 'compression';
 
 // 慢请求阈值（毫秒），可通过环境变量 SLOW_REQUEST_MS 调整，默认 1000

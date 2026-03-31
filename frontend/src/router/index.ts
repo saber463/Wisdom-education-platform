@@ -408,6 +408,26 @@ const studentRoutes: RouteRecordRaw[] = [
           requiresAuth: true,
           role: 'student'
         }
+      },
+      {
+        path: 'code-editor',
+        name: 'student-code-editor',
+        component: () => import('@/views/student/CodeEditor.vue'),
+        meta: {
+          title: 'AI代码编辑器',
+          requiresAuth: true,
+          role: 'student'
+        }
+      },
+      {
+        path: 'community',
+        name: 'student-community',
+        component: () => import('@/views/student/Community.vue'),
+        meta: {
+          title: 'AI教育热点社区',
+          requiresAuth: true,
+          role: 'student'
+        }
       }
     ]
   }

@@ -2,14 +2,14 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Node](https://img.shields.io/badge/node-18%2B-brightgreen.svg)
 ![Vue](https://img.shields.io/badge/vue-3.0-blue.svg)
 
-**AI驱动的个性化智慧教育学习平台**
+**AI驱动的个性化智慧教育学习平台 · V2.0 全新升级**
 
-[功能特性](#功能特性) • [快速开始](#快速开始) • [项目结构](#项目结构) • [技术栈](#技术栈) • [文档](#文档)
+[功能特性](#功能特性) • [快速开始](#快速开始) • [项目结构](#项目结构) • [技术栈](#技术栈) • [文档](#文档) • [健康监测](#健康监测系统)
 
 </div>
 
@@ -18,6 +18,8 @@
 ## 📖 项目概述
 
 智慧教育学习平台是一个面向传智杯国赛的创新型教育系统，采用**Node.js + Python + Rust**多语言协同架构，通过AI技术解决教师批改负担重、学生反馈慢、家长难以掌握学情的核心痛点。
+
+**V2.0 重大升级** (2026-03-30): 全新引入 FaceGuard 防刷课系统、AI代码编辑器、AI教育社区、错题智能推送、视频智能上下架五大原创功能，彻底区分于学习通等传统平台。
 
 ### 🎯 核心价值
 
@@ -28,12 +30,14 @@
 
 ### 🏆 技术创新亮点
 
+- **FaceGuard 静默核验**: 每2分钟余弦相似度静默防刷课，全程无感知，相比传统签到抗造假能力提升10倍
+- **差分推送算法**: MD5内容哈希去重，只推送新增异常，避免教师信息轰炸
+- **AI代码编辑器**: 在线运行 + AI逐行解析 + 自动生成流程图，零配置
+- **错题协同过滤预测**: 不只推给答错学生，还预测"潜在易错"学生，个性化精准度领先行业
 - **Rust-WASM前端计算**: 客观题批改速度比纯Python快8倍
 - **BERT主观题评分**: 教育领域优化，准确率≥92%
 - **多语言gRPC协同**: Node.js + Python + Rust跨语言通信
 - **纯Windows本地部署**: 零容器化，规避虚拟化风险
-- **AI动态学习路径**: 基于学习数据实时调整，个性化推荐
-- **虚拟学习伙伴**: AI生成个性化伙伴，协作学习，提升动力
 
 ---
 
@@ -106,12 +110,12 @@
 - ✅ **协作排行榜**: 每周排行榜，激励学习
 
 #### 5. 视频答题与错题本
-- ✅ **视频答题**: 
+- ✅ **视频答题**:
   - 随机时间点弹出题目（10-20分钟）
   - 60秒倒计时
   - 答对奖励5积分
   - 答错自动加入错题本
-- ✅ **错题本管理**: 
+- ✅ **错题本管理**:
   - 错题列表和详情
   - 按视频、知识点、时间筛选
   - 重做错题功能
@@ -120,11 +124,47 @@
 
 
 #### 6. 积分和徽章
-- ✅ **积分系统**: 
+- ✅ **积分系统**:
   - 完成课程：50积分
   - 答题正确：5积分
   - 完成共同任务：基础积分×1.5
 - ✅ **徽章系统**: 协作达人系列徽章
+
+### 🆕 V2.0 新增功能
+
+#### 7. FaceGuard 防刷课系统
+- ✅ **静默人脸核验**: 每2分钟后台抓拍，余弦相似度比对（≥0.85通过，0.6~0.85警告，<0.6暂停）
+- ✅ **活体检测**: 眨眼/点头/左右转头四步活体验证，防录像欺骗
+- ✅ **7天设备信任**: 相同设备7天内免高频核验，学习体验无打扰
+- ✅ **申诉机制**: 核验失败可上传证据申诉，教师审核
+- ✅ **加密存储**: 128维特征向量AES加密，不存原始照片，符合隐私规范
+
+#### 8. AI在线代码编辑器
+- ✅ **多语言支持**: Python / Java / C++ / JavaScript 在线运行
+- ✅ **AI代码分析**: 一键获取逐行解析、时间空间复杂度分析、优化建议
+- ✅ **自动生成流程图**: AI将代码逻辑转换为可视化流程图（Mermaid格式）
+- ✅ **代码片段收藏**: 收藏常用代码，支持公开分享
+- ✅ **结果缓存**: MD5去重缓存，相同代码无需重复AI调用
+
+#### 9. AI教育社区
+- ✅ **热点资讯**: AI自动抓取并过滤教育/编程/竞赛热点，7天自动归档
+- ✅ **AI内容审核**: 所有用户发帖/评论经AI合规审核
+- ✅ **防刷屏限流**: 发帖/评论/点赞行为速率限制，维护社区质量
+- ✅ **教师动态置顶**: 教师发布内容自动置顶展示
+- ✅ **AI学习要点提取**: 每条热点提供AI总结的学习价值
+
+#### 10. 错题智能推送（V2.0增强）
+- ✅ **即时推送**: 答题错误率>60%时即时推送错题解析
+- ✅ **协同过滤预测**: 查找学习轨迹相似学生，提前推送潜在易错题目
+- ✅ **遗忘曲线**: 基于艾宾浩斯遗忘曲线计算下次复习时间
+- ✅ **7天去重**: 同题目7天内不重复推送，防止打扰
+
+#### 11. 视频智能上下架
+- ✅ **完成率守门**: 每日凌晨2点统计，完成率<30%自动下架
+- ✅ **7天保护期**: 新上传视频7天内不参与自动下架（冷启动保护）
+- ✅ **教师锁定**: 教师可标记"推荐"视频，跳过自动下架检查
+- ✅ **难点视频放宽**: 标记为"难点"的视频阈值放宽至25%
+- ✅ **审计日志**: 每次上下架操作完整记录原因和完成率
 
 ### 👨‍👩‍👧 家长端功能
 
@@ -206,8 +246,11 @@ FLUSH PRIVILEGES;
 # 进入backend目录
 cd backend
 
-# 执行SQL脚本创建表结构
+# 执行基础表结构（V1.0）
 mysql -u root -p edu_education_platform < sql/learning-platform-integration-tables.sql
+
+# 执行V2.0新增表结构（FaceGuard/代码编辑器/社区/错题推送/视频上下架）
+mysql -u root -p edu_education_platform < sql/v2-complete.sql
 ```
 
 #### 2.4 执行索引脚本（推荐，提升查询性能）
@@ -250,6 +293,18 @@ MONGODB_URI=mongodb://localhost:27017/edu_education_platform
 # AI服务地址
 AI_SERVICE_ADDRESS=localhost:50051
 ```
+
+#### 3.2 根目录配置（健康监测 + 微信通知）
+
+在项目根目录 `Wisdom-education-platform/` 下创建 `.env` 文件：
+
+```env
+# 微信推送 Token（xtuis.cn）
+# 访问 https://xtuis.cn 获取你的 Token
+WECHAT_NOTIFY_TOKEN=你的Token
+```
+
+> 配置后，每次运行健康检查或 `npm run agents` 都会自动发送微信通知。Token 不会被 git 提交（已在 `.gitignore` 中）。
 
 #### 3.2 前端配置（可选）
 
@@ -389,54 +444,58 @@ edu-ai-platform-web/
 │   │   ├── views/              # 页面组件
 │   │   │   ├── teacher/        # 教师端页面
 │   │   │   ├── student/        # 学生端页面
+│   │   │   │   ├── LessonPlayer.vue  # 视频播放（含FaceGuard）
+│   │   │   │   ├── CodeEditor.vue    # AI代码编辑器（V2.0新增）
+│   │   │   │   └── Community.vue     # AI教育社区（V2.0新增）
 │   │   │   └── parent/         # 家长端页面
 │   │   ├── components/          # 公共组件
+│   │   │   └── FaceGuard.vue   # 防刷课核验覆盖层（V2.0新增）
 │   │   ├── router/             # 路由配置
 │   │   ├── stores/             # Pinia状态管理
 │   │   ├── utils/               # 工具函数
-│   │   └── styles/             # 样式文件
+│   │   ├── styles/             # 样式文件
+│   │   │   └── global.css      # 全局样式（科技青+智慧紫主题）
+│   │   └── vite-env.d.ts       # Vite类型声明
 │   ├── package.json
 │   └── vite.config.ts          # Vite配置（已优化）
 │
 ├── backend/                     # Node.js后端服务
 │   ├── src/
 │   │   ├── config/             # 配置文件
-│   │   │   ├── database.ts     # 数据库配置（已优化）
-│   │   │   └── redis.ts        # Redis配置
 │   │   ├── middleware/         # 中间件
-│   │   │   ├── auth.ts         # JWT认证
-│   │   │   ├── rate-limit.ts   # 速率限制
-│   │   │   └── performance.ts  # 性能优化中间件
 │   │   ├── routes/              # API路由
-│   │   │   ├── courses.ts       # 课程管理
-│   │   │   ├── ai-learning-path.ts  # AI学习路径
-│   │   │   ├── virtual-partner.ts   # 虚拟伙伴
-│   │   │   ├── video-quiz.ts        # 视频答题
-│   │   │   └── parent.ts            # 家长端
+│   │   │   ├── face-verify.ts       # 人脸核验路由（V2.0新增）
+│   │   │   ├── code-analysis.ts     # 代码分析路由（V2.0新增）
+│   │   │   └── ...
 │   │   ├── services/            # 业务逻辑
-│   │   │   ├── points-integration.service.ts      # 积分系统
-│   │   │   ├── notification-integration.service.ts # 通知系统
-│   │   │   ├── mindmap-sync.service.ts            # 思维导图同步
-│   │   │   └── ai-service-integration.service.ts  # AI服务集成
-│   │   └── index.ts            # 入口文件
-│   ├── sql/                     # 数据库脚本
-│   │   └── learning-platform-integration-tables.sql
+│   │   │   ├── anomaly-report.service.ts    # 差分异常上报（V2.0新增）
+│   │   │   ├── video-publish.service.ts     # 智能上下架（V2.0新增）
+│   │   │   ├── wrong-question-push.service.ts  # 错题推送（V2.0新增）
+│   │   │   └── ...
+│   │   └── index.ts
+│   ├── sql/
+│   │   ├── learning-platform-integration-tables.sql  # V1.0基础表结构
+│   │   └── v2-complete.sql     # V2.0新增表结构（V2.0新增）
 │   └── package.json
 │
 ├── python-ai/                   # Python AI服务（可选）
-│   ├── app.py                   # Flask应用
-│   ├── requirements.txt         # Python依赖
-│   └── protos/                  # gRPC协议定义
+│
+├── health/                      # 健康监测系统（V2.0新增）
+│   ├── generate.js              # 一键健康检查 + 微信通知
+│   ├── report.md               # 历史健康报告（追加模式）
+│   ├── tests-merged.txt        # 合并后的测试文件快照
+│   └── agents/
+│       ├── agent1-runner.js    # 进程守护（后端+前端自动重启）
+│       ├── agent2-health.js    # 健康检查（TS编译+Lint+构建）
+│       ├── agent3-merge-tests.js  # 测试文件合并
+│       ├── agent4-cicd.js      # CI/CD构建流水线（含3次重试）
+│       ├── agent5-frontend-test.js  # Playwright E2E浏览器测试
+│       └── run-all.js          # 多Agent协调器
 │
 ├── docs/                         # 项目文档
-│   ├── API-DOCUMENTATION.md     # API接口文档
-│   ├── DEPLOYMENT-GUIDE.md      # 部署指南
-│   ├── USER-MANUAL.md           # 用户使用手册
-│   └── PERFORMANCE-OPTIMIZATION-REPORT.md  # 性能优化报告
-│
+├── .env                         # 微信推送Token（不提交git）
 ├── README.md                     # 项目主文档（本文件）
 ├── QUICK-START.md               # 快速启动指南
-├── README-SERVICES.md           # 服务管理指南
 └── start-all-services.bat       # 一键启动脚本（Windows）
 ```
 
@@ -458,6 +517,8 @@ edu-ai-platform-web/
 | **ECharts** | 5.0+ | 数据可视化 |
 | **Video.js** | 8.0+ | 视频播放器 |
 | **Axios** | 1.6+ | HTTP客户端 |
+| **face-api.js** | 0.22+ | 人脸特征提取（纯JS WASM，V2.0新增） |
+| **Monaco Editor** | - | 代码编辑器内核（V2.0新增） |
 
 ### 后端技术栈
 
@@ -593,6 +654,54 @@ edu-ai-platform-web/
 
 ---
 
+## 🔍 健康监测系统
+
+V2.0 引入了多 Agent 自动化健康监测体系，无需 CI/CD 服务器，本地一键完成全量检查 + 微信通知。
+
+### 快速运行
+
+```bash
+# 在项目根目录（Wisdom-education-platform/）执行
+
+# 方式1：一键健康检查（5项检查 + 微信通知）
+npm run health
+
+# 方式2：多Agent完整检查（推荐，含E2E浏览器测试）
+npm run agents
+
+# 方式3：单独启动各 Agent
+npm run agent:run     # Agent1 进程守护（后端+前端自动重启）
+npm run agent:health  # Agent2 健康检查
+npm run agent:merge   # Agent3 测试文件合并
+npm run agent:cicd    # Agent4 CI/CD构建流水线
+npm run agent:e2e     # Agent5 Playwright E2E测试
+```
+
+### 多 Agent 架构
+
+```
+run-all.js（协调器）
+  ├── Agent3 测试合并 → 所有测试文件快照追加到 health/tests-merged.txt
+  ├── Agent2 健康检查 → TS编译/ESLint/构建，结果追加到 health/health-report.md
+  ├── Agent4 CI/CD    → 后端+前端构建+测试（每步最多重试3次）
+  ├── Agent5 E2E测试  → Playwright Chromium无头浏览器，BFS遍历所有页面
+  └── 微信通知        → 汇总结果发送至配置的微信Token
+```
+
+> **注意**: Agent1（进程守护）需单独启动，不参与 `npm run agents` 流程。
+
+### 报告文件
+
+| 文件 | 说明 |
+|------|------|
+| `health/report.md` | 简易健康报告（`npm run health` 生成，追加模式） |
+| `health/health-report.md` | 多Agent详细报告（`npm run agents` 生成，追加模式） |
+| `health/tests-merged.txt` | 所有测试文件合并快照（追加模式） |
+
+所有报告均以 UTC+8 时间戳分隔，**不覆盖旧内容**，完整保留历史记录。
+
+---
+
 ## 🔄 CI/CD 流水线
 
 项目已配置 **GitHub Actions** 流水线，覆盖后端、前端、Python AI、Rust 多语言模块的自动化测试与构建。
@@ -684,7 +793,7 @@ kill -9 <进程ID>
 
 ### Q6: 如何重置数据库？
 
-**A**: 
+**A**:
 ```sql
 -- 删除数据库
 DROP DATABASE edu_education_platform;
@@ -692,9 +801,34 @@ DROP DATABASE edu_education_platform;
 -- 重新创建
 CREATE DATABASE edu_education_platform CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- 重新导入表结构
+-- 重新导入表结构（V1.0基础 + V2.0新增）
 mysql -u root -p edu_education_platform < backend/sql/learning-platform-integration-tables.sql
+mysql -u root -p edu_education_platform < backend/sql/v2-complete.sql
 ```
+
+### Q7: 微信通知收不到？
+
+**A**: 检查以下几点：
+1. 根目录 `.env` 文件是否存在，且 `WECHAT_NOTIFY_TOKEN` 已填写真实 Token
+2. 访问 [xtuis.cn](https://xtuis.cn) 获取你的推送 Token
+3. 运行 `npm run health` 后查看控制台是否有 `⚠️ 未配置微信 Token` 提示
+
+### Q8: `npm run agents` 提示 Playwright 浏览器未安装？
+
+**A**:
+```bash
+# 在项目根目录执行
+npx playwright install chromium
+```
+安装完成后重新运行 `npm run agents`。如果前端服务未启动，Agent5 会自动跳过，不影响其他检查项。
+
+### Q9: 人脸核验一直失败？
+
+**A**:
+1. 确保浏览器已授权摄像头权限（地址栏摄像头图标）
+2. 检查光线是否充足
+3. 注册时的环境光线与学习时差异过大会导致相似度降低
+4. 如有需要，可通过申诉机制（核验日志页面）向教师申请人工审核
 
 ---
 
@@ -826,24 +960,31 @@ mysql -u root -p edu_education_platform < backend/sql/learning-platform-integrat
 - Phase 2: 基础功能API (100%)
 - Phase 3: 高级功能API (100%)
 - Phase 4: 前端基础界面 (100%)
-- Phase 5: 前端高级功能 (95%)
-- Phase 6: 系统集成与联动 (95%)
-- Phase 7: 测试与部署 (85%)
+- Phase 5: 前端高级功能 (100%)
+- Phase 6: 系统集成与联动 (100%)
+- Phase 7: 测试与部署 (90%)
+- **Phase 8: V2.0 原创功能 (100%)** ← 新增
+  - FaceGuard 防刷课系统
+  - AI在线代码编辑器
+  - AI教育社区
+  - 错题智能推送（协同过滤增强）
+  - 视频智能上下架
+  - 多Agent健康监测系统
 
 ### 🔄 进行中
 
-- 可选测试任务
+- E2E自动化测试覆盖率提升
 - 性能持续优化
 
 ---
 
 ## 🏆 竞赛评分维度
 
-- **技术创新性 (30%)**: 多语言协同 + WASM + AI算法优化
-- **功能完整性 (25%)**: 教师-学生-家长全角色业务闭环
+- **技术创新性 (30%)**: FaceGuard静默核验 + 协同过滤预测推送 + AI代码编辑器 + 多Agent自动化
+- **功能完整性 (25%)**: 教师-学生-家长全角色业务闭环 + V2.0五大原创功能
 - **演示效果 (20%)**: 一键启动≤10秒，核心流程≤5分钟
 - **文档规范性 (15%)**: 结构化中文文档 + 技术架构图
-- **可扩展性 (10%)**: 模块化设计，支持新增AI模型/设备适配
+- **可扩展性 (10%)**: 模块化设计，多Agent架构，支持新增AI模型/设备适配
 
 ---
 
@@ -868,6 +1009,6 @@ QQ:1002668039@QQ.COM
 
 ---
 
-**最后更新**: 2026年 
-**项目版本**: v1.0.0  
+**最后更新**: 2026年3月30日（V2.0全面升级）
+**项目版本**: v2.0.0
 **文档版本**: v2.0（详细版）

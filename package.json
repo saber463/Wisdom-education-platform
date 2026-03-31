@@ -1,9 +1,22 @@
 {
+  "scripts": {
+    "health": "node health/generate.js",
+    "agents": "node health/agents/run-all.js",
+    "agent:run": "node health/agents/agent1-runner.js",
+    "agent:health": "node health/agents/agent2-health.js",
+    "agent:merge": "node health/agents/agent3-merge-tests.js",
+    "agent:cicd": "node health/agents/agent4-cicd.js",
+    "agent:e2e": "node health/agents/agent5-frontend-test.js"
+  },
   "dependencies": {
     "@types/compression": "^1.8.1",
     "axios": "^1.13.2",
     "compression": "^1.8.1",
     "mysql2": "^3.16.1",
     "redis": "^5.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14",
+    "playwright": "^1.58.2"
   }
 }

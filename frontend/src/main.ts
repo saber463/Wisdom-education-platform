@@ -22,6 +22,7 @@ import { applyHarmonyOSStyles } from './utils/harmonyos-layout'
 import lazyLoadDirective from './directives/lazy-load'
 import './styles/harmonyos.css'
 import './styles/tailwind.css'
+import './styles/global.css'  // V2.0 全新全局样式（科技青+智慧紫主题）
 
 // 创建Vue应用实例
 const app = createApp(App)

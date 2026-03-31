@@ -30,6 +30,10 @@ import aiLearningPathRoutes from './routes/ai-learning-path.js';
 import virtualPartnerRoutes from './routes/virtual-partner.js';
 import videoQuizRoutes from './routes/video-quiz.js';
 import parentRoutes from './routes/parent.js';
+// V2.0 新增路由
+import faceVerifyRoutes from './routes/face-verify.js';
+import codeAnalysisRoutes from './routes/code-analysis.js';
+import pushRoutes from './routes/push-routes.js';
 
 // 加载环境变量
 dotenv.config();
@@ -93,6 +97,10 @@ app.use('/api/ai-learning-path', aiLearningPathRoutes);
 app.use('/api/virtual-partner', virtualPartnerRoutes);
 app.use('/api/video-quiz', videoQuizRoutes);
 app.use('/api/parent', parentRoutes);
+// V2.0 新增路由注册
+app.use('/api/face', faceVerifyRoutes);
+app.use('/api/code-analysis', codeAnalysisRoutes);
+app.use('/api/push', pushRoutes);
 
 // 端口检测函数 - 修改为严格模式
 async function findAvailablePort(startPort: number, _maxAttempts: number = 1): Promise<number> {
