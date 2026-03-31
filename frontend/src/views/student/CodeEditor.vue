@@ -815,7 +815,7 @@ async function generateFlowchart() {
 
   try {
     // 调用后端AI接口（带缓存、异步处理）
-    const response = await request.post<{ data?: { success?: boolean; flowData?: FlowData; analysis?: Array<{ type: string; content: string }> } }>('/api/code-analysis/analyze', {
+    const response = await request.post<{ data?: { success?: boolean; flowData?: FlowData; analysis?: Array<{ type: string; content: string }> } }>('/code-analysis/analyze', {
       code: code.value,
       language: selectedLang.value,
     }).catch(() => null)
@@ -906,7 +906,7 @@ function submitAsAssignment() {
 
 async function confirmSubmit() {
   try {
-    await request.post('/api/assignments/submit-code', {
+    await request.post('/assignments/submit-code', {
       assignment_id: targetAssignment.value,
       code: code.value,
       language: selectedLang.value,

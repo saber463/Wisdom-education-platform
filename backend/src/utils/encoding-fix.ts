@@ -9,13 +9,8 @@
  */
 export function initEncodingFix(): void {
   if (process.platform === 'win32') {
-    // 设置标准输出和标准错误的编码为 UTF-8
-    process.stdout.setEncoding('utf8');
-    process.stderr.setEncoding('utf8');
-    
-    // 设置环境变量
+    // Node 24 removed setEncoding on stdout/stderr — use env var instead
     process.env.PYTHONIOENCODING = 'utf-8';
-    
     console.log('[编码修复] Windows 终端 UTF-8 编码已启用');
   }
 }

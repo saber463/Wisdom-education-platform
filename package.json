@@ -6,7 +6,8 @@
     "agent:health": "node health/agents/agent2-health.js",
     "agent:merge": "node health/agents/agent3-merge-tests.js",
     "agent:cicd": "node health/agents/agent4-cicd.js",
-    "agent:e2e": "node health/agents/agent5-frontend-test.js"
+    "agent:e2e": "node health/agents/agent5-frontend-test.js",
+    "monitor": "node health/console-monitor.js"
   },
   "dependencies": {
     "@types/compression": "^1.8.1",

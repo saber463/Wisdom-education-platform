@@ -566,7 +566,7 @@ const publishContent = ref('')
 async function publishPost() {
   if (!publishContent.value.trim()) return
   try {
-    await request.post('/api/community/posts', { content: publishContent.value })
+    await request.post('/community/posts', { content: publishContent.value })
     ElMessage.success('动态发布成功，已通过AI内容审核')
   } catch {
     // 离线演示

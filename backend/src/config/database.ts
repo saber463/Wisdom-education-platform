@@ -1,10 +1,9 @@
 import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
 
-// 修复 Windows 终端乱码问题
+// 修复 Windows 终端乱码问题（Node 24 已移除 setEncoding，改用环境变量）
 if (process.platform === 'win32') {
-  process.stdout.setEncoding('utf8');
-  process.stderr.setEncoding('utf8');
+  process.env.PYTHONIOENCODING = 'utf-8';
 }
 
 dotenv.config();
