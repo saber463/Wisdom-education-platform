@@ -651,7 +651,7 @@ onMounted(async () => {
 .page-header h2 {
   margin: 0 0 8px 0;
   font-size: 24px;
-  color: #333;
+  color: #F0F0F0;
 }
 
 .page-desc {
@@ -665,7 +665,7 @@ onMounted(async () => {
 }
 
 .stat-card {
-  background: #fff;
+  background: #252525;
   border: 1px solid #ebeef5;
   border-radius: 8px;
   padding: 16px;
@@ -702,7 +702,7 @@ onMounted(async () => {
 .stat-value {
   font-size: 24px;
   font-weight: bold;
-  color: #333;
+  color: #F0F0F0;
 }
 
 .chart-card {
@@ -755,7 +755,7 @@ onMounted(async () => {
 .dialog-section label {
   display: block;
   font-weight: 600;
-  color: #333;
+  color: #F0F0F0;
   margin-bottom: 8px;
   font-size: 14px;
 }

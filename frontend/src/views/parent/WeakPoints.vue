@@ -436,8 +436,8 @@ function getMasteryTagType(rate: number): 'success' | 'warning' | 'danger' {
 // 获取资源图标颜色
 function getResourceColor(type: string): string {
   const colors: Record<string, string> = {
-    video: '#409eff',
-    article: '#67c23a',
+    video: '#00D4FF',
+    article: '#00FF94',
     exercise: '#e6a23c',
     link: '#909399'
   }
@@ -490,7 +490,7 @@ watch(selectedChildId, () => {
 .page-header h2 {
   margin: 0;
   font-size: 20px;
-  color: #333;
+  color: #F0F0F0;
 }
 
 .card-header {
@@ -518,16 +518,16 @@ watch(selectedChildId, () => {
   cursor: pointer;
   transition: all 0.3s;
   margin-bottom: 8px;
-  border: 1px solid #eee;
+  border: 1px solid rgba(255,255,255,0.06);
 }
 
 .weak-point-item:hover {
-  background: #f5f7fa;
+  background: #2a2a2a;
 }
 
 .weak-point-item.active {
   background: #ecf5ff;
-  border-color: #409eff;
+  border-color: #00FF94;
 }
 
 .point-info {
@@ -538,12 +538,12 @@ watch(selectedChildId, () => {
 
 .point-name {
   font-weight: 500;
-  color: #333;
+  color: #F0F0F0;
 }
 
 .point-subject {
   font-size: 12px;
-  color: #999;
+  color: #606060;
 }
 
 .point-stats {
@@ -573,9 +573,9 @@ watch(selectedChildId, () => {
   gap: 8px;
   margin: 0 0 12px 0;
   font-size: 16px;
-  color: #333;
+  color: #F0F0F0;
   padding-bottom: 8px;
-  border-bottom: 1px solid #eee;
+  border: 1px solid rgba(255,255,255,0.06);
 }
 
 .ai-suggestions {
@@ -599,7 +599,7 @@ watch(selectedChildId, () => {
 }
 
 .suggestion-icon {
-  color: #67c23a;
+  color: #00FF94;
   margin-top: 2px;
   flex-shrink: 0;
 }
@@ -616,7 +616,7 @@ watch(selectedChildId, () => {
   align-items: center;
   gap: 12px;
   padding: 12px;
-  background: #f5f7fa;
+  background: #2a2a2a;
   border-radius: 8px;
 }
 
@@ -644,11 +644,11 @@ watch(selectedChildId, () => {
 
 .resource-title {
   font-weight: 500;
-  color: #333;
+  color: #F0F0F0;
 }
 
 .resource-desc {
   font-size: 12px;
-  color: #999;
+  color: #606060;
 }
 </style>

@@ -518,7 +518,7 @@ onMounted(() => {
 
   &:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-color: #409eff;
+    border-color: #00FF94;
   }
 }
 
@@ -538,7 +538,7 @@ onMounted(() => {
       margin: 0;
       font-size: 18px;
       font-weight: 600;
-      color: #333;
+      color: #F0F0F0;
     }
   }
 }
@@ -562,7 +562,7 @@ onMounted(() => {
     display: flex;
     gap: 15px;
     font-size: 12px;
-    color: #999;
+    color: #606060;
 
     .stat {
       display: flex;
@@ -580,7 +580,7 @@ onMounted(() => {
 
   .more-members {
     font-size: 12px;
-    color: #999;
+    color: #606060;
     margin-left: 5px;
   }
 }
@@ -602,7 +602,7 @@ onMounted(() => {
 
   p {
     margin: 0 0 10px 0;
-    color: #333;
+    color: #F0F0F0;
   }
 
   .invite-code-display {
@@ -614,19 +614,19 @@ onMounted(() => {
     .code {
       flex: 1;
       padding: 10px;
-      background: #f5f5f5;
+      background: #2a2a2a;
       border-radius: 4px;
       font-family: monospace;
       font-size: 16px;
       font-weight: bold;
-      color: #409eff;
+      color: #00FF94;
       text-align: center;
     }
   }
 
   .tip {
     font-size: 12px;
-    color: #999;
+    color: #606060;
     margin: 0;
   }
 }

@@ -442,32 +442,32 @@ onMounted(async () => {
 <style scoped>
 .recommendations-page { min-height: 100%; }
 .page-header { margin-bottom: 20px; }
-.page-header h2 { margin: 0 0 8px 0; font-size: 20px; color: #333; }
+.page-header h2 { margin: 0 0 8px 0; font-size: 20px; color: #F0F0F0; }
 .page-desc { margin: 0; color: #909399; font-size: 14px; }
 .card-header { display: flex; justify-content: space-between; align-items: center; }
 .weak-points-card, .exercises-card { margin-bottom: 20px; }
 .weak-point-summary { display: flex; gap: 8px; margin-bottom: 16px; }
-.weak-point-item { padding: 12px; border-radius: 8px; margin-bottom: 12px; background: #f5f7fa; }
-.weak-point-item.weak { border-left: 4px solid #f56c6c; }
+.weak-point-item { padding: 12px; border-radius: 8px; margin-bottom: 12px; background: #2a2a2a; }
+.weak-point-item.weak { border-left: 4px solid #FF4B6E; }
 .weak-point-item.improving { border-left: 4px solid #e6a23c; }
-.weak-point-item.mastered { border-left: 4px solid #67c23a; }
+.weak-point-item.mastered { border-left: 4px solid #00FF94; }
 .wp-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-.wp-name { font-weight: 500; color: #333; }
+.wp-name { font-weight: 500; color: #F0F0F0; }
 .wp-info { display: flex; justify-content: space-between; font-size: 13px; color: #909399; margin-bottom: 8px; }
-.wp-rate.high-rate { color: #f56c6c; font-weight: 500; }
+.wp-rate.high-rate { color: #FF4B6E; font-weight: 500; }
 .practice-mode { margin-bottom: 16px; }
 .exercise-item { padding: 16px; border: 1px solid #ebeef5; border-radius: 8px; margin-bottom: 16px; }
 .exercise-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
-.exercise-number { font-weight: bold; color: #409eff; }
+.exercise-number { font-weight: bold; color: #00FF94; }
 .exercise-title { font-weight: 500; margin-bottom: 8px; }
 .exercise-content { color: #666; line-height: 1.6; margin-bottom: 12px; }
 .answer-input { margin-top: 12px; }
 .grading-result { margin-top: 12px; padding: 12px; border-radius: 8px; }
-.grading-result.correct { background: #f0f9eb; border: 1px solid #67c23a; }
-.grading-result.wrong { background: #fef0f0; border: 1px solid #f56c6c; }
+.grading-result.correct { background: rgba(0,255,148,0.05); border: 1px solid rgba(0,255,148,0.3); }
+.grading-result.wrong { background: rgba(255,75,110,0.05); border: 1px solid rgba(255,75,110,0.3); }
 .result-header { display: flex; align-items: center; gap: 8px; font-weight: 500; margin-bottom: 8px; }
-.grading-result.correct .result-header { color: #67c23a; }
-.grading-result.wrong .result-header { color: #f56c6c; }
+.grading-result.correct .result-header { color: #00FF94; }
+.grading-result.wrong .result-header { color: #FF4B6E; }
 .result-detail p { margin: 4px 0; font-size: 14px; }
 .submit-section { text-align: center; padding: 20px; }
 .practice-summary { padding: 20px; }

@@ -309,7 +309,7 @@ async function fetchMonitorData() {
   try {
     const params: Record<string, unknown> = { studentId: selectedChildId.value }
     if (dateRange.value) { params.startDate = dateRange.value[0].toISOString(); params.endDate = dateRange.value[1].toISOString() }
-    const response = await request.get<Record<string, unknown>>('/parent/monitor', { params })
+    const response = await request.get<Record<string, unknown>>(`/parent/child/${selectedChildId.value}/video-progress`, { params })
     if (response) {
       stats.latestScore = (response.latestScore as number) ?? null
       stats.scoreTrend = (response.scoreTrend as number) || 0
@@ -346,8 +346,8 @@ function updateCharts() {
       xAxis: { type: 'category', boundaryGap: false, data: trendData.value.dates },
       yAxis: { type: 'value', name: '分数', min: 0, max: 100 },
       series: [
-        { name: '孩子成绩', type: 'line', data: trendData.value.scores, smooth: true, itemStyle: { color: '#409eff' }, areaStyle: { color: 'rgba(64, 158, 255, 0.1)' } },
-        { name: '班级平均', type: 'line', data: trendData.value.classAverages, smooth: true, itemStyle: { color: '#e6a23c' }, lineStyle: { type: 'dashed' } }
+        { name: '孩子成绩', type: 'line', data: trendData.value.scores, smooth: true, itemStyle: { color: '#00D4FF' }, areaStyle: { color: 'rgba(64, 158, 255, 0.1)' } },
+        { name: '班级平均', type: 'line', data: trendData.value.classAverages, smooth: true, itemStyle: { color: '#FFB700' }, lineStyle: { type: 'dashed' } }
       ]
     })
   }
@@ -358,9 +358,9 @@ function updateCharts() {
         itemStyle: { borderRadius: 10, borderColor: '#fff', borderWidth: 2 },
         label: { show: false, position: 'center' }, emphasis: { label: { show: true, fontSize: 20, fontWeight: 'bold' } }, labelLine: { show: false },
         data: [
-          { value: completionData.value.completed, name: '已完成', itemStyle: { color: '#67c23a' } },
-          { value: completionData.value.pending, name: '待完成', itemStyle: { color: '#e6a23c' } },
-          { value: completionData.value.overdue, name: '已逾期', itemStyle: { color: '#f56c6c' } }
+          { value: completionData.value.completed, name: '已完成', itemStyle: { color: '#00FF94' } },
+          { value: completionData.value.pending, name: '待完成', itemStyle: { color: '#FFB700' } },
+          { value: completionData.value.overdue, name: '已逾期', itemStyle: { color: '#FF4B6E' } }
         ]
       }]
     })
@@ -372,7 +372,7 @@ function updateCharts() {
       xAxis: { type: 'category', data: studyTimeData.value.days },
       yAxis: { type: 'value', name: '分钟' },
       series: [{ name: '学习时长', type: 'bar', data: studyTimeData.value.times,
-        itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: '#409eff' }, { offset: 1, color: '#67c23a' }]) }
+        itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: '#00D4FF' }, { offset: 1, color: '#00FF94' }]) }
       }]
     })
   }
@@ -408,26 +408,26 @@ watch([selectedChildId, dateRange], () => { fetchMonitorData() })
 <style scoped>
 .monitor-page { min-height: 100%; }
 .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
-.page-header h2 { margin: 0; font-size: 20px; color: #333; }
+.page-header h2 { margin: 0; font-size: 20px; color: #F0F0F0; }
 .header-actions { display: flex; gap: 12px; align-items: center; }
 .stat-cards { margin-bottom: 20px; }
 .stat-card { text-align: center; padding: 20px; position: relative; }
-.stat-value { font-size: 28px; font-weight: bold; color: #409eff; }
-.stat-label { font-size: 14px; color: #999; margin-top: 8px; }
+.stat-value { font-size: 28px; font-weight: bold; color: #00FF94; }
+.stat-label { font-size: 14px; color: #606060; margin-top: 8px; }
 .stat-trend { font-size: 12px; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 4px; }
-.trend-up { color: #67c23a; }
-.trend-down { color: #f56c6c; }
-.stat-sub { font-size: 12px; color: #999; margin-top: 8px; }
+.trend-up { color: #00FF94; }
+.trend-down { color: #FF4B6E; }
+.stat-sub { font-size: 12px; color: #606060; margin-top: 8px; }
 .chart-card { margin-bottom: 20px; }
 .chart-container { height: 300px; }
 .card-header { display: flex; justify-content: space-between; align-items: center; }
 .weak-points-list { max-height: 300px; overflow-y: auto; }
-.weak-point-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #eee; }
+.weak-point-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border: 1px solid rgba(255,255,255,0.06); }
 .weak-point-item:last-child { border-bottom: none; }
-.point-rank { width: 24px; height: 24px; background: #f56c6c; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+.point-rank { width: 24px; height: 24px; background: #FF4B6E; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; }
 .point-name { flex: 1; }
 .point-rate { width: 40px; text-align: right; font-weight: bold; }
-.score-excellent { color: #67c23a; font-weight: bold; }
-.score-pass { color: #e6a23c; }
-.score-fail { color: #f56c6c; }
+.score-excellent { color: #00FF94; font-weight: bold; }
+.score-pass { color: #FFB700; }
+.score-fail { color: #FF4B6E; }
 </style>

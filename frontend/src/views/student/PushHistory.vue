@@ -529,7 +529,7 @@ onMounted(() => {
 <style scoped lang="scss">
 .push-history-container {
   padding: 20px;
-  background-color: #f5f7fa;
+  background-color: #2a2a2a;
   min-height: 100vh;
 
   .page-header {
@@ -539,7 +539,7 @@ onMounted(() => {
       margin: 0 0 10px 0;
       font-size: 28px;
       font-weight: 600;
-      color: #333;
+      color: #F0F0F0;
     }
 
     .subtitle {
@@ -594,14 +594,14 @@ onMounted(() => {
     }
 
     .error-text {
-      color: #f56c6c;
+      color: #FF4B6E;
       word-break: break-word;
       white-space: pre-wrap;
       line-height: 1.6;
     }
 
     .action-url-text {
-      color: #409eff;
+      color: #00FF94;
       word-break: break-all;
       font-family: monospace;
       font-size: 12px;

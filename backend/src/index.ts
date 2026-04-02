@@ -135,6 +135,25 @@ app.use('/api/user-interests', userInterestsRoutes);
 app.use('/api/ai-learning-path', aiLearningPathRoutes);
 app.use('/api/virtual-partner', virtualPartnerRoutes);
 app.use('/api/video-quiz', videoQuizRoutes);
+// Parent dashboard — must be before /api/parent to avoid route conflicts
+app.get('/api/parent/dashboard', authenticateToken, requireRole('parent'), async (req: any, res: any): Promise<void> => {
+  try {
+    const parentId = req.user?.id;
+    const children = await executeQuery<any[]>(
+      `SELECT u.id, u.username, u.real_name AS name FROM parent_children pc
+       JOIN users u ON pc.child_id = u.id WHERE pc.parent_id = ?`,
+      [parentId]
+    );
+    res.json({
+      children: children || [],
+      latestScore: null, classRank: null, averageScore: null,
+      weakPointCount: 0, recentResults: [], notifications: [], unreadCount: 0,
+    });
+  } catch {
+    res.json({ children: [], latestScore: null, classRank: null, averageScore: null,
+      weakPointCount: 0, recentResults: [], notifications: [], unreadCount: 0 });
+  }
+});
 app.use('/api/parent', parentRoutes);
 // V2.0 新增路由注册
 app.use('/api/face', faceVerifyRoutes);

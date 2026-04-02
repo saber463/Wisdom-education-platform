@@ -392,9 +392,9 @@ function updateCharts() {
         { type: 'value', name: '百分比', min: 0, max: 100, axisLabel: { formatter: '{value}%' } }
       ],
       series: [
-        { name: '平均分', type: 'line', data: trendData.value.averageScores, smooth: true, itemStyle: { color: '#409eff' } },
-        { name: '及格率', type: 'line', yAxisIndex: 1, data: trendData.value.passRates, smooth: true, itemStyle: { color: '#67c23a' } },
-        { name: '优秀率', type: 'line', yAxisIndex: 1, data: trendData.value.excellentRates, smooth: true, itemStyle: { color: '#e6a23c' } }
+        { name: '平均分', type: 'line', data: trendData.value.averageScores, smooth: true, itemStyle: { color: '#00D4FF' } },
+        { name: '及格率', type: 'line', yAxisIndex: 1, data: trendData.value.passRates, smooth: true, itemStyle: { color: '#00FF94' } },
+        { name: '优秀率', type: 'line', yAxisIndex: 1, data: trendData.value.excellentRates, smooth: true, itemStyle: { color: '#FFB700' } }
       ]
     })
   }
@@ -407,7 +407,7 @@ function updateCharts() {
       grid: { height: '60%', top: '10%' },
       xAxis: { type: 'category', data: knowledgePointNames.value.slice(0, 10), splitArea: { show: true } },
       yAxis: { type: 'category', data: students.slice(0, 10), splitArea: { show: true } },
-      visualMap: { min: 0, max: 100, calculable: true, orient: 'horizontal', left: 'center', bottom: '5%', inRange: { color: ['#f56c6c', '#e6a23c', '#67c23a'] } },
+      visualMap: { min: 0, max: 100, calculable: true, orient: 'horizontal', left: 'center', bottom: '5%', inRange: { color: ['#FF4B6E', '#FFB700', '#00FF94'] } },
       series: [{ name: '掌握度', type: 'heatmap', data: heatmapData.value, label: { show: false } }]
     })
   }
@@ -442,26 +442,26 @@ watch([selectedClassId, dateRange], () => { fetchAnalyticsData() })
 <style scoped>
 .analytics-page { min-height: 100%; }
 .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
-.page-header h2 { margin: 0; font-size: 20px; color: #333; }
+.page-header h2 { margin: 0; font-size: 20px; color: #F0F0F0; font-weight: 900; font-family: 'Source Han Sans CN', sans-serif; }
 .header-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
 .date-filter { display: flex; gap: 8px; }
 .stat-cards { margin-bottom: 20px; }
 .stat-card { text-align: center; padding: 20px; }
-.stat-value { font-size: 32px; font-weight: bold; color: #409eff; }
-.stat-label { font-size: 14px; color: #999; margin-top: 8px; }
+.stat-value { font-size: 32px; font-weight: bold; color: #00FF94; font-family: Consolas, monospace; }
+.stat-label { font-size: 14px; color: #606060; margin-top: 8px; }
 .chart-card, .ranking-card, .suggestions-card { margin-bottom: 20px; }
 .chart-container { height: 350px; }
 .weak-points-list { max-height: 350px; overflow-y: auto; }
-.weak-point-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #eee; }
+.weak-point-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
 .weak-point-item:last-child { border-bottom: none; }
-.point-rank { width: 24px; height: 24px; background: #f56c6c; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; }
-.point-name { flex: 1; }
-.point-rate { width: 50px; text-align: right; color: #f56c6c; font-weight: bold; }
-.text-success { color: #67c23a; }
-.text-danger { color: #f56c6c; }
+.point-rank { width: 24px; height: 24px; background: #FF4B6E; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+.point-name { flex: 1; color: #D0D0D0; }
+.point-rate { width: 50px; text-align: right; color: #FF4B6E; font-weight: bold; font-family: Consolas, monospace; }
+.text-success { color: #00FF94; }
+.text-danger { color: #FF4B6E; }
 .suggestions-content { padding: 12px 0; }
 .suggestions-list { display: flex; flex-direction: column; gap: 12px; }
-.suggestion-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px; background: #f0f9ff; border-left: 3px solid #67c23a; border-radius: 4px; }
-.suggestion-icon { color: #67c23a; font-size: 18px; flex-shrink: 0; margin-top: 2px; }
+.suggestion-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px; background: rgba(0,212,255,0.05); border-left: 3px solid #00FF94; border-radius: 4px; }
+.suggestion-icon { color: #00FF94; font-size: 18px; flex-shrink: 0; margin-top: 2px; }
 
 </style>

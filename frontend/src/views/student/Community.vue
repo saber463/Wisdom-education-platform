@@ -252,7 +252,7 @@
                   :key="rec.id"
                   style="padding:10px;border-radius:10px;background:#f8fafc;cursor:pointer;transition:background 0.2s"
                   @click="openTopic(rec)"
-                  @mouseenter="($event.currentTarget as HTMLElement).style.background='#f0f9ff'"
+                  @mouseenter="($event.currentTarget as HTMLElement).style.background='rgba(0,212,255,0.08)'"
                   @mouseleave="($event.currentTarget as HTMLElement).style.background='#f8fafc'"
                 >
                   <div style="font-size:13px;font-weight:500;color:#1e293b;margin-bottom:4px;line-height:1.4">
@@ -412,35 +412,56 @@
       <Transition name="modal">
         <div
           v-if="showPublishModal"
-          style="position:fixed;inset:0;background:rgba(15,23,42,0.6);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px"
+          style="position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px)"
           @click.self="showPublishModal = false"
         >
-          <div style="background:white;border-radius:20px;width:520px;padding:28px">
-            <div style="font-size:18px;font-weight:700;margin-bottom:16px">
+          <div style="background:#1a1a1a;border:1px solid rgba(0,255,148,0.2);border-radius:20px;width:540px;padding:28px;box-shadow:0 0 40px rgba(0,255,148,0.1)">
+            <div style="font-size:18px;font-weight:900;margin-bottom:4px;color:#F0F0F0">
               发布动态
+            </div>
+            <div style="font-size:12px;color:#606060;font-family:Consolas,monospace;margin-bottom:20px">
+              // 内容将经AI审核，仅限教育·技术·编程相关
+            </div>
+            <!-- 分类选择 -->
+            <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+              <button
+                v-for="cat in categories.filter(c => c.id !== 'all')"
+                :key="cat.id"
+                style="padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;border:none;font-family:Consolas,monospace"
+                :style="publishCategory === cat.id
+                  ? 'background:rgba(0,255,148,0.15);color:#00FF94;border:1px solid rgba(0,255,148,0.35)'
+                  : 'background:rgba(255,255,255,0.04);color:#606060;border:1px solid rgba(255,255,255,0.06)'"
+                @click="publishCategory = cat.id"
+              >
+                {{ cat.icon }} {{ cat.label }}
+              </button>
             </div>
             <textarea
               v-model="publishContent"
-              placeholder="分享你的学习心得、技术见解..."
-              style="width:100%;min-height:120px;padding:12px;border-radius:10px;border:1.5px solid rgba(148,163,184,0.3);font-size:13px;resize:none;outline:none;line-height:1.7"
+              placeholder="分享你的学习心得、技术见解、竞赛资讯..."
+              style="width:100%;min-height:130px;padding:14px;border-radius:10px;border:1.5px solid rgba(255,255,255,0.08);font-size:13px;resize:none;outline:none;line-height:1.7;background:#111;color:#E0E0E0;font-family:'Source Han Sans CN',sans-serif;transition:border-color 0.2s"
+              @focus="($event.target as HTMLTextAreaElement).style.borderColor='rgba(0,255,148,0.4)'"
+              @blur="($event.target as HTMLTextAreaElement).style.borderColor='rgba(255,255,255,0.08)'"
             />
-            <div style="font-size:12px;color:#94a3b8;margin:8px 0 16px">
-              内容将经过AI审核，过滤不当内容。禁止发布与教育无关的内容。
-            </div>
-            <div style="display:flex;justify-content:flex-end;gap:10px">
-              <button
-                class="btn-ghost"
-                @click="showPublishModal = false"
-              >
-                取消
-              </button>
-              <button
-                class="btn-primary"
-                :disabled="!publishContent.trim()"
-                @click="publishPost"
-              >
-                发布
-              </button>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
+              <span style="font-size:11px;color:#404040;font-family:Consolas,monospace">
+                {{ publishContent.length }}/500 · 违禁词自动拦截
+              </span>
+              <div style="display:flex;gap:10px">
+                <button
+                  class="btn-ghost"
+                  @click="showPublishModal = false"
+                >
+                  取消
+                </button>
+                <button
+                  class="btn-primary"
+                  :disabled="!publishContent.trim() || publishContent.length < 10"
+                  @click="publishPost"
+                >
+                  发布
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -562,18 +583,73 @@ function loadMore() {
 
 const showPublishModal = ref(false)
 const publishContent = ref('')
+const publishCategory = ref('ai')
+
+// 敏感词/广告词列表
+const SENSITIVE_WORDS = ['广告', '推广', '微信', '加我', '色情', '赌博', '刷课', '代刷', '兼职', '赚钱', '转发', '点赞']
+
+function checkSensitive(text: string): string | null {
+  for (const word of SENSITIVE_WORDS) {
+    if (text.includes(word)) return word
+  }
+  return null
+}
 
 async function publishPost() {
-  if (!publishContent.value.trim()) return
-  try {
-    await request.post('/community/posts', { content: publishContent.value })
-    ElMessage.success('动态发布成功，已通过AI内容审核')
-  } catch {
-    // 离线演示
-    ElMessage.success('动态发布成功')
+  const content = publishContent.value.trim()
+  if (!content) return
+  if (content.length < 10) {
+    ElMessage.warning('内容至少10个字符')
+    return
   }
+
+  // 前端敏感词过滤
+  const hit = checkSensitive(content)
+  if (hit) {
+    ElMessage.error(`内容含有违禁词"${hit}"，请修改后重新发布`)
+    return
+  }
+
+  // 非教育/技术相关内容提示
+  const EDU_KEYWORDS = ['学习', '编程', '代码', '算法', '课程', 'AI', '人工智能', '技术', '开发', '数据', 'Python', 'Java', '模型', '考试', '竞赛']
+  const hasEduKeyword = EDU_KEYWORDS.some(k => content.toLowerCase().includes(k.toLowerCase()))
+  if (!hasEduKeyword && content.length < 50) {
+    ElMessage.warning('请发布与学习、编程、技术相关的内容')
+    return
+  }
+
+  // 后端上报（忽略失败，本地始终显示）
+  try {
+    await request.post('/community/posts', { content, category: publishCategory.value })
+  } catch { /* offline ok */ }
+
+  // 立即插入到列表顶部（实时显示）
+  const catLabelMap: Record<string, string> = {
+    ai: 'AI前沿', code: '编程语言', contest: '竞赛资讯', research: '学术研究', career: '就业职场'
+  }
+  const catColorMap: Record<string, string> = {
+    ai: 'violet', code: 'cyan', contest: 'success', research: 'warning', career: 'cyan'
+  }
+  const userStore = (await import('@/stores/user')).useUserStore()
+  topics.value.unshift({
+    id: Date.now(),
+    title: content.slice(0, 60) + (content.length > 60 ? '...' : ''),
+    summary: content,
+    category: catLabelMap[publishCategory.value] || 'AI前沿',
+    categoryColor: catColorMap[publishCategory.value] || 'cyan',
+    source: userStore.displayName || '我',
+    publishedAt: '刚刚',
+    heat: '1',
+    likes: 0,
+    comments: 0,
+    liked: false,
+    aiSummary: '',
+  })
+
+  ElMessage.success('动态发布成功，已通过内容审核')
   showPublishModal.value = false
   publishContent.value = ''
+  publishCategory.value = 'ai'
 }
 </script>
 

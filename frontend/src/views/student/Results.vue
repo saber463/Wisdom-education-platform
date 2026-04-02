@@ -247,15 +247,15 @@ onMounted(() => { fetchResults() })
 <style scoped>
 .student-results-page { min-height: 100%; }
 .page-header { margin-bottom: 20px; }
-.page-header h2 { margin: 0 0 8px 0; font-size: 20px; color: #333; }
+.page-header h2 { margin: 0 0 8px 0; font-size: 20px; color: #F0F0F0; }
 .page-desc { margin: 0; color: #909399; font-size: 14px; }
 .filter-card { margin-bottom: 20px; }
 .results-card { margin-bottom: 20px; }
-.assignment-title { font-weight: 500; color: #333; }
+.assignment-title { font-weight: 500; color: #F0F0F0; }
 .score { font-weight: bold; font-size: 16px; }
-.score.excellent { color: #67c23a; }
-.score.pass { color: #e6a23c; }
-.score.fail { color: #f56c6c; }
+.score.excellent { color: #00FF94; }
+.score.pass { color: #FFB700; }
+.score.fail { color: #FF4B6E; }
 .max-score { color: #909399; font-size: 13px; }
 .pagination-wrapper { margin-top: 20px; display: flex; justify-content: flex-end; }
 </style>

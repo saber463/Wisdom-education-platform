@@ -182,7 +182,7 @@ h2 {
 
 .status-card,
 .demo-card {
-  background: #fff;
+  background: #252525;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   padding: 20px;
@@ -191,13 +191,13 @@ h2 {
 }
 
 h3 {
-  color: #409eff;
+  color: #00D4FF;
   margin-top: 0;
   margin-bottom: 15px;
 }
 
 .status-success {
-  color: #67c23a;
+  color: #00FF94;
   font-weight: bold;
 }
 
@@ -228,7 +228,7 @@ h3 {
 
 .input-group input:focus {
   outline: none;
-  border-color: #409eff;
+  border-color: #00D4FF;
 }
 
 button {
@@ -254,7 +254,7 @@ button:disabled {
 .result {
   margin-top: 15px;
   padding: 15px;
-  background: #f5f7fa;
+  background: #2a2a2a;
   border-radius: 4px;
 }
 
@@ -264,11 +264,11 @@ button:disabled {
 }
 
 .correct {
-  color: #67c23a;
+  color: #00FF94;
 }
 
 .incorrect {
-  color: #f56c6c;
+  color: #FF4B6E;
 }
 
 .progress-bar {

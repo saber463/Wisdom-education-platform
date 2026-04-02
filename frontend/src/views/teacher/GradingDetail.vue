@@ -305,28 +305,28 @@ onMounted(() => { fetchGradingDetail() })
 <style scoped>
 .grading-detail-page { min-height: 100%; }
 .page-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
-.page-header h2 { margin: 0; font-size: 20px; color: #333; flex: 1; }
+.page-header h2 { margin: 0; font-size: 20px; color: #F0F0F0; flex: 1; }
 .info-card, .answers-card, .score-card, .suggestions-card, .actions-card { margin-bottom: 20px; }
-.answer-item { background: #f5f7fa; border-radius: 8px; padding: 16px; margin-bottom: 12px; }
+.answer-item { background: #2a2a2a; border-radius: 8px; padding: 16px; margin-bottom: 12px; }
 .answer-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-.question-number { font-weight: bold; color: #409eff; }
+.question-number { font-weight: bold; color: #00FF94; }
 .answer-score { margin-left: auto; font-weight: bold; }
-.answer-score.correct { color: #67c23a; }
-.answer-score.wrong { color: #f56c6c; }
+.answer-score.correct { color: #00FF94; }
+.answer-score.wrong { color: #FF4B6E; }
 .question-content, .student-answer, .standard-answer, .ai-feedback { margin-bottom: 8px; line-height: 1.6; }
-.student-answer .correct { color: #67c23a; }
-.student-answer .wrong { color: #f56c6c; }
+.student-answer .correct { color: #00FF94; }
+.student-answer .wrong { color: #FF4B6E; }
 .review-section { margin-top: 12px; }
 .total-score { text-align: center; margin-bottom: 20px; }
 .score-value { font-size: 48px; font-weight: bold; }
-.score-value.excellent { color: #67c23a; }
-.score-value.pass { color: #e6a23c; }
-.score-value.fail { color: #f56c6c; }
-.score-max { font-size: 24px; color: #999; }
+.score-value.excellent { color: #00FF94; }
+.score-value.pass { color: #FFB700; }
+.score-value.fail { color: #FF4B6E; }
+.score-max { font-size: 24px; color: #606060; }
 .score-breakdown { margin-top: 20px; }
-.breakdown-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; }
+.breakdown-item { display: flex; justify-content: space-between; padding: 8px 0; border: 1px solid rgba(255,255,255,0.06); }
 .breakdown-item:last-child { border-bottom: none; }
-.breakdown-item .correct { color: #67c23a; font-weight: bold; }
-.breakdown-item .wrong { color: #f56c6c; font-weight: bold; }
-.suggestion-item { display: flex; align-items: flex-start; gap: 8px; padding: 8px 0; color: #e6a23c; }
+.breakdown-item .correct { color: #00FF94; font-weight: bold; }
+.breakdown-item .wrong { color: #FF4B6E; font-weight: bold; }
+.suggestion-item { display: flex; align-items: flex-start; gap: 8px; padding: 8px 0; color: #FFB700; }
 </style>

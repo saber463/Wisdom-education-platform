@@ -15,7 +15,43 @@ const router = Router();
 router.use(authenticateToken);
 
 /**
- * GET /api/grading/student/results
+ * GET /api/grading/submissions
+ * 获取教师待批改/已批改提交列表（批改管理页面用）
+ */
+router.get('/submissions', requireRole('teacher'), async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const teacherId = req.user?.id;
+    const { page = '1', pageSize = '10', status } = req.query;
+    const offset = (Number(page) - 1) * Number(pageSize);
+    const statusWhere = status ? `AND s.status = ?` : '';
+    const params: unknown[] = [teacherId];
+    if (status) params.push(status);
+    params.push(Number(pageSize), offset);
+
+    const submissions = await executeQuery<any[]>(
+      `SELECT s.id, s.assignment_id, s.student_id, s.status, s.submitted_at,
+              u.real_name AS student_name, a.title AS assignment_title
+       FROM submissions s
+       JOIN users u ON s.student_id = u.id
+       JOIN assignments a ON s.assignment_id = a.id
+       WHERE a.teacher_id = ? ${statusWhere}
+       ORDER BY s.submitted_at DESC
+       LIMIT ? OFFSET ?`,
+      params
+    );
+    const [{ total }] = await executeQuery<any[]>(
+      `SELECT COUNT(*) AS total FROM submissions s
+       JOIN assignments a ON s.assignment_id = a.id
+       WHERE a.teacher_id = ?`,
+      [teacherId]
+    ) as any[];
+    res.json({ code: 200, submissions: submissions || [], total: total || 0 });
+  } catch {
+    res.json({ code: 200, submissions: [], total: 0 });
+  }
+});
+
+/**
  * 获取学生的批改结果列表
  * 
  * 查询参数：

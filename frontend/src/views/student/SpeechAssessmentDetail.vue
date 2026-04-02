@@ -389,9 +389,9 @@ async function fetchAssessmentDetail() {
 }
 
 function getScoreColor(score: number): string {
-  if (score >= 85) return '#67c23a'
+  if (score >= 85) return '#00FF94'
   if (score >= 70) return '#e6a23c'
-  if (score >= 60) return '#f56c6c'
+  if (score >= 60) return '#FFB700'
   return '#909399'
 }
 
@@ -478,12 +478,12 @@ onMounted(() => {
 
 .info-item { }
 .info-label { font-size: 12px; color: #909399; margin-bottom: 8px; }
-.info-value { font-size: 16px; color: #333; font-weight: 500; }
+.info-value { font-size: 16px; color: #F0F0F0; font-weight: 500; }
 
 .score-row { margin-bottom: 20px; }
 .score-card { }
 .score-content { text-align: center; padding: 20px 0; }
-.score-value { font-size: 48px; font-weight: bold; color: #409eff; }
+.score-value { font-size: 48px; font-weight: bold; color: #00FF94; }
 .score-label { font-size: 14px; color: #909399; margin: 8px 0; }
 .score-bar { margin-top: 12px; }
 
@@ -494,7 +494,7 @@ onMounted(() => {
   width: 120px;
   height: 120px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #409eff, #66b1ff);
+  background: linear-gradient(135deg, #00D4FF, #0099BB);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -510,26 +510,26 @@ onMounted(() => {
 
 .overall-feedback { flex: 1; }
 .feedback-label { font-size: 12px; color: #909399; margin-bottom: 8px; }
-.feedback-text { font-size: 14px; color: #333; line-height: 1.6; }
+.feedback-text { font-size: 14px; color: #F0F0F0; line-height: 1.6; }
 
 .report-card { margin-bottom: 20px; }
 .sentence-count { font-size: 13px; color: #909399; }
 
 .sentence-reports { display: flex; flex-direction: column; gap: 16px; }
-.sentence-item { padding: 16px; background: #f5f7fa; border-radius: 8px; }
+.sentence-item { padding: 16px; background: #2a2a2a; border-radius: 8px; }
 .sentence-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-.sentence-number { font-weight: 500; color: #333; }
-.sentence-text { font-size: 14px; color: #333; margin: 8px 0; line-height: 1.6; }
+.sentence-number { font-weight: 500; color: #F0F0F0; }
+.sentence-text { font-size: 14px; color: #F0F0F0; margin: 8px 0; line-height: 1.6; }
 .sentence-issues { margin-top: 8px; }
 .issues-label { font-size: 12px; color: #909399; margin-bottom: 4px; }
 .issues-list { display: flex; flex-wrap: wrap; gap: 4px; }
 .sentence-score { margin-top: 8px; font-size: 13px; color: #909399; }
 .score-label { }
-.score-value { font-weight: 500; color: #409eff; }
+.score-value { font-weight: 500; color: #00FF94; }
 
 .reference-card { margin-bottom: 20px; }
 .reference-content { }
-.reference-label { font-size: 14px; color: #333; margin-bottom: 12px; }
+.reference-label { font-size: 14px; color: #F0F0F0; margin-bottom: 12px; }
 .reference-audio { width: 100%; margin-bottom: 12px; }
 .reference-tips { }
 

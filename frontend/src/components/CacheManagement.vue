@@ -462,7 +462,7 @@ onMounted(async () => {
       margin-bottom: 16px;
       font-size: 14px;
       font-weight: bold;
-      color: #333;
+      color: #F0F0F0;
     }
   }
 

@@ -70,9 +70,9 @@ function initChart() {
           }
         },
         data: [
-          { value: mastered, name: '已掌握', itemStyle: { color: '#67c23a' } },
-          { value: consolidating, name: '待巩固', itemStyle: { color: '#e6a23c' } },
-          { value: weak, name: '薄弱', itemStyle: { color: '#f56c6c' } }
+          { value: mastered, name: '已掌握', itemStyle: { color: '#00FF94' } },
+          { value: consolidating, name: '待巩固', itemStyle: { color: '#FFB700' } },
+          { value: weak, name: '薄弱', itemStyle: { color: '#FF4B6E' } }
         ]
       }
     ]

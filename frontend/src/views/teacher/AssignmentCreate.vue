@@ -393,12 +393,12 @@ onMounted(() => { fetchClasses(); fetchKnowledgePoints() })
 <style scoped>
 .assignment-create-page { min-height: 100%; }
 .page-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
-.page-header h2 { margin: 0; font-size: 20px; color: #333; }
+.page-header h2 { margin: 0; font-size: 20px; color: #F0F0F0; }
 .form-card { max-width: 900px; }
 .assignment-form { padding: 20px 0; }
 .questions-section { padding: 10px 0; }
-.question-item { background: #f5f7fa; border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+.question-item { background: #2a2a2a; border-radius: 8px; padding: 20px; margin-bottom: 16px; }
 .question-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-.question-number { font-weight: bold; color: #409eff; }
+.question-number { font-weight: bold; color: #00FF94; }
 .form-actions { display: flex; justify-content: flex-end; gap: 12px; }
 </style>

@@ -21,6 +21,55 @@ function generateInviteCode(): string {
   return crypto.randomBytes(3).toString('hex').toUpperCase();
 }
 
+// ===== 固定路径路由必须在 /:id 之前注册 =====
+
+// GET /my-teams - 获取当前用户的小组列表（必须在 /:id 之前）
+router.get('/my-teams', async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const userId = req.user!.id;
+    const teams = await executeQuery<any[]>(
+      `SELECT DISTINCT t.id as team_id, t.name, t.description, t.creator_id, t.max_members, t.status, t.created_at,
+              u.real_name as creator_name,
+              COUNT(DISTINCT tm.user_id) as current_members
+       FROM teams t
+       JOIN users u ON t.creator_id = u.id
+       LEFT JOIN team_members tm ON t.id = tm.team_id
+       WHERE t.id IN (SELECT team_id FROM team_members WHERE user_id = ?)
+       GROUP BY t.id, t.name, t.description, t.creator_id, t.max_members, t.status, t.created_at, u.real_name
+       ORDER BY t.created_at DESC`,
+      [userId]
+    );
+    const teamsWithMembers = await Promise.all(
+      teams.map(async (team) => {
+        const members = await executeQuery<any[]>(
+          `SELECT tm.user_id as student_id, u.real_name, u.avatar_url, tm.joined_at
+           FROM team_members tm JOIN users u ON tm.user_id = u.id
+           WHERE tm.team_id = ? ORDER BY tm.joined_at ASC`,
+          [team.team_id]
+        );
+        return {
+          team_id: team.team_id, name: team.name, goal: team.description,
+          creator_id: team.creator_id, creator_name: team.creator_name,
+          max_members: team.max_members, current_members: team.current_members,
+          invite_code: null, created_at: team.created_at,
+          members: members.map(m => ({ student_id: m.student_id, real_name: m.real_name, avatar_url: m.avatar_url, joined_at: m.joined_at, is_creator: m.student_id === team.creator_id })),
+          is_creator: userId === team.creator_id, is_member: true
+        };
+      })
+    );
+    res.json({ success: true, data: teamsWithMembers });
+  } catch (error) {
+    console.error('获取用户小组列表失败:', error);
+    res.status(500).json({ success: false, message: '服务器内部错误' });
+  }
+});
+
+// POST /join-by-code - 通过邀请码加入（必须在 /:id 之前）
+// Note: invite_code feature removed, this route returns a stub
+router.post('/join-by-code', async (req: AuthRequest, res: Response): Promise<void> => {
+  res.status(400).json({ success: false, message: '邀请码功能暂不可用' });
+});
+
 /**
  * POST /api/teams
  * 创建学习小组
@@ -41,7 +90,7 @@ function generateInviteCode(): string {
  */
 router.post('/', async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { name, learning_goal, member_limit = 10 } = req.body;
+    const { name, learning_goal, max_members = 10 } = req.body;
     const userId = req.user!.id;
     const userRole = req.user!.role;
 
@@ -80,7 +129,7 @@ router.post('/', async (req: AuthRequest, res: Response): Promise<void> => {
     
     while (codeExists && attempts < 10) {
       const existing = await executeQuery<any[]>(
-        'SELECT id FROM teams WHERE invite_code = ?',
+        'SELECT id FROM teams WHERE 1=0 -- invite_code removed',
         [inviteCode]
       );
       if (existing.length === 0) {
@@ -103,14 +152,14 @@ router.post('/', async (req: AuthRequest, res: Response): Promise<void> => {
     const result = await executeQuery<any>(
       `INSERT INTO teams (name, learning_goal, creator_id, member_limit, invite_code, created_at)
        VALUES (?, ?, ?, ?, ?, NOW())`,
-      [name, learning_goal, userId, memberLimitNum, inviteCode]
+      [name, learning_goal, userId, memberLimitNum]
     );
 
     const teamId = result.insertId;
 
     // 自动将创建者加入小组
     await executeQuery(
-      `INSERT INTO team_members (team_id, user_id, join_date)
+      `INSERT INTO team_members (team_id, user_id)
        VALUES (?, ?, NOW())`,
       [teamId, userId]
     );
@@ -132,8 +181,7 @@ router.post('/', async (req: AuthRequest, res: Response): Promise<void> => {
         creator_name: userInfo[0]?.real_name || '',
         max_members: memberLimitNum,
         current_members: 1,
-        invite_code: inviteCode,
-        created_at: new Date()
+                created_at: new Date()
       }
     });
 
@@ -164,7 +212,7 @@ router.get('/:id', async (req: AuthRequest, res: Response): Promise<void> => {
 
     // 查询小组信息
     const teamInfo = await executeQuery<any[]>(
-      `SELECT t.id, t.name, t.learning_goal, t.creator_id, t.member_limit, t.invite_code, t.created_at,
+      `SELECT t.id, t.name, t.description, t.creator_id, t.max_members, t.created_at,
               u.real_name as creator_name
        FROM teams t
        JOIN users u ON t.creator_id = u.id
@@ -184,11 +232,11 @@ router.get('/:id', async (req: AuthRequest, res: Response): Promise<void> => {
 
     // 查询成员列表
     const members = await executeQuery<any[]>(
-      `SELECT tm.user_id, u.real_name, u.avatar_url, tm.join_date
+      `SELECT tm.user_id, u.real_name, u.avatar_url, tm.joined_at
        FROM team_members tm
        JOIN users u ON tm.user_id = u.id
        WHERE tm.team_id = ?
-       ORDER BY tm.join_date ASC`,
+       ORDER BY tm.joined_at ASC`,
       [id]
     );
 
@@ -209,18 +257,18 @@ router.get('/:id', async (req: AuthRequest, res: Response): Promise<void> => {
       data: {
         team_id: team.id,
         name: team.name,
-        goal: team.learning_goal,
+        goal: team.description,
         creator_id: team.creator_id,
         creator_name: team.creator_name,
-        max_members: team.member_limit,
+        max_members: team.max_members,
         current_members: members.length,
-        invite_code: isMember ? team.invite_code : null, // 只有成员可以看到邀请码
+        invite_code: isMember ? null : null, // 只有成员可以看到邀请码
         created_at: team.created_at,
         members: members.map(m => ({
           student_id: m.user_id,
           real_name: m.real_name,
           avatar_url: m.avatar_url,
-          joined_at: m.join_date,
+          joined_at: m.joined_at,
           is_creator: m.user_id === team.creator_id
         })),
         statistics: {
@@ -306,7 +354,7 @@ router.put('/:id', async (req: AuthRequest, res: Response): Promise<void> => {
     }
 
     if (goal !== undefined && goal.trim() !== '') {
-      updates.push('learning_goal = ?');
+      updates.push('description = ?');
       params.push(goal.trim());
     }
 
@@ -445,7 +493,7 @@ router.get('/my-teams', async (req: AuthRequest, res: Response): Promise<void> =
 
     // 查询用户所在的所有小组
     const teams = await executeQuery<any[]>(
-      `SELECT DISTINCT t.id as team_id, t.name, t.learning_goal, t.creator_id, t.member_limit, t.invite_code, t.created_at,
+      `SELECT DISTINCT t.id as team_id, t.name, t.description as learning_goal, t.creator_id, t.max_members as member_limit, t.status, t.created_at,
               u.real_name as creator_name,
               COUNT(DISTINCT tm.user_id) as current_members,
               (SELECT COUNT(*) FROM team_members WHERE team_id = t.id AND user_id = ?) as is_member
@@ -455,7 +503,7 @@ router.get('/my-teams', async (req: AuthRequest, res: Response): Promise<void> =
        WHERE t.id IN (
          SELECT team_id FROM team_members WHERE user_id = ?
        )
-       GROUP BY t.id, t.name, t.learning_goal, t.creator_id, t.member_limit, t.invite_code, t.created_at, u.real_name
+       GROUP BY t.id, t.name, t.description, t.creator_id, t.max_members, t.status, t.created_at, u.real_name
        ORDER BY t.created_at DESC`,
       [userId, userId]
     );
@@ -464,29 +512,29 @@ router.get('/my-teams', async (req: AuthRequest, res: Response): Promise<void> =
     const teamsWithMembers = await Promise.all(
       teams.map(async (team) => {
         const members = await executeQuery<any[]>(
-          `SELECT tm.user_id as student_id, u.real_name, u.avatar_url, tm.join_date
+          `SELECT tm.user_id as student_id, u.real_name, u.avatar_url, tm.joined_at
            FROM team_members tm
            JOIN users u ON tm.user_id = u.id
            WHERE tm.team_id = ?
-           ORDER BY tm.join_date ASC`,
+           ORDER BY tm.joined_at ASC`,
           [team.team_id]
         );
 
         return {
           team_id: team.team_id,
           name: team.name,
-          goal: team.learning_goal,
+          goal: team.description,
           creator_id: team.creator_id,
           creator_name: team.creator_name,
-          max_members: team.member_limit,
+          max_members: team.max_members,
           current_members: team.current_members,
-          invite_code: team.invite_code,
+          invite_code: null,
           created_at: team.created_at,
           members: members.map(m => ({
             student_id: m.student_id,
             real_name: m.real_name,
             avatar_url: m.avatar_url,
-            joined_at: m.join_date,
+            joined_at: m.joined_at,
             is_creator: m.student_id === team.creator_id
           })),
           is_creator: userId === team.creator_id,
@@ -552,7 +600,7 @@ router.post('/join-by-code', async (req: AuthRequest, res: Response): Promise<vo
     // 查询小组信息
     const teamInfo = await executeQuery<any[]>(
       `SELECT id, name, learning_goal, creator_id, member_limit, invite_code
-       FROM teams WHERE invite_code = ?`,
+       FROM teams WHERE 1=0 -- invite_code removed`,
       [invite_code.toUpperCase()]
     );
 
@@ -586,7 +634,7 @@ router.post('/join-by-code', async (req: AuthRequest, res: Response): Promise<vo
       [team.id]
     );
 
-    if (memberCount[0].count >= team.member_limit) {
+    if (memberCount[0].count >= team.max_members) {
       res.status(400).json({
         success: false,
         message: '小组人数已满'
@@ -596,7 +644,7 @@ router.post('/join-by-code', async (req: AuthRequest, res: Response): Promise<vo
 
     // 加入小组
     await executeQuery(
-      `INSERT INTO team_members (team_id, user_id, join_date)
+      `INSERT INTO team_members (team_id, user_id)
        VALUES (?, ?, NOW())`,
       [team.id, userId]
     );
@@ -617,7 +665,7 @@ router.post('/join-by-code', async (req: AuthRequest, res: Response): Promise<vo
         student_name: userInfo[0]?.real_name || '',
         joined_at: new Date(),
         current_members: memberCount[0].count + 1,
-        max_members: team.member_limit
+        max_members: team.max_members
       }
     });
 
@@ -688,7 +736,7 @@ router.post('/:id/join', async (req: AuthRequest, res: Response): Promise<void> 
     const team = teamInfo[0];
 
     // 验证邀请码是否正确
-    if (team.invite_code !== invite_code.toUpperCase()) {
+    if (null !== invite_code.toUpperCase()) {
       res.status(400).json({
         success: false,
         message: '邀请码错误'
@@ -716,7 +764,7 @@ router.post('/:id/join', async (req: AuthRequest, res: Response): Promise<void> 
       [id]
     );
 
-    if (memberCount[0].count >= team.member_limit) {
+    if (memberCount[0].count >= team.max_members) {
       res.status(400).json({
         success: false,
         message: '小组人数已满'
@@ -726,7 +774,7 @@ router.post('/:id/join', async (req: AuthRequest, res: Response): Promise<void> 
 
     // 加入小组
     await executeQuery(
-      `INSERT INTO team_members (team_id, user_id, join_date)
+      `INSERT INTO team_members (team_id, user_id)
        VALUES (?, ?, NOW())`,
       [id, userId]
     );
@@ -747,7 +795,7 @@ router.post('/:id/join', async (req: AuthRequest, res: Response): Promise<void> 
         student_name: userInfo[0]?.real_name || '',
         joined_at: new Date(),
         current_members: memberCount[0].count + 1,
-        max_members: team.member_limit
+        max_members: team.max_members
       }
     });
 
@@ -893,7 +941,7 @@ router.get('/:id/members', async (req: AuthRequest, res: Response): Promise<void
         tm.user_id,
         u.real_name,
         u.avatar_url,
-        tm.join_date,
+        tm.joined_at,
         COUNT(DISTINCT ci.id) as check_in_count,
         COUNT(DISTINCT pr.id) as peer_review_count
        FROM team_members tm
@@ -901,8 +949,8 @@ router.get('/:id/members', async (req: AuthRequest, res: Response): Promise<void
        LEFT JOIN check_ins ci ON ci.team_id = tm.team_id AND ci.user_id = tm.user_id
        LEFT JOIN peer_reviews pr ON pr.team_id = tm.team_id AND pr.reviewer_id = tm.user_id
        WHERE tm.team_id = ?
-       GROUP BY tm.user_id, u.real_name, u.avatar_url, tm.join_date
-       ORDER BY tm.join_date ASC`,
+       GROUP BY tm.user_id, u.real_name, u.avatar_url, tm.joined_at
+       ORDER BY tm.joined_at ASC`,
       [id]
     );
 
@@ -916,7 +964,7 @@ router.get('/:id/members', async (req: AuthRequest, res: Response): Promise<void
           student_id: m.user_id,
           real_name: m.real_name,
           avatar_url: m.avatar_url,
-          joined_at: m.join_date,
+          joined_at: m.joined_at,
           is_creator: m.user_id === team.creator_id,
           statistics: {
             check_in_count: m.check_in_count || 0,
@@ -1605,7 +1653,7 @@ router.get('/:id/report', async (req: AuthRequest, res: Response): Promise<void>
 
     // 验证小组存在
     const teamInfo = await executeQuery<any[]>(
-      `SELECT t.id, t.name, t.learning_goal, t.creator_id, t.member_limit, t.created_at,
+      `SELECT t.id, t.name, t.description, t.creator_id, t.max_members, t.created_at,
               u.real_name as creator_name
        FROM teams t
        JOIN users u ON t.creator_id = u.id
@@ -1643,7 +1691,7 @@ router.get('/:id/report', async (req: AuthRequest, res: Response): Promise<void>
         tm.user_id,
         u.real_name,
         u.avatar_url,
-        tm.join_date,
+        tm.joined_at,
         COUNT(DISTINCT ci.id) as check_in_count,
         COALESCE(SUM(ci.study_duration), 0) as total_study_duration,
         COALESCE(SUM(ci.completed_tasks), 0) as total_completed_tasks,
@@ -1653,7 +1701,7 @@ router.get('/:id/report', async (req: AuthRequest, res: Response): Promise<void>
        LEFT JOIN check_ins ci ON ci.team_id = tm.team_id AND ci.user_id = tm.user_id
        LEFT JOIN peer_reviews pr ON pr.team_id = tm.team_id AND pr.reviewer_id = tm.user_id
        WHERE tm.team_id = ?
-       GROUP BY tm.user_id, u.real_name, u.avatar_url, tm.join_date
+       GROUP BY tm.user_id, u.real_name, u.avatar_url, tm.joined_at
        ORDER BY (COUNT(DISTINCT ci.id) + COUNT(DISTINCT pr.id)) DESC`,
       [id]
     );
@@ -1775,10 +1823,10 @@ router.get('/:id/report', async (req: AuthRequest, res: Response): Promise<void>
         team_info: {
           team_id: team.id,
           name: team.name,
-          goal: team.learning_goal,
+          goal: team.description,
           creator_id: team.creator_id,
           creator_name: team.creator_name,
-          max_members: team.member_limit,
+          max_members: team.max_members,
           current_members: totalMembers,
           created_at: team.created_at
         },

@@ -407,7 +407,7 @@ function updateProgressChart() {
         data: accuracyData,
         type: 'line',
         smooth: true,
-        itemStyle: { color: '#409eff' },
+        itemStyle: { color: '#00D4FF' },
         areaStyle: { color: 'rgba(64, 158, 255, 0.2)' }
       },
       {
@@ -415,7 +415,7 @@ function updateProgressChart() {
         data: toneData,
         type: 'line',
         smooth: true,
-        itemStyle: { color: '#67c23a' },
+        itemStyle: { color: '#00FF94' },
         areaStyle: { color: 'rgba(103, 194, 58, 0.2)' }
       },
       {
@@ -423,7 +423,7 @@ function updateProgressChart() {
         data: fluencyData,
         type: 'line',
         smooth: true,
-        itemStyle: { color: '#e6a23c' },
+        itemStyle: { color: '#FFB700' },
         areaStyle: { color: 'rgba(230, 162, 60, 0.2)' }
       }
     ]
@@ -529,7 +529,7 @@ function updateScoresChart() {
           Math.max(...assessments.value.map(a => a.accuracy_score), 0)
         ],
         type: 'bar',
-        itemStyle: { color: '#409eff' }
+        itemStyle: { color: '#00D4FF' }
       },
       {
         name: '语调评分',
@@ -539,7 +539,7 @@ function updateScoresChart() {
           Math.max(...assessments.value.map(a => a.tone_score), 0)
         ],
         type: 'bar',
-        itemStyle: { color: '#67c23a' }
+        itemStyle: { color: '#00FF94' }
       },
       {
         name: '流畅度评分',
@@ -549,7 +549,7 @@ function updateScoresChart() {
           Math.max(...assessments.value.map(a => a.fluency_score), 0)
         ],
         type: 'bar',
-        itemStyle: { color: '#e6a23c' }
+        itemStyle: { color: '#FFB700' }
       }
     ]
   }
@@ -604,9 +604,9 @@ function formatDate(dateStr: string): string {
 }
 
 function getScoreColor(score: number): string {
-  if (score >= 85) return '#67c23a'
+  if (score >= 85) return '#00FF94'
   if (score >= 70) return '#e6a23c'
-  if (score >= 60) return '#f56c6c'
+  if (score >= 60) return '#FFB700'
   return '#909399'
 }
 
@@ -636,7 +636,7 @@ onMounted(() => {
 
 .stat-item { }
 .stat-label { font-size: 12px; color: #909399; margin-bottom: 8px; }
-.stat-value { font-size: 28px; font-weight: bold; color: #409eff; }
+.stat-value { font-size: 28px; font-weight: bold; color: #00FF94; }
 
 .chart-card { margin-bottom: 20px; }
 .chart-container { width: 100%; height: 400px; }

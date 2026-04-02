@@ -465,7 +465,7 @@ onUnmounted(() => {
 .page-header h2 {
   margin: 0;
   font-size: 20px;
-  color: #333;
+  color: #F0F0F0;
 }
 
 .assignment-info-card {
@@ -490,7 +490,7 @@ onUnmounted(() => {
 .description {
   margin-top: 16px;
   padding: 12px;
-  background: #f5f7fa;
+  background: #2a2a2a;
   border-radius: 4px;
   color: #666;
 }
@@ -524,7 +524,7 @@ onUnmounted(() => {
 
 .question-number {
   font-weight: bold;
-  color: #409eff;
+  color: #00FF94;
 }
 
 .question-score {
@@ -538,7 +538,7 @@ onUnmounted(() => {
 
 .question-content {
   line-height: 1.6;
-  color: #333;
+  color: #F0F0F0;
 }
 
 .action-buttons {
@@ -546,12 +546,12 @@ onUnmounted(() => {
   justify-content: center;
   gap: 16px;
   padding: 20px;
-  background: #fff;
+  background: #252525;
   border-radius: 8px;
   box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.05);
 }
 
 .text-danger {
-  color: #f56c6c;
+  color: #FF4B6E;
 }
 </style>

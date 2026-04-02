@@ -542,56 +542,56 @@ onMounted(() => { fetchGradingResult() })
 <style scoped>
 .result-detail-page { min-height: 100%; }
 .page-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
-.page-header h2 { margin: 0; font-size: 20px; color: #333; flex: 1; }
+.page-header h2 { margin: 0; font-size: 20px; color: #F0F0F0; flex: 1; }
 .card-header { display: flex; justify-content: space-between; align-items: center; }
 .header-stats { display: flex; gap: 8px; }
 .info-card, .answers-card, .score-card, .wrong-questions-card, .suggestions-card, .review-request-card {
   margin-bottom: 20px;
 }
 .answer-item {
-  background: #f5f7fa; border-radius: 8px; padding: 16px; margin-bottom: 12px;
-  border-left: 4px solid #67c23a;
+  background: #2a2a2a; border-radius: 8px; padding: 16px; margin-bottom: 12px;
+  border-left: 4px solid #00FF94;
 }
-.answer-item.wrong { border-left-color: #f56c6c; }
+.answer-item.wrong { border-left-color: #FF4B6E; }
 .answer-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
-.question-number { font-weight: bold; color: #409eff; }
+.question-number { font-weight: bold; color: #00FF94; }
 .answer-score { margin-left: auto; font-weight: bold; }
-.answer-score.correct { color: #67c23a; }
-.answer-score.wrong { color: #f56c6c; }
+.answer-score.correct { color: #00FF94; }
+.answer-score.wrong { color: #FF4B6E; }
 .question-content, .student-answer, .standard-answer { margin-bottom: 8px; line-height: 1.6; }
 .student-answer { display: flex; align-items: center; gap: 8px; }
-.student-answer .correct { color: #67c23a; font-weight: 500; }
-.student-answer .wrong { color: #f56c6c; font-weight: 500; }
-.correct-icon { color: #67c23a; font-size: 18px; }
-.wrong-icon { color: #f56c6c; font-size: 18px; }
+.student-answer .correct { color: #00FF94; font-weight: 500; }
+.student-answer .wrong { color: #FF4B6E; font-weight: 500; }
+.correct-icon { color: #00FF94; font-size: 18px; }
+.wrong-icon { color: #FF4B6E; font-size: 18px; }
 .ai-feedback {
   display: flex; align-items: flex-start; gap: 8px; padding: 12px;
-  background: #fdf6ec; border-radius: 4px; color: #e6a23c; margin-top: 8px;
+  background: #fdf6ec; border-radius: 4px; color: #FFB700; margin-top: 8px;
 }
 .review-comment {
   display: flex; align-items: flex-start; gap: 8px; padding: 12px;
-  background: #ecf5ff; border-radius: 4px; color: #409eff; margin-top: 8px;
+  background: #ecf5ff; border-radius: 4px; color: #00FF94; margin-top: 8px;
 }
 .needs-review-tag { margin-top: 8px; }
 .total-score { text-align: center; margin-bottom: 20px; }
 .score-value { font-size: 48px; font-weight: bold; }
-.score-value.excellent { color: #67c23a; }
-.score-value.pass { color: #e6a23c; }
-.score-value.fail { color: #f56c6c; }
-.score-max { font-size: 24px; color: #999; }
+.score-value.excellent { color: #00FF94; }
+.score-value.pass { color: #FFB700; }
+.score-value.fail { color: #FF4B6E; }
+.score-max { font-size: 24px; color: #606060; }
 .score-breakdown { margin-top: 20px; }
 .breakdown-item {
   display: flex; justify-content: space-between; padding: 8px 0;
-  border-bottom: 1px solid #eee;
+  border: 1px solid rgba(255,255,255,0.06);
 }
 .breakdown-item:last-child { border-bottom: none; }
-.breakdown-item .correct { color: #67c23a; font-weight: bold; }
-.breakdown-item .wrong { color: #f56c6c; font-weight: bold; }
+.breakdown-item .correct { color: #00FF94; font-weight: bold; }
+.breakdown-item .wrong { color: #FF4B6E; font-weight: bold; }
 .wrong-question-item { padding: 12px; background: #fef0f0; border-radius: 4px; margin-bottom: 8px; }
 .wq-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
-.wq-number { font-weight: bold; color: #f56c6c; }
+.wq-number { font-weight: bold; color: #FF4B6E; }
 .wq-content { color: #666; font-size: 13px; }
-.suggestion-item { display: flex; align-items: flex-start; gap: 8px; padding: 8px 0; color: #409eff; }
+.suggestion-item { display: flex; align-items: flex-start; gap: 8px; padding: 8px 0; color: #00FF94; }
 .review-hint { color: #909399; font-size: 13px; margin-bottom: 16px; }
 .already-review { color: #909399; font-size: 12px; }
 </style>

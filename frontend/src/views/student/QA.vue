@@ -64,7 +64,7 @@
                     v-else
                     :size="36"
                     :icon="ChatDotRound"
-                    style="background: #409eff"
+                    style="background: linear-gradient(135deg, #00D4FF, #0099BB)"
                   />
                 </div>
                 <div class="message-content">
@@ -153,7 +153,7 @@
                   <el-avatar
                     :size="36"
                     :icon="ChatDotRound"
-                    style="background: #409eff"
+                    style="background: linear-gradient(135deg, #00D4FF, #0099BB)"
                   />
                 </div>
                 <div class="message-content">
@@ -481,8 +481,8 @@ onMounted(() => { fetchHistory() })
 .chat-card :deep(.el-card__body) { flex: 1; display: flex; flex-direction: column; padding: 0; }
 .chat-messages { flex: 1; overflow-y: auto; padding: 20px; }
 .welcome-message { text-align: center; padding: 40px 20px; color: #909399; }
-.welcome-icon { font-size: 48px; color: #409eff; margin-bottom: 16px; }
-.welcome-message h3 { margin: 0 0 8px 0; color: #333; }
+.welcome-icon { font-size: 48px; color: #00FF94; margin-bottom: 16px; }
+.welcome-message h3 { margin: 0 0 8px 0; color: #F0F0F0; }
 .quick-questions { margin-top: 20px; }
 .quick-tag { cursor: pointer; margin: 4px; }
 .quick-tag:hover { background: #ecf5ff; }
@@ -491,14 +491,14 @@ onMounted(() => { fetchHistory() })
 .message-item.user .message-content { align-items: flex-end; }
 .message-content { display: flex; flex-direction: column; max-width: 70%; }
 .message-text { padding: 12px 16px; border-radius: 12px; line-height: 1.6; }
-.message-item.user .message-text { background: #409eff; color: #fff; border-bottom-right-radius: 4px; }
-.message-item.assistant .message-text { background: #f5f7fa; color: #333; border-bottom-left-radius: 4px; }
-.answer-steps, .related-examples { margin-top: 12px; padding: 12px; background: #f5f7fa; border-radius: 8px; }
+.message-item.user .message-text { background: linear-gradient(135deg, #00D4FF, #0099BB); color: #fff; border-bottom-right-radius: 4px; }
+.message-item.assistant .message-text { background: #2a2a2a; color: #F0F0F0; border-bottom-left-radius: 4px; }
+.answer-steps, .related-examples { margin-top: 12px; padding: 12px; background: #2a2a2a; border-radius: 8px; }
 .steps-title, .examples-title { font-weight: 500; margin-bottom: 8px; display: flex; align-items: center; gap: 4px; }
 .answer-steps ol, .related-examples ul { margin: 0; padding-left: 20px; }
 .answer-steps li, .related-examples li { margin: 4px 0; }
 .feedback-section { margin-top: 12px; display: flex; align-items: center; gap: 8px; font-size: 13px; color: #909399; }
-.feedback-given { margin-top: 12px; font-size: 13px; color: #67c23a; display: flex; align-items: center; gap: 4px; }
+.feedback-given { margin-top: 12px; font-size: 13px; color: #00FF94; display: flex; align-items: center; gap: 4px; }
 .typing-indicator { display: flex; gap: 4px; padding: 12px 16px; }
 .typing-indicator span { width: 8px; height: 8px; background: #909399; border-radius: 50%; animation: typing 1.4s infinite; }
 .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
@@ -510,13 +510,13 @@ onMounted(() => { fetchHistory() })
 .history-card { height: calc(100vh - 180px); }
 .history-card :deep(.el-card__body) { height: calc(100% - 60px); overflow-y: auto; }
 .history-list { display: flex; flex-direction: column; gap: 12px; }
-.history-item { padding: 12px; background: #f5f7fa; border-radius: 8px; cursor: pointer; transition: background 0.2s; }
+.history-item { padding: 12px; background: #2a2a2a; border-radius: 8px; cursor: pointer; transition: background 0.2s; }
 .history-item:hover { background: #ecf5ff; }
-.history-question { font-size: 14px; color: #333; margin-bottom: 8px; line-height: 1.4; }
+.history-question { font-size: 14px; color: #F0F0F0; margin-bottom: 8px; line-height: 1.4; }
 .history-meta { display: flex; justify-content: space-between; align-items: center; }
 .history-time { font-size: 12px; color: #909399; }
 .history-pagination { margin-top: 16px; display: flex; justify-content: center; }
 .history-detail .detail-section { margin-bottom: 16px; }
 .detail-label { font-weight: 500; color: #909399; margin-bottom: 4px; font-size: 13px; }
-.detail-content { color: #333; line-height: 1.6; }
+.detail-content { color: #F0F0F0; line-height: 1.6; }
 </style>

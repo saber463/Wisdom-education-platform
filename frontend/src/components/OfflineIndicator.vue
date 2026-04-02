@@ -211,7 +211,7 @@ onUnmounted(() => {
 
   &.offline {
     background-color: #fef0f0;
-    color: #f56c6c;
+    color: #FF4B6E;
     border: 1px solid #fde2e2;
 
     .indicator-icon {
@@ -227,7 +227,7 @@ onUnmounted(() => {
 
   &.online {
     background-color: #f0f9ff;
-    color: #409eff;
+    color: #00D4FF;
     border: 1px solid #c6e2ff;
   }
 

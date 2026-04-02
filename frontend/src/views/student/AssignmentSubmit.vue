@@ -762,7 +762,7 @@ onUnmounted(() => {
 .page-header h2 {
   margin: 0;
   font-size: 20px;
-  color: #333;
+  color: #F0F0F0;
 }
 
 .assignment-info-card {
@@ -782,7 +782,7 @@ onUnmounted(() => {
 .description {
   margin-top: 16px;
   padding: 12px;
-  background: #f5f7fa;
+  background: #2a2a2a;
   border-radius: 4px;
   color: #666;
 }
@@ -821,7 +821,7 @@ onUnmounted(() => {
 }
 
 .question-item.answered {
-  border-color: #67c23a;
+  border-color: #00FF94;
   background: #f0f9eb;
 }
 
@@ -834,7 +834,7 @@ onUnmounted(() => {
 
 .question-number {
   font-weight: bold;
-  color: #409eff;
+  color: #00FF94;
 }
 
 .question-score {
@@ -845,7 +845,7 @@ onUnmounted(() => {
 .question-content {
   margin-bottom: 16px;
   line-height: 1.6;
-  color: #333;
+  color: #F0F0F0;
 }
 
 .choice-options,
@@ -861,7 +861,7 @@ onUnmounted(() => {
   gap: 4px;
   margin-top: 12px;
   font-size: 12px;
-  color: #e6a23c;
+  color: #FFB700;
 }
 
 .submit-actions {
@@ -869,13 +869,13 @@ onUnmounted(() => {
   justify-content: center;
   gap: 16px;
   padding: 20px;
-  background: #fff;
+  background: #252525;
   border-radius: 8px;
   box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.05);
 }
 
 .text-danger {
-  color: #f56c6c;
+  color: #FF4B6E;
 }
 
 /* 批改结果弹窗样式 */
@@ -900,7 +900,7 @@ onUnmounted(() => {
 }
 
 .score-circle.score-excellent {
-  background: linear-gradient(135deg, #67c23a 0%, #85ce61 100%);
+  background: linear-gradient(135deg, #00FF94 0%, #00BB66 100%);
 }
 
 .score-circle.score-pass {
@@ -908,7 +908,7 @@ onUnmounted(() => {
 }
 
 .score-circle.score-fail {
-  background: linear-gradient(135deg, #f56c6c 0%, #f78989 100%);
+  background: linear-gradient(135deg, #FF4B6E 0%, #CC2244 100%);
 }
 
 .score-value {

@@ -122,6 +122,26 @@ const teacherRoutes: RouteRecordRaw[] = [
           requiresAuth: true,
           role: 'teacher'
         }
+      },
+      {
+        path: 'courses',
+        name: 'teacher-courses',
+        component: () => import('@/views/teacher/Courses.vue'),
+        meta: {
+          title: '课程管理',
+          requiresAuth: true,
+          role: 'teacher'
+        }
+      },
+      {
+        path: 'students',
+        name: 'teacher-students',
+        component: () => import('@/views/teacher/Students.vue'),
+        meta: {
+          title: '学生列表',
+          requiresAuth: true,
+          role: 'teacher'
+        }
       }
     ]
   }
@@ -428,6 +448,26 @@ const studentRoutes: RouteRecordRaw[] = [
           requiresAuth: true,
           role: 'student'
         }
+      },
+      {
+        path: 'learning-path',
+        name: 'student-learning-path',
+        component: () => import('@/views/student/LearningPath.vue'),
+        meta: {
+          title: '学习路径',
+          requiresAuth: true,
+          role: 'student'
+        }
+      },
+      {
+        path: 'virtual-partner',
+        name: 'student-virtual-partner',
+        component: () => import('@/views/student/VirtualPartner.vue'),
+        meta: {
+          title: 'AI学伴',
+          requiresAuth: true,
+          role: 'student'
+        }
       }
     ]
   }
@@ -481,6 +521,16 @@ const parentRoutes: RouteRecordRaw[] = [
         component: () => import('@/views/parent/Messages.vue'),
         meta: {
           title: '家校留言',
+          requiresAuth: true,
+          role: 'parent'
+        }
+      },
+      {
+        path: 'reports',
+        name: 'parent-reports',
+        component: () => import('@/views/parent/Reports.vue'),
+        meta: {
+          title: '成绩报告',
           requiresAuth: true,
           role: 'parent'
         }

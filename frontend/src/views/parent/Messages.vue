@@ -395,7 +395,7 @@ watch(selectedChildId, () => {
 .page-header h2 {
   margin: 0;
   font-size: 20px;
-  color: #333;
+  color: #F0F0F0;
 }
 
 .teachers-card {
@@ -421,7 +421,7 @@ watch(selectedChildId, () => {
 }
 
 .teacher-item:hover {
-  background: #f5f7fa;
+  background: #2a2a2a;
 }
 
 .teacher-item.active {
@@ -437,12 +437,12 @@ watch(selectedChildId, () => {
 
 .teacher-name {
   font-weight: 500;
-  color: #333;
+  color: #F0F0F0;
 }
 
 .teacher-subject {
   font-size: 12px;
-  color: #999;
+  color: #606060;
 }
 
 .unread-badge {
@@ -481,20 +481,20 @@ watch(selectedChildId, () => {
 .chat-teacher-info .teacher-name {
   display: block;
   font-weight: 500;
-  color: #333;
+  color: #F0F0F0;
 }
 
 .chat-teacher-info .teacher-subject {
   display: block;
   font-size: 12px;
-  color: #999;
+  color: #606060;
 }
 
 .messages-container {
   flex: 1;
   overflow-y: auto;
   padding: 20px;
-  background: #f5f7fa;
+  background: #2a2a2a;
 }
 
 .message-wrapper {
@@ -521,26 +521,26 @@ watch(selectedChildId, () => {
 .message-bubble {
   padding: 12px 16px;
   border-radius: 12px;
-  background: #fff;
+  background: #252525;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   line-height: 1.6;
   word-break: break-word;
 }
 
 .message-self .message-bubble {
-  background: #409eff;
+  background: linear-gradient(135deg, #00D4FF, #0099BB);
   color: #fff;
 }
 
 .message-time {
   font-size: 12px;
-  color: #999;
+  color: #606060;
 }
 
 .input-area {
   padding: 16px;
-  border-top: 1px solid #eee;
-  background: #fff;
+  border: 1px solid rgba(255,255,255,0.06);
+  background: #252525;
 }
 
 .input-actions {
@@ -552,7 +552,7 @@ watch(selectedChildId, () => {
 
 .input-hint {
   font-size: 12px;
-  color: #999;
+  color: #606060;
 }
 
 .empty-chat-card {

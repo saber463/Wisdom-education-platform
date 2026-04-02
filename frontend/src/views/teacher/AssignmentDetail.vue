@@ -251,17 +251,17 @@ onMounted(() => { fetchAssignment() })
 <style scoped>
 .assignment-detail-page { min-height: 100%; }
 .page-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
-.page-header h2 { margin: 0; font-size: 20px; color: #333; flex: 1; }
+.page-header h2 { margin: 0; font-size: 20px; color: #F0F0F0; flex: 1; }
 .header-actions { display: flex; align-items: center; gap: 12px; }
 .info-card, .questions-card, .stats-card, .submissions-card { margin-bottom: 20px; }
-.question-item { background: #f5f7fa; border-radius: 8px; padding: 16px; margin-bottom: 12px; }
+.question-item { background: #2a2a2a; border-radius: 8px; padding: 16px; margin-bottom: 12px; }
 .question-header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
-.question-number { font-weight: bold; color: #409eff; }
-.question-score { margin-left: auto; color: #e6a23c; font-weight: bold; }
-.question-content { color: #333; margin-bottom: 8px; }
-.question-answer { color: #67c23a; font-size: 14px; }
-.stats-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #eee; }
+.question-number { font-weight: bold; color: #00FF94; }
+.question-score { margin-left: auto; color: #FFB700; font-weight: bold; }
+.question-content { color: #F0F0F0; margin-bottom: 8px; }
+.question-answer { color: #00FF94; font-size: 14px; }
+.stats-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border: 1px solid rgba(255,255,255,0.06); }
 .stats-item:last-child { border-bottom: none; }
 .stats-label { color: #666; }
-.stats-value { font-size: 18px; font-weight: bold; color: #333; }
+.stats-value { font-size: 18px; font-weight: bold; color: #F0F0F0; }
 </style>

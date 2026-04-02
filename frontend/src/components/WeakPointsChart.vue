@@ -65,7 +65,7 @@ function initChart() {
         type: 'bar',
         data: errorCounts,
         itemStyle: {
-          color: '#f56c6c'
+          color: '#FF4B6E'
         },
         label: {
           show: true,

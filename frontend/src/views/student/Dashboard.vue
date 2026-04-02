@@ -419,7 +419,7 @@
                   :key="wq.id"
                   style="display:flex;gap:10px;padding:12px;border-radius:12px;background:#f8fafc;cursor:pointer;transition:background 0.2s"
                   @click="$router.push('/student/wrong-book')"
-                  @mouseenter="($event.currentTarget as HTMLElement).style.background='#f0f9ff'"
+                  @mouseenter="($event.currentTarget as HTMLElement).style.background='rgba(0,212,255,0.08)'"
                   @mouseleave="($event.currentTarget as HTMLElement).style.background='#f8fafc'"
                 >
                   <div
@@ -511,9 +511,9 @@ function initTrendChart() {
   trendEchart.setOption({
     grid: { top: 20, right: 10, bottom: 20, left: 40 },
     tooltip: { trigger: 'axis' },
-    legend: { top: 0, right: 0, data: ['专注度', '正确率'], textStyle: { fontSize: 11, color: '#94a3b8' } },
-    xAxis: { type: 'category', data: days, axisLine: { show: false }, axisTick: { show: false }, axisLabel: { color: '#94a3b8', fontSize: 10 } },
-    yAxis: { type: 'value', max: 100, splitLine: { lineStyle: { color: 'rgba(148,163,184,0.15)' } }, axisLabel: { color: '#94a3b8', fontSize: 10 } },
+    legend: { top: 0, right: 0, data: ['专注度', '正确率'], textStyle: { fontSize: 11, color: '#606060' } },
+    xAxis: { type: 'category', data: days, axisLine: { show: false }, axisTick: { show: false }, axisLabel: { color: '#606060', fontSize: 10 } },
+    yAxis: { type: 'value', max: 100, splitLine: { lineStyle: { color: 'rgba(255,255,255,0.06)' } }, axisLabel: { color: '#606060', fontSize: 10 } },
     series: [
       { name: '专注度', type: 'line', smooth: true, data: focusData, lineStyle: { color: '#06b6d4', width: 2.5 }, itemStyle: { color: '#06b6d4' }, areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(6,182,212,0.25)' }, { offset: 1, color: 'rgba(6,182,212,0)' }] } }, symbol: 'none' },
       { name: '正确率', type: 'line', smooth: true, data: scoreData, lineStyle: { color: '#8b5cf6', width: 2.5 }, itemStyle: { color: '#8b5cf6' }, symbol: 'none' },
@@ -543,8 +543,8 @@ function initRadarChart() {
       indicator: knowledgePoints.value.map(k => ({ name: k.name, max: 100 })),
       splitArea: { areaStyle: { color: ['rgba(6,182,212,0.02)', 'rgba(6,182,212,0.05)'] } },
       axisLine: { lineStyle: { color: 'rgba(148,163,184,0.2)' } },
-      splitLine: { lineStyle: { color: 'rgba(148,163,184,0.15)' } },
-      axisLabel: { color: '#94a3b8', fontSize: 10 },
+      splitLine: { lineStyle: { color: 'rgba(255,255,255,0.06)' } },
+      axisLabel: { color: '#606060', fontSize: 10 },
     },
     series: [{ type: 'radar', data: [{ value: knowledgePoints.value.map(k => k.value), name: '掌握度' }], lineStyle: { color: '#06b6d4', width: 2 }, areaStyle: { color: 'rgba(6,182,212,0.15)' }, itemStyle: { color: '#06b6d4' }, symbol: 'circle', symbolSize: 4 }],
   })
@@ -584,3 +584,56 @@ function handleLogout() {
   router.push('/login')
 }
 </script>
+
+<style scoped>
+/* Dark theme overrides for inline-styled elements */
+:deep([style*="background:#f8fafc"]),
+:deep([style*="background: #f8fafc"]) {
+  background: #252525 !important;
+}
+
+:deep([style*="color: #E0E0E0"]),
+:deep([style*="color: #E0E0E0"]) {
+  color: #E0E0E0 !important;
+}
+
+:deep([style*="color: #707070"]),
+:deep([style*="color: #707070"]) {
+  color: #606060 !important;
+}
+
+:deep([style*="color: #00D4FF"]),
+:deep([style*="color: #00D4FF"]) {
+  color: #00D4FF !important;
+}
+
+:deep([style*="color: #909090"]),
+:deep([style*="color: #909090"]) {
+  color: #606060 !important;
+}
+
+:deep([style*="color:#0f172a"]),
+:deep([style*="color: #0f172a"]) {
+  color: #E0E0E0 !important;
+}
+
+:deep([style*="background: #252525"]) {
+  background: rgba(255,255,255,0.08) !important;
+}
+
+/* Knowledge points progress bars */
+:deep([style*="background: #252525;border-radius:3px"]) {
+  background: rgba(255,255,255,0.06) !important;
+}
+
+/* Wrong question hover states */
+:deep([style*="background: rgba(0,212,255,0.06)"]) {
+  background: rgba(0, 212, 255, 0.06) !important;
+}
+
+/* User display */
+:deep([style*="color: #F0F0F0"]) {
+  color: #D0D0D0 !important;
+}
+</style>
+

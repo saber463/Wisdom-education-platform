@@ -363,7 +363,7 @@ const drawCheckInChart = () => {
         type: 'line',
         smooth: true,
         itemStyle: {
-          color: '#409eff'
+          color: '#00D4FF'
         },
         areaStyle: {
           color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
@@ -445,9 +445,9 @@ const drawTrendChart = () => {
 
 // 获取评分颜色
 const getScoreColor = (score: number): string => {
-  if (score >= 80) return '#67c23a'
+  if (score >= 80) return '#00FF94'
   if (score >= 60) return '#e6a23c'
-  return '#f56c6c'
+  return '#FF4B6E'
 }
 
 // 格式化日期
@@ -492,7 +492,7 @@ onMounted(() => {
     margin: 0 0 20px 0;
     font-size: 18px;
     font-weight: 600;
-    color: #333;
+    color: #F0F0F0;
   }
 }
 
@@ -513,7 +513,7 @@ onMounted(() => {
 
     .value {
       font-size: 16px;
-      color: #333;
+      color: #F0F0F0;
       font-weight: 500;
     }
   }
@@ -524,7 +524,7 @@ onMounted(() => {
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 20px;
   padding: 20px;
-  background: #f5f7fa;
+  background: #2a2a2a;
   border-radius: 8px;
 
   .ranking-item {
@@ -539,7 +539,7 @@ onMounted(() => {
 
     .value {
       font-size: 18px;
-      color: #409eff;
+      color: #00FF94;
       font-weight: bold;
     }
   }
@@ -554,7 +554,7 @@ onMounted(() => {
     display: grid;
     grid-template-columns: 60px 1fr 150px 150px;
     gap: 0;
-    background: #f5f7fa;
+    background: #2a2a2a;
     padding: 12px;
     font-weight: 600;
     font-size: 14px;
@@ -634,7 +634,7 @@ onMounted(() => {
 .chart-container {
   margin: 20px 0;
   padding: 20px;
-  background: #f5f7fa;
+  background: #2a2a2a;
   border-radius: 8px;
 }
 
@@ -648,7 +648,7 @@ onMounted(() => {
     display: grid;
     grid-template-columns: 100px 100px 150px 150px;
     gap: 0;
-    background: #f5f7fa;
+    background: #2a2a2a;
     padding: 12px;
     font-weight: 600;
     font-size: 14px;

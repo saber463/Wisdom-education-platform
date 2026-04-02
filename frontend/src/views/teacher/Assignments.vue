@@ -476,7 +476,7 @@ onMounted(() => {
 .page-header h2 {
   margin: 0;
   font-size: 20px;
-  color: #333;
+  color: #F0F0F0;
 }
 
 .filter-card {
@@ -500,6 +500,6 @@ onMounted(() => {
 }
 
 .text-danger {
-  color: #f56c6c;
+  color: #FF4B6E;
 }
 </style>

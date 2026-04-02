@@ -15,7 +15,7 @@
           >
             <div
               class="stat-icon"
-              style="background: #409eff;"
+              style="background: linear-gradient(135deg, #00D4FF, #0099BB);"
             >
               <el-icon><Document /></el-icon>
             </div>
@@ -36,7 +36,7 @@
           >
             <div
               class="stat-icon"
-              style="background: #67c23a;"
+              style="background: linear-gradient(135deg, #00FF94, #00BB66);"
             >
               <el-icon><Check /></el-icon>
             </div>
@@ -57,7 +57,7 @@
           >
             <div
               class="stat-icon"
-              style="background: #e6a23c;"
+              style="background: linear-gradient(135deg, #FFB700, #CC8800);"
             >
               <el-icon><Clock /></el-icon>
             </div>
@@ -78,7 +78,7 @@
           >
             <div
               class="stat-icon"
-              style="background: #f56c6c;"
+              style="background: linear-gradient(135deg, #FF4B6E, #CC2244);"
             >
               <el-icon><User /></el-icon>
             </div>
@@ -194,14 +194,14 @@ onMounted(() => { fetchDashboardData() })
 
 <style scoped>
 .teacher-dashboard { padding: 10px; }
-.teacher-dashboard h2 { margin: 0 0 20px 0; font-size: 24px; color: #333; }
+.teacher-dashboard h2 { margin: 0 0 20px 0; font-size: 24px; color: #F0F0F0; }
 .stat-cards { margin-bottom: 20px; }
 .stat-card { display: flex; align-items: center; padding: 10px; }
 .stat-icon { width: 60px; height: 60px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 16px; }
 .stat-icon .el-icon { font-size: 28px; color: #fff; }
 .stat-info { flex: 1; }
-.stat-value { font-size: 28px; font-weight: bold; color: #333; }
-.stat-label { font-size: 14px; color: #999; }
+.stat-value { font-size: 28px; font-weight: bold; color: #F0F0F0; }
+.stat-label { font-size: 14px; color: #606060; }
 .quick-actions { margin-bottom: 20px; }
 .action-buttons { display: flex; gap: 12px; flex-wrap: wrap; }
 </style>

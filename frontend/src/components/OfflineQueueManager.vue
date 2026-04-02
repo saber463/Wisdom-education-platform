@@ -258,7 +258,7 @@ onMounted(async () => {
 
     .queue-badge {
       :deep(.el-badge__content) {
-        background-color: #f56c6c;
+        background-color: #FF4B6E;
       }
     }
   }

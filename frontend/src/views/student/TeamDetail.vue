@@ -619,7 +619,7 @@ onMounted(async () => {
   gap: 20px;
   margin-bottom: 30px;
   padding: 20px;
-  background: #f5f7fa;
+  background: #2a2a2a;
   border-radius: 8px;
 
   .overview-item {
@@ -634,7 +634,7 @@ onMounted(async () => {
 
     .value {
       font-size: 16px;
-      color: #333;
+      color: #F0F0F0;
       font-weight: 500;
     }
   }
@@ -677,7 +677,7 @@ onMounted(async () => {
           display: flex;
           gap: 15px;
           font-size: 12px;
-          color: #999;
+          color: #606060;
         }
       }
     }
@@ -687,7 +687,7 @@ onMounted(async () => {
 .checkin-form,
 .peer-review-form {
   padding: 20px;
-  background: #f5f7fa;
+  background: #2a2a2a;
   border-radius: 8px;
   margin-bottom: 30px;
 

@@ -227,13 +227,13 @@ onMounted(() => { fetchAssignments(); fetchSubmissions() })
 <style scoped>
 .grading-page { min-height: 100%; }
 .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.page-header h2 { margin: 0; font-size: 20px; color: #333; }
+.page-header h2 { margin: 0; font-size: 22px; font-weight: 900; color: #F0F0F0; font-family: 'Source Han Sans CN', sans-serif; }
 .filter-card { margin-bottom: 20px; }
-.filter-form { display: flex; flex-wrap: wrap; gap: 10px; }
+.filter-form { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 .list-card { min-height: 400px; }
 .pagination-wrapper { display: flex; justify-content: flex-end; margin-top: 20px; }
-.text-success { color: #67c23a; font-weight: bold; }
-.text-warning { color: #e6a23c; font-weight: bold; }
-.text-danger { color: #f56c6c; font-weight: bold; }
-.text-muted { color: #999; }
+.text-success { color: #00FF94; font-weight: bold; font-family: Consolas, monospace; }
+.text-warning { color: #FFB700; font-weight: bold; font-family: Consolas, monospace; }
+.text-danger  { color: #FF4B6E; font-weight: bold; font-family: Consolas, monospace; }
+.text-muted   { color: #606060; font-family: Consolas, monospace; }
 </style>

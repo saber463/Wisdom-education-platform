@@ -422,7 +422,7 @@ onUnmounted(() => {
 .page-header h2 {
   margin: 0;
   font-size: 20px;
-  color: #333;
+  color: #F0F0F0;
 }
 
 .filter-card {
@@ -456,19 +456,19 @@ onUnmounted(() => {
 }
 
 .text-danger {
-  color: #f56c6c;
+  color: #FF4B6E;
 }
 
 .score-excellent {
-  color: #67c23a;
+  color: #00FF94;
   font-weight: bold;
 }
 
 .score-pass {
-  color: #e6a23c;
+  color: #FFB700;
 }
 
 .score-fail {
-  color: #f56c6c;
+  color: #FF4B6E;
 }
 </style>

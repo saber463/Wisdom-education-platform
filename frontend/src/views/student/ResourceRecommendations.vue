@@ -480,7 +480,7 @@ onMounted(async () => {
 .page-header h2 {
   margin: 0 0 8px 0;
   font-size: 24px;
-  color: #333;
+  color: #F0F0F0;
 }
 
 .page-desc {
@@ -506,7 +506,7 @@ onMounted(async () => {
 }
 
 .resource-card {
-  background: #fff;
+  background: #252525;
   border: 1px solid #ebeef5;
   border-radius: 8px;
   overflow: hidden;
@@ -533,7 +533,7 @@ onMounted(async () => {
   position: relative;
   width: 100%;
   height: 150px;
-  background: #f5f7fa;
+  background: #2a2a2a;
   overflow: hidden;
 }
 
@@ -565,7 +565,7 @@ onMounted(async () => {
   margin: 0 0 8px 0;
   font-size: 14px;
   font-weight: 600;
-  color: #333;
+  color: #F0F0F0;
   line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -633,7 +633,7 @@ onMounted(async () => {
 .detail-header h2 {
   margin: 0;
   font-size: 20px;
-  color: #333;
+  color: #F0F0F0;
   flex: 1;
 }
 
@@ -658,7 +658,7 @@ onMounted(async () => {
 .detail-section h3 {
   margin: 0 0 12px 0;
   font-size: 16px;
-  color: #333;
+  color: #F0F0F0;
   font-weight: 600;
 }
 
@@ -681,7 +681,7 @@ onMounted(async () => {
 }
 
 .stat-card {
-  background: #f5f7fa;
+  background: #2a2a2a;
   padding: 16px;
   border-radius: 8px;
   text-align: center;
@@ -690,7 +690,7 @@ onMounted(async () => {
 .stat-value {
   font-size: 24px;
   font-weight: bold;
-  color: #409eff;
+  color: #00FF94;
   margin-bottom: 8px;
 }
 

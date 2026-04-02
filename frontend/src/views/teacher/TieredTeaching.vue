@@ -492,9 +492,9 @@ function updateEffectChart(data: { basic?: unknown[]; medium?: unknown[]; advanc
     xAxis: { type: 'category', data: effectData.dates || [] },
     yAxis: { type: 'value', name: '平均分', min: 0, max: 100 },
     series: [
-      { name: '基础层', type: 'line', data: effectData.basic || [], smooth: true, itemStyle: { color: '#67c23a' } },
-      { name: '中等层', type: 'line', data: effectData.medium || [], smooth: true, itemStyle: { color: '#e6a23c' } },
-      { name: '提高层', type: 'line', data: effectData.advanced || [], smooth: true, itemStyle: { color: '#f56c6c' } }
+      { name: '基础层', type: 'line', data: effectData.basic || [], smooth: true, itemStyle: { color: '#00FF94' } },
+      { name: '中等层', type: 'line', data: effectData.medium || [], smooth: true, itemStyle: { color: '#FFB700' } },
+      { name: '提高层', type: 'line', data: effectData.advanced || [], smooth: true, itemStyle: { color: '#FF4B6E' } }
     ]
   })
 }
@@ -537,19 +537,19 @@ onUnmounted(() => {
 <style scoped>
 .tiered-teaching-page { min-height: 100%; }
 .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.page-header h2 { margin: 0; font-size: 20px; color: #333; }
+.page-header h2 { margin: 0; font-size: 20px; color: #F0F0F0; }
 .header-actions { display: flex; gap: 12px; }
 .tier-stats { margin-bottom: 20px; }
 .tier-card { text-align: center; padding: 20px; }
-.tier-card.basic { border-top: 4px solid #67c23a; }
-.tier-card.medium { border-top: 4px solid #e6a23c; }
-.tier-card.advanced { border-top: 4px solid #f56c6c; }
+.tier-card.basic { border-top: 4px solid #00FF94; }
+.tier-card.medium { border-top: 4px solid #FFB700; }
+.tier-card.advanced { border-top: 4px solid #FF4B6E; }
 .tier-header { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px; font-size: 16px; color: #666; }
-.tier-count { font-size: 48px; font-weight: bold; color: #333; }
-.tier-info { display: flex; justify-content: space-around; margin-top: 12px; font-size: 14px; color: #999; }
+.tier-count { font-size: 48px; font-weight: bold; color: #F0F0F0; }
+.tier-info { display: flex; justify-content: space-around; margin-top: 12px; font-size: 14px; color: #606060; }
 .assignments-card, .students-card, .effect-card { margin-bottom: 20px; }
 .card-header { display: flex; justify-content: space-between; align-items: center; }
 .chart-container { height: 200px; }
-.text-success { color: #67c23a; }
-.text-danger { color: #f56c6c; }
+.text-success { color: #00FF94; }
+.text-danger { color: #FF4B6E; }
 </style>

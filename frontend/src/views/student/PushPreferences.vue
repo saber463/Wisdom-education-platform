@@ -469,7 +469,7 @@ onMounted(() => {
 <style scoped lang="scss">
 .push-preferences-container {
   padding: 20px;
-  background-color: #f5f7fa;
+  background-color: #2a2a2a;
   min-height: 100vh;
 
   .page-header {
@@ -479,7 +479,7 @@ onMounted(() => {
       margin: 0 0 10px 0;
       font-size: 28px;
       font-weight: 600;
-      color: #333;
+      color: #F0F0F0;
     }
 
     .subtitle {
@@ -527,7 +527,7 @@ onMounted(() => {
 
         .item-icon {
           font-size: 24px;
-          color: #409eff;
+          color: #00FF94;
           margin-right: 15px;
         }
 
@@ -536,7 +536,7 @@ onMounted(() => {
             margin: 0 0 5px 0;
             font-size: 16px;
             font-weight: 500;
-            color: #333;
+            color: #F0F0F0;
           }
 
           p {
@@ -584,15 +584,15 @@ onMounted(() => {
           font-size: 24px;
 
           &.status-success {
-            color: #67c23a;
+            color: #00FF94;
           }
 
           &.status-failed {
-            color: #f56c6c;
+            color: #FF4B6E;
           }
 
           &.status-pending {
-            color: #e6a23c;
+            color: #FFB700;
           }
         }
       }
@@ -604,7 +604,7 @@ onMounted(() => {
           margin: 0 0 5px 0;
           font-size: 14px;
           font-weight: 500;
-          color: #333;
+          color: #F0F0F0;
         }
 
         p {

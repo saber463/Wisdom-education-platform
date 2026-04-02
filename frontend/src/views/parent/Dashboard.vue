@@ -34,7 +34,7 @@
           >
             <div
               class="stat-icon"
-              style="background: #409eff;"
+              style="background: linear-gradient(135deg, #00D4FF, #0099BB);"
             >
               <el-icon><Document /></el-icon>
             </div>
@@ -55,7 +55,7 @@
           >
             <div
               class="stat-icon"
-              style="background: #67c23a;"
+              style="background: linear-gradient(135deg, #00FF94, #00BB66);"
             >
               <el-icon><Trophy /></el-icon>
             </div>
@@ -76,7 +76,7 @@
           >
             <div
               class="stat-icon"
-              style="background: #e6a23c;"
+              style="background: linear-gradient(135deg, #FFB700, #CC8800);"
             >
               <el-icon><TrendCharts /></el-icon>
             </div>
@@ -97,7 +97,7 @@
           >
             <div
               class="stat-icon"
-              style="background: #f56c6c;"
+              style="background: linear-gradient(135deg, #FF4B6E, #CC2244);"
             >
               <el-icon><Warning /></el-icon>
             </div>
@@ -362,7 +362,7 @@ onMounted(() => {
 .parent-dashboard h2 {
   margin: 0 0 20px 0;
   font-size: 24px;
-  color: #333;
+  color: #F0F0F0;
 }
 
 .child-selector {
@@ -401,12 +401,12 @@ onMounted(() => {
 .stat-value {
   font-size: 28px;
   font-weight: bold;
-  color: #333;
+  color: #F0F0F0;
 }
 
 .stat-label {
   font-size: 14px;
-  color: #999;
+  color: #606060;
 }
 
 .quick-actions {
@@ -430,7 +430,7 @@ onMounted(() => {
 }
 
 .notification-content strong {
-  color: #333;
+  color: #F0F0F0;
 }
 
 .notification-content p {
@@ -440,15 +440,15 @@ onMounted(() => {
 }
 
 .score-excellent {
-  color: #67c23a;
+  color: #00FF94;
   font-weight: bold;
 }
 
 .score-pass {
-  color: #e6a23c;
+  color: #FFB700;
 }
 
 .score-fail {
-  color: #f56c6c;
+  color: #FF4B6E;
 }
 </style>

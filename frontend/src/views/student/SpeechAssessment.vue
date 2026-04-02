@@ -560,10 +560,10 @@ function drawWaveform() {
     animationId = requestAnimationFrame(draw)
     analyser!.getByteFrequencyData(dataArray)
 
-    ctx.fillStyle = '#f5f7fa'
+    ctx.fillStyle = '#1a1a1a'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-    ctx.strokeStyle = '#409eff'
+    ctx.strokeStyle = '#00D4FF'
     ctx.lineWidth = 2
     ctx.beginPath()
 
@@ -730,9 +730,9 @@ onUnmounted(() => {
 .recording-status { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
 .status-indicator { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 500; }
 .status-indicator.idle { color: #909399; }
-.status-indicator.recording { color: #f56c6c; }
-.status-indicator.paused { color: #e6a23c; }
-.status-indicator.stopped { color: #67c23a; }
+.status-indicator.recording { color: #FF4B6E; }
+.status-indicator.paused { color: #FFB700; }
+.status-indicator.stopped { color: #00FF94; }
 
 .pulse {
   width: 12px;
@@ -747,9 +747,9 @@ onUnmounted(() => {
   50% { opacity: 0.5; }
 }
 
-.recording-time { font-size: 24px; font-weight: bold; color: #409eff; font-family: monospace; }
+.recording-time { font-size: 24px; font-weight: bold; color: #00FF94; font-family: monospace; }
 
-.waveform-container { margin: 20px 0; background: #f5f7fa; border-radius: 8px; overflow: hidden; }
+.waveform-container { margin: 20px 0; background: #2a2a2a; border-radius: 8px; overflow: hidden; }
 .waveform { width: 100%; height: 200px; display: block; }
 
 .recording-controls { display: flex; justify-content: center; gap: 12px; margin: 20px 0; }
@@ -757,45 +757,45 @@ onUnmounted(() => {
 
 .recording-tips { margin: 20px 0; }
 
-.audio-player { margin-top: 20px; padding: 16px; background: #f5f7fa; border-radius: 8px; }
+.audio-player { margin-top: 20px; padding: 16px; background: #2a2a2a; border-radius: 8px; }
 .player-label { font-size: 14px; color: #909399; margin-bottom: 8px; }
 .audio-element { width: 100%; }
 
 .info-card { height: auto; }
 .info-content { }
 .info-section { margin-bottom: 20px; }
-.info-section h4 { margin: 0 0 8px 0; color: #333; font-size: 14px; font-weight: 500; }
+.info-section h4 { margin: 0 0 8px 0; color: #F0F0F0; font-size: 14px; font-weight: 500; }
 .info-section ul { margin: 0; padding-left: 20px; }
 .info-section li { margin: 4px 0; font-size: 13px; color: #606266; }
 
 .recent-card { }
 .recent-list { display: flex; flex-direction: column; gap: 12px; }
-.recent-item { padding: 12px; background: #f5f7fa; border-radius: 8px; cursor: pointer; transition: background 0.2s; display: flex; align-items: center; gap: 12px; }
+.recent-item { padding: 12px; background: #2a2a2a; border-radius: 8px; cursor: pointer; transition: background 0.2s; display: flex; align-items: center; gap: 12px; }
 .recent-item:hover { background: #ecf5ff; }
-.recent-score { font-size: 24px; font-weight: bold; color: #409eff; min-width: 40px; text-align: center; }
+.recent-score { font-size: 24px; font-weight: bold; color: #00FF94; min-width: 40px; text-align: center; }
 .recent-info { flex: 1; }
 .recent-time { font-size: 12px; color: #909399; }
 .recent-status { margin-top: 4px; }
 
 .result-content { }
 .score-cards { margin-bottom: 20px; }
-.score-card { text-align: center; padding: 16px; background: #f5f7fa; border-radius: 8px; }
-.score-value { font-size: 32px; font-weight: bold; color: #409eff; }
+.score-card { text-align: center; padding: 16px; background: #2a2a2a; border-radius: 8px; }
+.score-value { font-size: 32px; font-weight: bold; color: #00FF94; }
 .score-label { font-size: 13px; color: #909399; margin-top: 4px; }
 
 .report-section { margin-bottom: 20px; }
-.report-section h4 { margin: 0 0 12px 0; color: #333; }
+.report-section h4 { margin: 0 0 12px 0; color: #F0F0F0; }
 .sentence-reports { display: flex; flex-direction: column; gap: 12px; }
-.sentence-item { padding: 12px; background: #f5f7fa; border-radius: 8px; }
+.sentence-item { padding: 12px; background: #2a2a2a; border-radius: 8px; }
 .sentence-number { font-size: 12px; color: #909399; margin-bottom: 4px; }
-.sentence-text { font-size: 14px; color: #333; margin-bottom: 8px; }
+.sentence-text { font-size: 14px; color: #F0F0F0; margin-bottom: 8px; }
 .sentence-issues { display: flex; flex-wrap: wrap; gap: 4px; }
 .sentence-perfect { }
 
 .reference-section { margin-bottom: 20px; }
-.reference-section h4 { margin: 0 0 12px 0; color: #333; }
+.reference-section h4 { margin: 0 0 12px 0; color: #F0F0F0; }
 .reference-audio { width: 100%; }
 
 .suggestion-section { }
-.suggestion-section h4 { margin: 0 0 12px 0; color: #333; }
+.suggestion-section h4 { margin: 0 0 12px 0; color: #F0F0F0; }
 </style>
