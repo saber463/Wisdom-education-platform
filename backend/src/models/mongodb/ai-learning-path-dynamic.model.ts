@@ -67,7 +67,8 @@ const AILearningPathDynamicSchema = new Schema<IAILearningPathDynamic>({
   created_at: { type: Date, required: true, default: Date.now }
 }, {
   collection: 'ai_learning_path_dynamic',
-  timestamps: { createdAt: 'created_at', updatedAt: false }
+  timestamps: { createdAt: 'created_at', updatedAt: false },
+  bufferCommands: false
 });
 
 // 创建复合索引

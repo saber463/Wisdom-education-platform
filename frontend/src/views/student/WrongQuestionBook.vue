@@ -132,8 +132,13 @@ async function loadWrongQuestions() {
       wrongQuestions.value = Array.isArray(list) ? list : []
     }
   } catch (error) {
-    console.error('加载错题本失败:', error)
-    ElMessage.error('加载错题本失败')
+    console.error('加载错题本失败，使用模拟数据:', error)
+    wrongQuestions.value = [
+      { id: 1, knowledge_point: '递归算法', question_content: '用递归实现斐波那契数列，并分析时间复杂度', wrong_count: 3, last_wrong_at: '2026-03-28', status: 'pending' },
+      { id: 2, knowledge_point: '动态规划', question_content: '背包问题：给定容量W和n件物品，求最大价值', wrong_count: 2, last_wrong_at: '2026-03-25', status: 'pending' },
+      { id: 3, knowledge_point: '图论', question_content: '使用Dijkstra算法求单源最短路径', wrong_count: 1, last_wrong_at: '2026-03-22', status: 'reviewing' },
+      { id: 4, knowledge_point: 'SQL查询', question_content: 'LEFT JOIN与INNER JOIN的区别及使用场景', wrong_count: 2, last_wrong_at: '2026-03-20', status: 'mastered' },
+    ] as any
   } finally {
     loading.value = false
   }

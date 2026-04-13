@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>测试所有路由</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      h1 {
+        color: #333;
+        text-align: center;
+      }
+      .category {
+        margin-bottom: 30px;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .category h2 {
+        color: #4a90e2;
+        margin-top: 0;
+      }
+      .route-list {
+        list-style: none;
+        padding: 0;
+      }
+      .route-list li {
+        margin-bottom: 10px;
+      }
+      .route-list a {
+        display: inline-block;
+        padding: 8px 16px;
+        background-color: #4a90e2;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+      }
+      .route-list a:hover {
+        background-color: #357abd;
+      }
+      .route-info {
+        margin-left: 10px;
+        font-size: 14px;
+        color: #666;
+      }
+      .requires-auth {
+        color: #e74c3c;
+        font-size: 12px;
+        margin-left: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>学习AI平台 - 所有路由测试</h1>
+
+    <div class="category">
+      <h2>认证相关路由</h2>
+      <ul class="route-list">
+        <li>
+          <a href="http://localhost:3001/login" target="_blank">登录页面</a
+          ><span class="route-info">/login</span>
+        </li>
+        <li>
+          <a href="http://localhost:3001/register" target="_blank">注册页面</a
+          ><span class="route-info">/register</span>
+        </li>
+        <li>
+          <a href="http://localhost:3001/forgot-password" target="_blank">忘记密码</a
+          ><span class="route-info">/forgot-password</span>
+        </li>
+        <li>
+          <a href="http://localhost:3001/reset-password/test-token" target="_blank"
+            >重置密码（测试）</a
+          ><span class="route-info">/reset-password/:token</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="category">
+      <h2>主页面路由</h2>
+      <ul class="route-list">
+        <li>
+          <a href="http://localhost:3001/" target="_blank">首页</a><span class="route-info">/</span>
+        </li>
+        <li>
+          <a href="http://localhost:3001/home" target="_blank">首页</a
+          ><span class="route-info">/home</span>
+        </li>
+        <li>
+          <a href="http://localhost:3001/courses" target="_blank">课程</a
+          ><span class="route-info">/courses</span>
+        </li>
+        <li>
+          <a href="http://localhost:3001/knowledge-base" target="_blank">知识库</a
+          ><span class="route-info">/knowledge-base</span>
+        </li>
+        <li>
+          <a href="http://localhost:3001/coupons" target="_blank">优惠券</a
+          ><span class="route-info">/coupons</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="category">
+      <h2>学习路径相关</h2>
+      <ul class="route-list">
+        <li>
+          <a href="http://localhost:3001/learning-path/generate" target="_blank">生成学习路径</a
+          ><span class="route-info">/learning-path/generate</span>
+        </li>
+        <li>
+          <a href="http://localhost:3001/learning-path/1" target="_blank">学习路径详情（测试）</a
+          ><span class="route-info">/learning-path/:id</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="category">
+      <h2>评估相关</h2>
+      <ul class="route-list">
+        <li>
+          <a href="http://localhost:3001/assessment/tests" target="_blank">测试列表</a
+          ><span class="route-info">/assessment/tests</span>
+        </li>
+        <li>
+          <a href="http://localhost:3001/assessment/test/1" target="_blank">测试详情（测试）</a
+          ><span class="route-info">/assessment/test/:id</span
+          ><span class="requires-auth">(需要登录)</span>
+        </li>
+        <li>
+          <a href="http://localhost:3001/assessment/result/1" target="_blank">测试结果（测试）</a
+          ><span class="route-info">/assessment/result/:id</span
+          ><span class="requires-auth">(需要登录)</span>
+        </li>
+        <li>
+          <a href="http://localhost:3001/assessment/analysis" target="_blank">知识点分析</a
+          ><span class="route-info">/assessment/analysis</span
+          ><span class="requires-auth">(需要登录)</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="category">
+      <h2>帖子相关</h2>
+      <ul class="route-list">
+        <li>
+          <a href="http://localhost:3001/tweets" target="_blank">帖子列表</a
+          ><span class="route-info">/tweets</span>
+        </li>
+        <li>
+          <a href="http://localhost:3001/tweets/publish" target="_blank">发布帖子</a
+          ><span class="route-info">/tweets/publish</span
+          ><span class="requires-auth">(需要登录)</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="category">
+      <h2>小组相关</h2>
+      <ul class="route-list">
+        <li>
+          <a href="http://localhost:3001/groups" target="_blank">小组列表</a
+          ><span class="route-info">/groups</span>
+        </li>
+        <li>
+          <a href="http://localhost:3001/groups/create" target="_blank">创建小组</a
+          ><span class="route-info">/groups/create</span
+          ><span class="requires-auth">(需要登录)</span>
+        </li>
+        <li>
+          <a href="http://localhost:3001/groups/1" target="_blank">小组详情（测试）</a
+          ><span class="route-info">/groups/:id</span>
+        </li>
+        <li>
+          <a href="http://localhost:3001/user/groups" target="_blank">我的小组</a
+          ><span class="route-info">/user/groups</span><span class="requires-auth">(需要登录)</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="category">
+      <h2>代码生成器</h2>
+      <ul class="route-list">
+        <li>
+          <a href="http://localhost:3001/code-generator/fixed" target="_blank">固定代码生成器</a
+          ><span class="route-info">/code-generator/fixed</span>
+        </li>
+        <li>
+          <a href="http://localhost:3001/code-generator/full" target="_blank">完整代码生成器</a
+          ><span class="route-info">/code-generator/full</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="category">
+      <h2>用户中心</h2>
+      <ul class="route-list">
+        <li>
+          <a href="http://localhost:3001/user/center" target="_blank">用户中心</a
+          ><span class="route-info">/user/center</span><span class="requires-auth">(需要登录)</span>
+        </li>
+        <li>
+          <a href="http://localhost:3001/user/browse-history" target="_blank">浏览历史</a
+          ><span class="route-info">/user/browse-history</span
+          ><span class="requires-auth">(需要登录)</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="category">
+      <h2>错误页面</h2>
+      <ul class="route-list">
+        <li>
+          <a href="http://localhost:3001/nonexistent-page-12345" target="_blank">404页面测试</a
+          ><span class="route-info">/nonexistent-page-12345</span>
+        </li>
+      </ul>
+    </div>
+
+    <script>
+      // 简单的测试脚本，可以扩展以自动化测试
+      console.log('路由测试页面加载完成');
+
+      // 可以添加更多自动化测试逻辑
+    </script>
+  </body>
+</html>

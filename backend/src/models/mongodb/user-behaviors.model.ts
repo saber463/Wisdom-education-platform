@@ -48,7 +48,8 @@ const UserBehaviorSchema = new Schema<IUserBehavior>({
   user_agent: { type: String }
 }, {
   collection: 'user_behaviors',
-  timestamps: false
+  timestamps: false,
+  bufferCommands: false
 });
 
 // 创建复合索引

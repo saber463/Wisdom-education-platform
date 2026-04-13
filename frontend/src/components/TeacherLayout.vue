@@ -26,6 +26,14 @@
         </router-link>
       </nav>
 
+      <!-- 主题选择 -->
+      <div class="sidebar-theme-wrap">
+        <ThemePicker v-if="!sidebarCollapsed" />
+        <div v-else class="theme-icon-only" title="切换主题">
+          <PaintBrushIcon class="nav-icon" />
+        </div>
+      </div>
+
       <button class="sidebar-toggle" @click="sidebarCollapsed = !sidebarCollapsed">
         <el-icon>
           <ArrowLeft v-if="!sidebarCollapsed" />
@@ -45,11 +53,43 @@
         </div>
 
         <div class="topbar-right">
-          <el-badge :value="5" class="notification-badge">
-            <button class="icon-btn" title="待批改">
-              <el-icon><Bell /></el-icon>
-            </button>
-          </el-badge>
+          <!-- 消息通知 -->
+          <el-popover
+            placement="bottom-end"
+            :width="340"
+            trigger="click"
+            popper-class="msg-popover"
+          >
+            <template #reference>
+              <el-badge :value="unreadCount || undefined" :hidden="unreadCount === 0" class="notification-badge">
+                <button class="icon-btn" title="消息通知">
+                  <el-icon><Bell /></el-icon>
+                </button>
+              </el-badge>
+            </template>
+            <!-- 消息面板内容 -->
+            <div class="msg-panel">
+              <div class="msg-panel-head">
+                <span>消息通知</span>
+                <el-button link size="small" @click="markAllRead">全部已读</el-button>
+              </div>
+              <div v-if="notifications.length === 0" class="msg-empty">暂无消息</div>
+              <div
+                v-for="n in notifications"
+                :key="n.id"
+                class="msg-item"
+                :class="{ unread: !n.read }"
+                @click="readNotification(n)"
+              >
+                <div class="msg-dot" :class="n.type" />
+                <div class="msg-body">
+                  <div class="msg-title">{{ n.title }}</div>
+                  <div class="msg-content">{{ n.content }}</div>
+                  <div class="msg-time">{{ n.time }}</div>
+                </div>
+              </div>
+            </div>
+          </el-popover>
 
           <el-dropdown @command="handleCommand" trigger="click">
             <div class="user-trigger">
@@ -88,16 +128,46 @@ import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { ElMessageBox } from 'element-plus'
+import ThemePicker from '@/components/ThemePicker.vue'
+import { PaintBrushIcon } from '@heroicons/vue/24/outline'
 import {
   HomeFilled, Document, Edit, DataAnalysis, Operation,
   ArrowDown, ArrowLeft, ArrowRight, User, SwitchButton, Bell,
-  Management, TrendCharts
+  Management, TrendCharts, VideoCamera, Warning
 } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
 const sidebarCollapsed = ref(false)
+
+// ── 消息通知 ──────────────────────────────────
+interface Notification {
+  id: number
+  title: string
+  content: string
+  time: string
+  type: 'assignment' | 'system' | 'student'
+  read: boolean
+}
+
+const notifications = ref<Notification[]>([
+  { id: 1, title: '有新作业待批改', content: '算法1班《递归算法》作业已截止，23人已提交待批改', time: '10分钟前', type: 'assignment', read: false },
+  { id: 2, title: '学生求助消息', content: '网络工程2班 张同学 对《动态规划》课节提出问题', time: '32分钟前', type: 'student', read: false },
+  { id: 3, title: '防刷课告警', content: '数据结构3班发现2名学生人脸核验异常，请及时处理', time: '1小时前', type: 'system', read: false },
+  { id: 4, title: '作业发布成功', content: '《链表与树》作业已成功发布至算法1班', time: '2小时前', type: 'assignment', read: true },
+  { id: 5, title: '系统通知', content: '平台将于今晚22:00进行维护，预计30分钟', time: '昨天', type: 'system', read: true },
+])
+
+const unreadCount = computed(() => notifications.value.filter(n => !n.read).length)
+
+function readNotification(n: Notification) {
+  n.read = true
+}
+
+function markAllRead() {
+  notifications.value.forEach(n => { n.read = true })
+}
 
 const navItems = [
   { path: '/teacher/dashboard',        label: '工作台',   icon: HomeFilled   },
@@ -107,6 +177,8 @@ const navItems = [
   { path: '/teacher/analytics',        label: '学情分析', icon: DataAnalysis },
   { path: '/teacher/tiered-teaching',  label: '分层教学', icon: Operation    },
   { path: '/teacher/students',         label: '学生列表', icon: TrendCharts  },
+  { path: '/teacher/video-publish',    label: '视频上下架', icon: VideoCamera },
+  { path: '/teacher/face-audit',       label: '防刷课监控', icon: Warning     },
 ]
 
 const isActive = (path: string) => {
@@ -390,4 +462,44 @@ async function handleLogout() {
   .layout-main { margin-left: 0; }
   .layout-content { padding: 12px; }
 }
+
+/* ── 主题选择器 ── */
+.sidebar-theme-wrap {
+  padding: 0 0 8px;
+  border-bottom: 1px solid var(--border-color-dim);
+  margin-bottom: 4px;
+}
+.theme-icon-only {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: color 0.2s;
+}
+.theme-icon-only:hover { color: var(--color-primary); }
+.nav-icon { width: 18px; height: 18px; }
+</style>
+
+<style>
+/* 消息弹窗（非scoped，作用于teleport到body的popover）*/
+.msg-popover { padding: 0 !important; background: var(--bg-card, #252525) !important; border: 1px solid var(--border-color, rgba(0,212,255,0.15)) !important; border-radius: 12px !important; }
+.msg-panel { min-width: 300px; }
+.msg-panel-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px 10px; border-bottom: 1px solid var(--border-color-dim, rgba(255,255,255,0.06)); font-size: 14px; font-weight: 700; color: var(--text-primary, #F0F0F0); }
+.msg-empty { padding: 32px; text-align: center; color: var(--text-muted, #606060); font-size: 13px; }
+.msg-item { display: flex; align-items: flex-start; gap: 10px; padding: 12px 16px; cursor: pointer; transition: background 0.2s; border-bottom: 1px solid var(--border-color-dim, rgba(255,255,255,0.04)); }
+.msg-item:last-child { border-bottom: none; }
+.msg-item:hover { background: var(--border-color, rgba(0,212,255,0.05)); }
+.msg-item.unread { background: rgba(0,212,255,0.04); }
+.msg-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+.msg-dot.assignment { background: #00FF94; }
+.msg-dot.student { background: #00D4FF; }
+.msg-dot.system { background: #FFB700; }
+.msg-item:not(.unread) .msg-dot { background: #404040; }
+.msg-body { flex: 1; min-width: 0; }
+.msg-title { font-size: 13px; font-weight: 600; color: var(--text-primary, #E0E0E0); margin-bottom: 3px; }
+.msg-item:not(.unread) .msg-title { color: var(--text-muted, #707070); font-weight: 400; }
+.msg-content { font-size: 12px; color: var(--text-muted, #606060); line-height: 1.5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.msg-time { font-size: 11px; color: var(--text-muted, #505050); margin-top: 4px; }
 </style>

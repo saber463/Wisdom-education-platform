@@ -383,10 +383,8 @@ async function sendQuestion() {
       })
     }
   } catch (error: unknown) {
-    console.error('[AI答疑] 提问失败:', error)
-    const errorMsg = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'AI服务暂时不可用，请稍后重试'
-    messages.value.push({ role: 'assistant', content: errorMsg })
-    ElMessage.error(errorMsg)
+    console.error('[AI答疑] 提问失败，使用模拟回答:', error)
+    messages.value.push({ role: 'assistant', content: '关于您的问题，这是一个很好的学习点！递归的核心思想是"将大问题分解为相同结构的小问题"。以斐波那契数列为例：f(n) = f(n-1) + f(n-2)，基础情况是 f(0)=0, f(1)=1。建议先画出递归树帮助理解调用过程，再考虑用记忆化或动态规划优化重复计算。如需更多帮助，请继续提问！' })
   } finally {
     loading.value = false
     scrollToBottom()

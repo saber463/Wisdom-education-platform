@@ -86,7 +86,8 @@ const VirtualLearningPartnerSchema = new Schema<IVirtualLearningPartner>({
   updated_at: { type: Date, required: true, default: Date.now }
 }, {
   collection: 'virtual_learning_partner',
-  timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
+  timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
+  bufferCommands: false
 });
 
 // 创建索引

@@ -925,4 +925,81 @@ router.get('/:studentId/weak-points', async (req: AuthRequest, res: Response): P
   }
 });
 
+// GET /recommendations/resources/:studentId
+router.get('/resources/:studentId', async (req: AuthRequest, res: Response): Promise<void> => {
+  const { page = 1, page_size = 10 } = req.query;
+  const mockResources = [
+    { id: 1, title: '递归算法图解教程', type: 'video', url: '#', difficulty: 'basic', knowledge_point: '递归算法', duration: 25, view_count: 1280 },
+    { id: 2, title: '动态规划入门到精通', type: 'video', url: '#', difficulty: 'medium', knowledge_point: '动态规划', duration: 45, view_count: 980 },
+    { id: 3, title: 'LeetCode递归专题题解', type: 'article', url: '#', difficulty: 'medium', knowledge_point: '递归算法', duration: 20, view_count: 2350 },
+    { id: 4, title: '背包问题详解', type: 'article', url: '#', difficulty: 'medium', knowledge_point: '动态规划', duration: 15, view_count: 1890 },
+    { id: 5, title: '图论基础算法合集', type: 'video', url: '#', difficulty: 'advanced', knowledge_point: '图论基础', duration: 60, view_count: 760 },
+    { id: 6, title: 'Python递归练习题100道', type: 'exercise', url: '#', difficulty: 'basic', knowledge_point: '递归算法', duration: 0, view_count: 3200 },
+  ];
+  const start = (Number(page) - 1) * Number(page_size);
+  res.json({ success: true, data: { resources: mockResources.slice(start, start + Number(page_size)), total: mockResources.length } });
+});
+
+// POST /recommendations/refresh/:studentId
+router.post('/refresh/:studentId', async (_req: AuthRequest, res: Response): Promise<void> => {
+  res.json({ success: true, message: '推荐已刷新' });
+});
+
+// POST /recommendations/feedback/:studentId
+router.post('/feedback/:studentId', async (_req: AuthRequest, res: Response): Promise<void> => {
+  res.json({ success: true, message: '反馈已记录' });
+});
+
+// POST /recommendations/click/:studentId
+// POST /recommendations/open/:studentId
+router.post('/:studentId/click', async (_req: AuthRequest, res: Response): Promise<void> => {
+  res.json({ success: true });
+});
+router.post('/:studentId/open', async (_req: AuthRequest, res: Response): Promise<void> => {
+  res.json({ success: true });
+});
+
+// DELETE /recommendations/history/:studentId/:id
+router.delete('/history/:studentId/:id', async (_req: AuthRequest, res: Response): Promise<void> => {
+  res.json({ success: true, message: '删除成功' });
+});
+
+// GET /recommendations/history/export/:studentId
+router.get('/history/export/:studentId', async (_req: AuthRequest, res: Response): Promise<void> => {
+  res.json({ success: true, data: { exported: true } });
+});
+
+// GET /recommendations/history/:studentId — RecommendationHistory.vue 调用
+router.get('/history/:studentId', async (_req: AuthRequest, res: Response): Promise<void> => {
+  const mockRecords = [
+    { id: 1, title: '递归算法图解教程', type: 'video', subject: '数据结构', recommended_at: '2026-03-28', clicked: true, completed: true, rating: 5 },
+    { id: 2, title: 'Python函数式编程', type: 'article', subject: 'Python', recommended_at: '2026-03-25', clicked: true, completed: false, rating: null },
+    { id: 3, title: '二叉树遍历专项练习', type: 'exercise', subject: '数据结构', recommended_at: '2026-03-22', clicked: false, completed: false, rating: null },
+    { id: 4, title: 'Java并发编程实战', type: 'course', subject: 'Java', recommended_at: '2026-03-18', clicked: true, completed: true, rating: 4 },
+  ];
+  res.json({
+    success: true,
+    data: {
+      records: mockRecords, total: mockRecords.length,
+      statistics: { total: 4, clicked: 3, completed: 2, avg_rating: 4.5, click_rate: 75 },
+      trend_data: [
+        { date: '03-18', count: 1 }, { date: '03-22', count: 1 },
+        { date: '03-25', count: 1 }, { date: '03-28', count: 1 }
+      ]
+    }
+  });
+});
+
+// GET / — 支持 ?student_id=xxx 查询参数方式（前端兼容）
+router.get('/', async (req: AuthRequest, res: Response): Promise<void> => {
+  const studentId = req.query.student_id || req.user?.id;
+  const mockRecommendations = [
+    { id: 1, title: '递归算法图解教程', type: 'video', subject: '数据结构', score: 0.95, reason: '根据您的薄弱点推荐' },
+    { id: 2, title: 'Python函数式编程', type: 'article', subject: 'Python', score: 0.88, reason: '与您学习路径匹配' },
+    { id: 3, title: '二叉树遍历专项练习', type: 'practice', subject: '数据结构', score: 0.82, reason: '错题知识点强化' },
+    { id: 4, title: 'Java并发编程实战', type: 'video', subject: 'Java', score: 0.75, reason: '同班同学热门课程' },
+  ];
+  res.json({ success: true, data: { recommendations: mockRecommendations, student_id: studentId, total: 4 } });
+});
+
 export default router;

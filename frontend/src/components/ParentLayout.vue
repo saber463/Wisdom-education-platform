@@ -26,6 +26,14 @@
         </router-link>
       </nav>
 
+      <!-- 主题选择 -->
+      <div class="sidebar-theme-wrap">
+        <ThemePicker v-if="!sidebarCollapsed" />
+        <div v-else class="theme-icon-only" title="切换主题">
+          <PaintBrushIcon class="nav-icon" />
+        </div>
+      </div>
+
       <button class="sidebar-toggle" @click="sidebarCollapsed = !sidebarCollapsed">
         <el-icon>
           <ArrowLeft v-if="!sidebarCollapsed" />
@@ -88,6 +96,8 @@ import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { ElMessageBox } from 'element-plus'
+import ThemePicker from '@/components/ThemePicker.vue'
+import { PaintBrushIcon } from '@heroicons/vue/24/outline'
 import {
   HomeFilled, DataAnalysis, Warning, ChatDotRound,
   ArrowDown, ArrowLeft, ArrowRight, User, SwitchButton, Bell,
@@ -388,4 +398,22 @@ async function handleLogout() {
   .layout-main { margin-left: 0; }
   .layout-content { padding: 12px; }
 }
+
+/* ── 主题选择器 ── */
+.sidebar-theme-wrap {
+  padding: 0 0 8px;
+  border-bottom: 1px solid var(--border-color-dim);
+  margin-bottom: 4px;
+}
+.theme-icon-only {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: color 0.2s;
+}
+.theme-icon-only:hover { color: var(--color-primary); }
+.nav-icon { width: 18px; height: 18px; }
 </style>

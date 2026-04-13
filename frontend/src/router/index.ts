@@ -142,6 +142,18 @@ const teacherRoutes: RouteRecordRaw[] = [
           requiresAuth: true,
           role: 'teacher'
         }
+      },
+      {
+        path: "video-publish",
+        name: "teacher-video-publish",
+        component: () => import("@/views/teacher/VideoPublish.vue"),
+        meta: { title: "视频智能上下架", requiresAuth: true, role: "teacher" }
+      },
+      {
+        path: "face-audit",
+        name: "teacher-face-audit",
+        component: () => import("@/views/teacher/FaceAudit.vue"),
+        meta: { title: "防刷课监控", requiresAuth: true, role: "teacher" }
       }
     ]
   }

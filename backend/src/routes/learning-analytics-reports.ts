@@ -743,4 +743,20 @@ router.post('/:id/export', async (req: AuthRequest, res: Response): Promise<void
   }
 });
 
+// GET /student/:studentId — 前端 analytics/reports/student/:id 调用（演示模式 mock）
+router.get('/student/:studentId', async (_req: AuthRequest, res: Response): Promise<void> => {
+  res.json({ success: true, data: {
+    student_id: parseInt(_req.params.studentId),
+    report_type: 'weekly',
+    period: '2026-03-27 ~ 2026-04-03',
+    summary: { total_study_time: 480, completed_lessons: 8, avg_score: 85, improvement: 5 },
+    subject_stats: [
+      { subject: 'Python', score: 88, time: 180, completion: 75 },
+      { subject: '数据结构', score: 72, time: 160, completion: 60 },
+      { subject: 'Java', score: 80, time: 140, completion: 70 },
+    ],
+    generated_at: new Date().toISOString()
+  } });
+});
+
 export default router;

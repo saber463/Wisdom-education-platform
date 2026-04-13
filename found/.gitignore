@@ -1,0 +1,30 @@
+# 依赖目录
+node_modules/
+**/node_modules/
+
+# 构建产物
+frontend/dist/
+frontend/.vite/
+
+# 环境变量（敏感信息不提交）
+backend/.env
+# 允许示例文件提交
+!backend/.env.example
+!frontend/.env.example
+
+# 日志
+*.log
+logs/
+backend/uploads/
+
+# 覆盖率
+backend/coverage/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/settings.json
+
+# 测试缓存
+.vitest/

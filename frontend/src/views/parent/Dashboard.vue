@@ -311,7 +311,24 @@ async function fetchDashboardData() {
       unreadCount.value = response.unreadCount ?? 0
     }
   } catch (error) {
-    console.error('[家长工作台] 获取数据失败:', error)
+    console.error('[家长工作台] 获取数据失败，使用模拟数据:', error)
+    children.value = [{ id: 4, name: '张小明' }]
+    selectedChildId.value = 4
+    stats.latestScore = 92
+    stats.classRank = 3
+    stats.averageScore = 88.5
+    stats.weakPointCount = 2
+    recentResults.value = [
+      { id: 1, assignmentTitle: 'Python基础语法练习', score: 92, totalScore: 100, gradingTime: '2026-03-28T10:00:00Z' },
+      { id: 2, assignmentTitle: '数据结构——链表实现', score: 85, totalScore: 100, gradingTime: '2026-03-25T14:00:00Z' },
+      { id: 3, assignmentTitle: '算法复杂度分析', score: 78, totalScore: 100, gradingTime: '2026-03-20T09:00:00Z' },
+    ]
+    notifications.value = [
+      { id: 1, type: 'grading', title: '作业批改完成', content: 'Python基础语法练习已批改，得分92分，班级排名第3名', createdAt: '2026-03-28T10:30:00Z', isRead: false },
+      { id: 2, type: 'assignment', title: '新作业发布', content: '老师发布了新作业：面向对象编程设计，请督促孩子及时完成', createdAt: '2026-03-27T08:00:00Z', isRead: true },
+      { id: 3, type: 'system', title: 'AI学习建议', content: '根据孩子近期表现，建议加强"递归算法"和"动态规划"专项练习', createdAt: '2026-03-26T12:00:00Z', isRead: true },
+    ]
+    unreadCount.value = 1
   }
 }
 

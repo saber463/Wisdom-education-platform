@@ -17,8 +17,9 @@ function delay(ms: number): Promise<void> {
 export async function connectMongoDB(retryCount = 0): Promise<typeof mongoose> {
   try {
     const connection = await mongoose.connect(MONGODB_URI, {
-      serverSelectionTimeoutMS: 5000,
-      socketTimeoutMS: 45000,
+      serverSelectionTimeoutMS: 3000,
+      socketTimeoutMS: 10000,
+      bufferCommands: false,
     });
     
     if (retryCount > 0) {

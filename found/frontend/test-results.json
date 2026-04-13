@@ -1,0 +1,93 @@
+[
+  {
+    "path": "/",
+    "description": "首页",
+    "expected": "PASS",
+    "status": "PASS",
+    "message": "页面正常访问"
+  },
+  {
+    "path": "/home",
+    "description": "首页(home)",
+    "expected": "PASS",
+    "status": "PASS",
+    "message": "页面正常访问"
+  },
+  {
+    "path": "/courses",
+    "description": "课程页面",
+    "expected": "PASS",
+    "status": "PASS",
+    "message": "页面正常访问"
+  },
+  {
+    "path": "/knowledge-base",
+    "description": "知识库页面",
+    "expected": "PASS",
+    "status": "PASS",
+    "message": "页面正常访问"
+  },
+  {
+    "path": "/learning-path/generate",
+    "description": "AI学习路径生成页面(修复404)",
+    "expected": "PASS",
+    "status": "PASS",
+    "message": "页面正常访问"
+  },
+  {
+    "path": "/tweets",
+    "description": "学习社区页面(修复点赞逻辑)",
+    "expected": "PASS",
+    "status": "PASS",
+    "message": "页面正常访问"
+  },
+  {
+    "path": "/login",
+    "description": "登录页面(修复丢失问题)",
+    "expected": "PASS",
+    "status": "PASS",
+    "message": "页面正常访问"
+  },
+  {
+    "path": "/register",
+    "description": "注册页面(修复丢失问题)",
+    "expected": "PASS",
+    "status": "PASS",
+    "message": "页面正常访问"
+  },
+  {
+    "path": "/user/center",
+    "description": "个人中心页面(修复路径问题)",
+    "expected": "PASS",
+    "status": "PASS",
+    "message": "页面正常访问"
+  },
+  {
+    "path": "/assessment/tests",
+    "description": "学习评估页面(修复路径问题)",
+    "expected": "PASS",
+    "status": "PASS",
+    "message": "页面正常访问"
+  },
+  {
+    "path": "/learning/code-generator",
+    "description": "删除的在线代码生成器页面",
+    "expected": "PASS",
+    "status": "PASS",
+    "message": "页面正常访问"
+  },
+  {
+    "path": "/code-generator/fixed",
+    "description": "删除的代码生成器固定模式",
+    "expected": "PASS",
+    "status": "PASS",
+    "message": "页面正常访问"
+  },
+  {
+    "path": "/code-generator/full",
+    "description": "删除的代码生成器完整模式",
+    "expected": "PASS",
+    "status": "PASS",
+    "message": "页面正常访问"
+  }
+]

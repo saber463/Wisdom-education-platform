@@ -64,7 +64,8 @@ const CommunityPostSchema = new Schema<ICommunityPost>({
   updated_at: { type: Date, required: true, default: Date.now }
 }, {
   collection: 'community_posts',
-  timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
+  timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
+  bufferCommands: false
 });
 
 // 创建索引

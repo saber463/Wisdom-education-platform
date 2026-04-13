@@ -119,7 +119,7 @@
               {{ r.emoji }} {{ r.label }}
             </button>
           </div>
-          <p class="pwd-hint">默认密码：teacher123 / student123 / parent123</p>
+          <p class="pwd-hint">默认密码：123456</p>
         </div>
       </div>
     </div>
@@ -137,16 +137,16 @@ const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
 const loginFormRef = ref<FormInstance>()
-const rainCanvas = ref<HTMLCanvasElement>()
+const rainCanvas = ref<HTMLCanvasElement | null>(null)
 
 const loginForm = reactive({ username: '', password: '' })
 const loading = ref(false)
 const selectedRole = ref<'teacher' | 'student' | 'parent'>('student')
 
 const roles = [
-  { key: 'student' as const, label: '学生', emoji: '📚', user: 'student001', pwd: 'student123' },
-  { key: 'teacher' as const, label: '教师', emoji: '🎓', user: 'teacher001', pwd: 'teacher123' },
-  { key: 'parent'  as const, label: '家长', emoji: '👨‍👩‍👧', user: 'parent001',  pwd: 'parent123'  },
+  { key: 'student' as const, label: '学生', emoji: '📚', user: 'student001', pwd: '123456' },
+  { key: 'teacher' as const, label: '教师', emoji: '🎓', user: 'teacher001', pwd: '123456' },
+  { key: 'parent'  as const, label: '家长', emoji: '👨‍👩‍👧', user: 'parent001',  pwd: '123456'  },
 ]
 
 const features = [
@@ -208,13 +208,13 @@ function initRain() {
 
   function draw() {
     ctx.fillStyle = 'rgba(0, 0, 0, 0.06)'
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
+    ctx.fillRect(0, 0, canvas!.width, canvas!.height)
     ctx.fillStyle = '#00FF94'
     ctx.font = '14px Consolas, monospace'
     for (let i = 0; i < drops.length; i++) {
       const char = chars[Math.floor(Math.random() * chars.length)]
       ctx.fillText(char, i * 18, drops[i] * 18)
-      if (drops[i] * 18 > canvas.height && Math.random() > 0.975) drops[i] = 0
+      if (drops[i] * 18 > canvas!.height && Math.random() > 0.975) drops[i] = 0
       drops[i]++
     }
     animFrame = requestAnimationFrame(draw)

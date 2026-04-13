@@ -68,7 +68,8 @@ const VideoProgressSchema = new Schema<IVideoProgress>({
   updated_at: { type: Date, required: true, default: Date.now }
 }, {
   collection: 'video_progress',
-  timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
+  timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
+  bufferCommands: false
 });
 
 // 创建复合索引

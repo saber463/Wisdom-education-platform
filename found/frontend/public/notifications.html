@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>通知系统演示</title>
+    <style>
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+
+      .container {
+        background-color: white;
+        border-radius: 8px;
+        padding: 30px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        color: #333;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .notification-list {
+        margin-top: 20px;
+      }
+
+      .notification-item {
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 15px;
+        margin-bottom: 15px;
+        background-color: #fafafa;
+      }
+
+      .notification-item.unread {
+        border-left: 4px solid #007bff;
+        background-color: #f8f9ff;
+      }
+
+      .notification-title {
+        font-weight: bold;
+        font-size: 18px;
+        margin-bottom: 8px;
+        color: #333;
+      }
+
+      .notification-content {
+        color: #666;
+        margin-bottom: 10px;
+        line-height: 1.5;
+      }
+
+      .notification-meta {
+        display: flex;
+        justify-content: space-between;
+        font-size: 14px;
+        color: #999;
+      }
+
+      .notification-type {
+        background-color: #e9ecef;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+      }
+
+      .btn-group {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.2s;
+      }
+
+      .btn-primary {
+        background-color: #007bff;
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background-color: #0056b3;
+      }
+
+      .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+      }
+
+      .btn-secondary:hover {
+        background-color: #545b62;
+      }
+
+      .btn-success {
+        background-color: #28a745;
+        color: white;
+      }
+
+      .btn-success:hover {
+        background-color: #1e7e34;
+      }
+
+      .stats {
+        display: flex;
+        justify-content: space-around;
+        background-color: #e9f7ef;
+        padding: 15px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+      }
+
+      .stat-item {
+        text-align: center;
+      }
+
+      .stat-number {
+        font-size: 24px;
+        font-weight: bold;
+        color: #28a745;
+      }
+
+      .stat-label {
+        font-size: 14px;
+        color: #666;
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+      }
+
+      .btn-small {
+        padding: 5px 10px;
+        font-size: 12px;
+      }
+
+      .loading {
+        text-align: center;
+        color: #666;
+        font-style: italic;
+      }
+
+      .error {
+        color: #dc3545;
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        padding: 10px;
+        border-radius: 4px;
+        margin: 10px 0;
+      }
+
+      .success {
+        color: #155724;
+        background-color: #d4edda;
+        border: 1px solid #c3e6cb;
+        padding: 10px;
+        border-radius: 4px;
+        margin: 10px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🔔 通知系统演示</h1>
+
+      <div class="stats">
+        <div class="stat-item">
+          <div class="stat-number" id="total-notifications">0</div>
+          <div class="stat-label">总通知数</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" id="unread-notifications">0</div>
+          <div class="stat-label">未读通知</div>
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn-primary" onclick="loadNotifications()">刷新通知</button>
+        <button class="btn-secondary" onclick="markAllAsRead()">全部标为已读</button>
+        <button class="btn-success" onclick="addTestNotification()">添加测试通知</button>
+      </div>
+
+      <div id="message-area"></div>
+
+      <div class="notification-list" id="notification-list">
+        <div class="loading">正在加载通知...</div>
+      </div>
+    </div>
+
+    <script>
+      // 模拟token，实际应用中应从localStorage或其他安全存储中获取
+      const TOKEN =
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NDE3Zjc2OTM2ZTJkYmQ4OWI2OGFkYyIsInVzZXJuYW1lIjoidGVzdHVzZXJfbm90aWYiLCJpYXQiOjE3NjU5MDAxNTAsImV4cCI6MTc2NjUwNDk1MH0.hCimSTFJY2jMr6UPIgowx68-v-5RVwVLJzEdNWQi6Sw';
+      const BASE_URL = 'http://localhost:4001/api';
+
+      // 显示消息
+      function showMessage(message, type = 'info') {
+        const messageArea = document.getElementById('message-area');
+        messageArea.innerHTML = `<div class="${type}">${message}</div>`;
+
+        // 3秒后自动清除消息
+        setTimeout(() => {
+          messageArea.innerHTML = '';
+        }, 3000);
+      }
+
+      // 格式化时间
+      function formatTime(timeString) {
+        const date = new Date(timeString);
+        return date.toLocaleString('zh-CN');
+      }
+
+      // 获取通知类型中文名称
+      function getNotificationTypeName(type) {
+        const types = {
+          system: '系统',
+          learning_path: '学习路径',
+          message: '消息',
+          course_update: '课程更新',
+          achievement: '成就',
+          reminder: '提醒',
+        };
+        return types[type] || type;
+      }
+
+      // 加载通知列表
+      async function loadNotifications() {
+        try {
+          // 显示加载状态
+          document.getElementById('notification-list').innerHTML =
+            '<div class="loading">正在加载通知...</div>';
+
+          // 获取通知列表
+          const response = await fetch(`${BASE_URL}/notifications`, {
+            headers: {
+              Authorization: `Bearer ${TOKEN}`,
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error('获取通知失败');
+          }
+
+          const data = await response.json();
+          const notifications = data.notifications;
+
+          // 更新统计数据
+          document.getElementById('total-notifications').textContent = notifications.length;
+
+          // 获取未读通知数量
+          const unreadResponse = await fetch(`${BASE_URL}/notifications/unread-count`, {
+            headers: {
+              Authorization: `Bearer ${TOKEN}`,
+            },
+          });
+
+          if (unreadResponse.ok) {
+            const unreadData = await unreadResponse.json();
+            document.getElementById('unread-notifications').textContent = unreadData.unreadCount;
+          }
+
+          // 渲染通知列表
+          renderNotifications(notifications);
+        } catch (error) {
+          document.getElementById('notification-list').innerHTML =
+            `<div class="error">加载通知失败: ${error.message}</div>`;
+        }
+      }
+
+      // 渲染通知列表
+      function renderNotifications(notifications) {
+        const notificationList = document.getElementById('notification-list');
+
+        if (notifications.length === 0) {
+          notificationList.innerHTML = '<div class="loading">暂无通知</div>';
+          return;
+        }
+
+        let html = '';
+        notifications.forEach(notification => {
+          const isUnread = !notification.read;
+          const typeClass = isUnread ? 'unread' : '';
+
+          html += `
+                    <div class="notification-item ${typeClass}" data-id="${notification._id}">
+                        <div class="notification-title">${notification.title}</div>
+                        <div class="notification-content">${notification.content}</div>
+                        <div class="notification-meta">
+                            <span class="notification-type">${getNotificationTypeName(notification.type)}</span>
+                            <span>${formatTime(notification.time)}</span>
+                        </div>
+                        <div class="action-buttons">
+                            ${
+                              isUnread
+                                ? `<button class="btn-small btn-success" onclick="markAsRead('${notification._id}')">标为已读</button>`
+                                : ''
+                            }
+                            <button class="btn-small btn-secondary" onclick="deleteNotification('${notification._id}')">删除</button>
+                        </div>
+                    </div>
+                `;
+        });
+
+        notificationList.innerHTML = html;
+      }
+
+      // 标记通知为已读
+      async function markAsRead(id) {
+        try {
+          const response = await fetch(`${BASE_URL}/notifications/${id}/read`, {
+            method: 'PUT',
+            headers: {
+              Authorization: `Bearer ${TOKEN}`,
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error('标记已读失败');
+          }
+
+          showMessage('标记为已读成功', 'success');
+          loadNotifications(); // 重新加载通知
+        } catch (error) {
+          showMessage(`操作失败: ${error.message}`, 'error');
+        }
+      }
+
+      // 标记所有通知为已读
+      async function markAllAsRead() {
+        try {
+          const response = await fetch(`${BASE_URL}/notifications/mark-all-read`, {
+            method: 'PUT',
+            headers: {
+              Authorization: `Bearer ${TOKEN}`,
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error('批量标记已读失败');
+          }
+
+          showMessage('所有通知已标记为已读', 'success');
+          loadNotifications(); // 重新加载通知
+        } catch (error) {
+          showMessage(`操作失败: ${error.message}`, 'error');
+        }
+      }
+
+      // 添加测试通知
+      async function addTestNotification() {
+        try {
+          const notificationTypes = ['system', 'learning_path', 'message'];
+          const randomType =
+            notificationTypes[Math.floor(Math.random() * notificationTypes.length)];
+
+          const notificationData = {
+            title: '测试通知',
+            content: '这是一条用于测试的通知内容，您可以点击按钮将其标记为已读或删除。',
+            type: randomType,
+          };
+
+          const response = await fetch(`${BASE_URL}/notifications`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${TOKEN}`,
+            },
+            body: JSON.stringify(notificationData),
+          });
+
+          if (!response.ok) {
+            throw new Error('添加通知失败');
+          }
+
+          showMessage('添加测试通知成功', 'success');
+          loadNotifications(); // 重新加载通知
+        } catch (error) {
+          showMessage(`操作失败: ${error.message}`, 'error');
+        }
+      }
+
+      // 删除通知
+      async function deleteNotification(id) {
+        if (!confirm('确定要删除这条通知吗？')) {
+          return;
+        }
+
+        try {
+          const response = await fetch(`${BASE_URL}/notifications/${id}`, {
+            method: 'DELETE',
+            headers: {
+              Authorization: `Bearer ${TOKEN}`,
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error('删除通知失败');
+          }
+
+          showMessage('删除通知成功', 'success');
+          loadNotifications(); // 重新加载通知
+        } catch (error) {
+          showMessage(`操作失败: ${error.message}`, 'error');
+        }
+      }
+
+      // 页面加载完成后初始化
+      document.addEventListener('DOMContentLoaded', function () {
+        loadNotifications();
+      });
+    </script>
+  </body>
+</html>

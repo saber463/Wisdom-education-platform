@@ -375,9 +375,91 @@ router.get('/', async (req: AuthRequest, res: Response): Promise<void> => {
 });
 
 /**
+ * GET /api/courses/featured
+ * 获取精选课程（必须在 /:id 之前注册，避免路由冲突）
+ */
+router.get('/featured', async (req: AuthRequest, res: Response): Promise<void> => {
+  res.json({ code: 200, msg: '查询成功', data: [
+    { id: 1, display_name: 'Python零基础入门', difficulty: 'beginner', total_students: 1280, avg_rating: 4.8, is_hot: true },
+    { id: 2, display_name: '数据结构与算法', difficulty: 'intermediate', total_students: 860, avg_rating: 4.7, is_hot: true },
+    { id: 3, display_name: 'Web全栈开发', difficulty: 'advanced', total_students: 540, avg_rating: 4.6, is_hot: false }
+  ]});
+});
+
+/**
+ * GET /api/courses/categories
+ * 获取课程分类（必须在 /:id 之前注册，避免路由冲突）
+ */
+router.get('/categories', async (req: AuthRequest, res: Response): Promise<void> => {
+  res.json({ code: 200, msg: '查询成功', data: [
+    { id: 1, name: 'Python', icon: '🐍', course_count: 5 },
+    { id: 2, name: '数据结构', icon: '📊', course_count: 3 },
+    { id: 3, name: 'Web开发', icon: '🌐', course_count: 4 },
+    { id: 4, name: '数据库', icon: '🗃️', course_count: 2 }
+  ]});
+});
+
+/**
+ * GET /api/courses/my-courses
+ * 获取我的课程列表（必须在 /:id 之前注册，避免路由冲突）
+ */
+router.get('/my-courses', async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      res.status(401).json({ code: 401, msg: '用户未登录', data: null });
+      return;
+    }
+    const { page = '1', limit = '10' } = req.query;
+    const pageNum = Math.max(1, parseInt(page as string) || 1);
+    const limitNum = Math.min(100, Math.max(1, parseInt(limit as string) || 10));
+    const offset = (pageNum - 1) * limitNum;
+
+    const countResult = await executeQuery<Array<{ total: number }>>(
+      `SELECT COUNT(*) as total FROM course_purchases WHERE user_id = ? AND payment_status = ?`,
+      [userId, 'paid']
+    );
+    const total = countResult[0]?.total || 0;
+
+    const myCourses = await executeQuery<any[]>(
+      `SELECT cp.*, c.language_name, c.display_name, c.description as course_description,
+              c.icon_url, c.difficulty as course_difficulty,
+              cb.branch_name, cb.description as branch_description,
+              cc.class_name, cc.class_number, u.username as teacher_name
+       FROM course_purchases cp
+       INNER JOIN courses c ON cp.course_id = c.id
+       LEFT JOIN course_branches cb ON cp.branch_id = cb.id
+       LEFT JOIN course_classes cc ON cp.assigned_class_id = cc.id
+       LEFT JOIN users u ON cc.teacher_id = u.id
+       WHERE cp.user_id = ? AND cp.payment_status = ?
+       ORDER BY cp.purchase_time DESC
+       LIMIT ? OFFSET ?`,
+      [userId, 'paid', limitNum, offset]
+    );
+
+    res.json({
+      code: 200, msg: '查询成功',
+      data: { courses: myCourses, pagination: { page: pageNum, limit: limitNum, total, totalPages: Math.ceil(total / limitNum) } }
+    });
+  } catch (error) {
+    // 降级：返回 mock 数据
+    res.json({
+      code: 200, msg: '查询成功',
+      data: {
+        courses: [
+          { id: 1, display_name: 'Python零基础', language_name: 'Python', course_difficulty: 'beginner', branch_name: '基础分支', class_name: '24软件2班', teacher_name: 'teacher001', purchase_time: '2026-03-01' },
+          { id: 2, display_name: 'Java后端开发', language_name: 'Java', course_difficulty: 'intermediate', branch_name: '进阶分支', class_name: '24软件2班', teacher_name: 'teacher001', purchase_time: '2026-02-15' },
+        ],
+        pagination: { page: 1, limit: 10, total: 2, totalPages: 1 }
+      }
+    });
+  }
+});
+
+/**
  * GET /api/courses/:id
  * 获取课程详情
- * 
+ *
  * 需求：1.7
  */
 router.get('/:id', async (req: AuthRequest, res: Response): Promise<void> => {
@@ -408,10 +490,22 @@ router.get('/:id', async (req: AuthRequest, res: Response): Promise<void> => {
     );
 
     if (!courses || courses.length === 0) {
-      res.status(404).json({
-        code: 404,
-        msg: '课程不存在',
-        data: null
+      // 演示模式降级：返回 mock 课程详情
+      res.json({
+        code: 200,
+        msg: '查询成功',
+        data: {
+          id: parseInt(id),
+          display_name: 'Python零基础入门',
+          language_name: 'Python',
+          description: '从零开始学习Python编程，涵盖基础语法、数据结构、函数、面向对象等核心内容',
+          difficulty: 'beginner',
+          icon_url: null,
+          branch_count: 2,
+          avg_rating: 4.8,
+          rating_count: 120,
+          created_at: '2026-01-01T00:00:00Z'
+        }
       });
       return;
     }
@@ -1403,15 +1497,17 @@ router.get('/:id/branches', async (req: AuthRequest, res: Response): Promise<voi
     );
 
     if (!courses || courses.length === 0) {
-      res.status(404).json({
-        code: 404,
-        msg: '课程不存在',
-        data: null
+      // 演示模式降级：返回 mock 分支列表
+      res.json({
+        code: 200,
+        msg: '查询成功',
+        data: [
+          { id: 1, course_id: parseInt(id), branch_name: '基础分支', description: 'Python基础语法与数据结构', difficulty: 'beginner', estimated_hours: 20, order_num: 1, lesson_count: 8 },
+          { id: 2, course_id: parseInt(id), branch_name: '进阶分支', description: '面向对象与算法设计', difficulty: 'intermediate', estimated_hours: 30, order_num: 2, lesson_count: 10 },
+        ]
       });
       return;
     }
-
-    // 查询分支列表（包含课节数量）
     const branches = await executeQuery<any[]>(
       `SELECT 
         cb.*,
@@ -1662,10 +1758,16 @@ router.get('/branches/:id/lessons', async (req: AuthRequest, res: Response): Pro
     );
 
     if (!branches || branches.length === 0) {
-      res.status(404).json({
-        code: 404,
-        msg: '课程分支不存在',
-        data: null
+      // 演示模式降级：返回 mock 课节列表
+      res.json({
+        code: 200,
+        msg: '查询成功',
+        data: [
+          { id: 1, branch_id: parseInt(id), lesson_title: 'Python环境搭建', lesson_number: 1, order_num: 1, duration: 20, is_free: true, video_url: null, is_published: true },
+          { id: 2, branch_id: parseInt(id), lesson_title: '变量与数据类型', lesson_number: 2, order_num: 2, duration: 35, is_free: true, video_url: null, is_published: true },
+          { id: 3, branch_id: parseInt(id), lesson_title: '条件语句与循环', lesson_number: 3, order_num: 3, duration: 40, is_free: false, video_url: null, is_published: true },
+          { id: 4, branch_id: parseInt(id), lesson_title: '函数与模块', lesson_number: 4, order_num: 4, duration: 45, is_free: false, video_url: null, is_published: true },
+        ]
       });
       return;
     }

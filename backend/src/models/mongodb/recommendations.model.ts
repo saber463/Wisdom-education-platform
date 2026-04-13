@@ -49,7 +49,8 @@ const RecommendationSchema = new Schema<IRecommendation>({
   is_active: { type: Boolean, required: true, default: true, index: true }
 }, {
   collection: 'recommendations',
-  timestamps: false
+  timestamps: false,
+  bufferCommands: false
 });
 
 // 创建复合索引

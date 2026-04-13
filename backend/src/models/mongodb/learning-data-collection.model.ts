@@ -88,7 +88,8 @@ const LearningDataCollectionSchema = new Schema<ILearningDataCollection>({
   session_id: { type: String, required: true, index: true }
 }, {
   collection: 'learning_data_collection',
-  timestamps: false
+  timestamps: false,
+  bufferCommands: false
 });
 
 // 创建复合索引

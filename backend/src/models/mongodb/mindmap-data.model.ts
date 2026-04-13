@@ -99,7 +99,8 @@ const MindMapDataSchema = new Schema<IMindMapData>({
   updated_at: { type: Date, required: true, default: Date.now }
 }, {
   collection: 'mindmap_data',
-  timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
+  timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
+  bufferCommands: false
 });
 
 // 创建复合索引

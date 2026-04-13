@@ -1,0 +1,38 @@
+{
+  "categories": [
+    {
+      "name": "JavaScript",
+      "slug": "javascript",
+      "description": "JavaScript编程语言",
+      "isActive": true
+    },
+    {
+      "name": "Python",
+      "slug": "python",
+      "description": "Python编程语言",
+      "isActive": true
+    }
+  ],
+  "knowledgePoints": [
+    {
+      "name": "JavaScript变量",
+      "description": "JavaScript变量的定义和使用",
+      "category": "JavaScript",
+      "parent": null,
+      "level": 0,
+      "keywords": ["javascript", "变量"],
+      "content": "JavaScript变量用于存储数据值，使用let或const关键字声明。",
+      "isActive": true
+    },
+    {
+      "name": "Python变量",
+      "description": "Python变量的定义和使用",
+      "category": "Python",
+      "parent": null,
+      "level": 0,
+      "keywords": ["python", "变量"],
+      "content": "Python变量不需要声明类型，可以直接赋值。",
+      "isActive": true
+    }
+  ]
+}

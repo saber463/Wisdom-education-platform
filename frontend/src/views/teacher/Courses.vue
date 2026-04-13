@@ -33,10 +33,12 @@
         <el-col v-for="course in courses" :key="course.id" :xs="24" :sm="12" :lg="8">
           <el-card class="course-card" shadow="hover">
             <div class="course-cover">
-              <div class="cover-placeholder">
+              <img v-if="course.cover" :src="course.cover" class="cover-img" />
+              <div v-else class="cover-placeholder">
                 <el-icon style="font-size:40px;color:#00FF94"><Reading /></el-icon>
               </div>
               <el-tag class="status-tag" :type="getStatusType(course.status)" size="small">{{ getStatusLabel(course.status) }}</el-tag>
+              <el-tag v-if="course.language" class="lang-tag" size="small" type="info">{{ course.language }}</el-tag>
             </div>
             <div class="course-info">
               <div class="course-title">{{ course.title }}</div>
@@ -113,6 +115,7 @@ const showCreateDialog = ref(false)
 interface Course {
   id: number; title: string; description: string; status: string
   studentCount: number; lessonCount: number; category: string
+  cover?: string; language?: string; completionRate?: number
 }
 
 const courses = ref<Course[]>([])
@@ -122,6 +125,18 @@ const pageSize = ref(9)
 const filter = reactive({ keyword: '', status: '' })
 const editingCourse = ref<Course | null>(null)
 const form = reactive({ title: '', description: '', category: '' })
+
+const mockCourses: Course[] = [
+  { id:1,  title:'Python零基础入门',    description:'从零开始学Python，包含语法、函数、面向对象，适合编程小白',  status:'published', studentCount:128, lessonCount:24, category:'programming', cover:'https://picsum.photos/seed/py1/400/200',  language:'Python', completionRate:72 },
+  { id:2,  title:'数据结构与算法精讲',  description:'深入理解栈、队列、树、图、动态规划，帮你拿下大厂面试',      status:'published', studentCount:96,  lessonCount:32, category:'programming', cover:'https://picsum.photos/seed/ds2/400/200',  language:'Python', completionRate:65 },
+  { id:3,  title:'Java后端开发实战',    description:'Spring Boot + MyBatis + MySQL，企业级项目从0到1',          status:'published', studentCount:84,  lessonCount:28, category:'programming', cover:'https://picsum.photos/seed/java3/400/200', language:'Java',   completionRate:81 },
+  { id:4,  title:'前端Vue3全栈实战',   description:'Vue3 + TypeScript + Element Plus，打造现代Web应用',         status:'published', studentCount:72,  lessonCount:20, category:'programming', cover:'https://picsum.photos/seed/vue4/400/200',  language:'JS',     completionRate:88 },
+  { id:5,  title:'数据库原理与应用',   description:'MySQL深度优化，索引、事务、存储过程，附真实业务案例',        status:'published', studentCount:58,  lessonCount:18, category:'programming', cover:'https://picsum.photos/seed/db5/400/200',   language:'SQL',    completionRate:67 },
+  { id:6,  title:'计算机网络核心',     description:'TCP/IP协议、HTTP详解、网络安全，理论与实践结合',             status:'published', studentCount:44,  lessonCount:16, category:'programming', cover:'https://picsum.photos/seed/net6/400/200',  language:'—',      completionRate:55 },
+  { id:7,  title:'操作系统原理',       description:'进程管理、内存管理、文件系统，考研/面试必备',               status:'draft',     studentCount:0,   lessonCount:12, category:'programming', cover:'https://picsum.photos/seed/os7/400/200',   language:'—',      completionRate:0  },
+  { id:8,  title:'机器学习入门',       description:'线性回归、决策树、神经网络基础，附Python实战代码',            status:'draft',     studentCount:0,   lessonCount:10, category:'programming', cover:'https://picsum.photos/seed/ml8/400/200',   language:'Python', completionRate:0  },
+  { id:9,  title:'C++程序设计',        description:'从C到C++，面向对象、STL、设计模式全覆盖',                   status:'archived',  studentCount:35,  lessonCount:22, category:'programming', cover:'https://picsum.photos/seed/cpp9/400/200',  language:'C++',    completionRate:45 },
+]
 
 async function fetchCourses() {
   loading.value = true
@@ -133,13 +148,8 @@ async function fetchCourses() {
     courses.value = res.courses || []
     total.value = res.total || 0
   } catch {
-    // Mock data for display
-    courses.value = [
-      { id: 1, title: 'Python编程基础', description: '从零开始学Python，适合初学者', status: 'published', studentCount: 42, lessonCount: 15, category: 'programming' },
-      { id: 2, title: '数据结构与算法', description: '深入理解数据结构，掌握常用算法', status: 'published', studentCount: 28, lessonCount: 20, category: 'programming' },
-      { id: 3, title: '前端开发实战', description: 'HTML/CSS/JavaScript全栈入门', status: 'draft', studentCount: 0, lessonCount: 8, category: 'programming' },
-    ]
-    total.value = 3
+    courses.value = mockCourses
+    total.value = mockCourses.length
   } finally { loading.value = false }
 }
 
@@ -196,7 +206,9 @@ onMounted(fetchCourses)
 .filter-form { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 .courses-grid { margin-bottom: 20px; }
 .course-card { height: 100%; }
-.course-cover { position: relative; height: 120px; background: linear-gradient(135deg, #1a1a1a, #252525); border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; border: 1px solid rgba(0,255,148,0.1); }
+.course-cover { position: relative; height: 120px; background: linear-gradient(135deg, #1a1a1a, #252525); border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; border: 1px solid rgba(0,255,148,0.1); overflow: hidden; }
+.cover-img { width: 100%; height: 100%; object-fit: cover; }
+.lang-tag { position: absolute; top: 8px; left: 8px; }
 .status-tag { position: absolute; top: 8px; right: 8px; }
 .course-info { padding: 0 0 12px; }
 .course-title { font-size: 15px; font-weight: 700; color: #E0E0E0; margin-bottom: 6px; }

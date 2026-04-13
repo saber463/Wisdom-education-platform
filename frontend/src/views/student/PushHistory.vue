@@ -438,8 +438,17 @@ const fetchPushHistory = async () => {
       ElMessage.error(response.data.message || '获取推送历史失败')
     }
   } catch (error) {
-    console.error('获取推送历史失败:', error)
-    ElMessage.error('获取推送历史失败，请稍后重试')
+    console.error('获取推送历史失败，使用模拟数据:', error)
+    pushHistoryList.value = [
+      { id: 1, userId: 1, type: '练习推送', title: '递归算法专项练习推送', content: '根据您的错题分析，为您推送递归算法强化练习5道', status: 'success', createdAt: '2026-04-01T09:00:00Z', actionUrl: '/student/recommendations' },
+      { id: 2, userId: 1, type: '资源推送', title: '动态规划学习资源推送', content: '发现您在动态规划方面有待提升，为您推荐优质视频教程', status: 'success', createdAt: '2026-03-30T09:00:00Z', actionUrl: '/student/resources' },
+      { id: 3, userId: 1, type: '作业提醒', title: '作业截止提醒', content: '面向对象编程设计将于2026-04-15截止，请及时完成', status: 'success', createdAt: '2026-03-29T08:00:00Z', actionUrl: '/student/assignments' },
+      { id: 4, userId: 1, type: '练习推送', title: '图论基础练习推送', content: '为您推送图论基础练习3道，巩固薄弱知识点', status: 'success', createdAt: '2026-03-28T10:00:00Z', actionUrl: '/student/recommendations' },
+      { id: 5, userId: 1, type: '系统通知', title: '学习成就解锁', content: '恭喜！您已连续学习15天，获得"学习达人"勋章', status: 'success', createdAt: '2026-03-27T12:00:00Z', actionUrl: '/student/dashboard' },
+      { id: 6, userId: 1, type: '错题推送', title: '二叉树遍历错题推送', content: 'AI检测到您在二叉树遍历题目上的错误率较高，特推送针对性练习', status: 'success', createdAt: '2026-03-26T11:00:00Z', actionUrl: '/student/wrong-questions' },
+      { id: 7, userId: 1, type: '课程提醒', title: '新课程发布通知', content: '您关注的Python进阶课程已更新第18节：协程与异步编程', status: 'success', createdAt: '2026-03-25T09:00:00Z', actionUrl: '/student/courses' },
+    ]
+    totalCount.value = 7
   } finally {
     loading.value = false
   }

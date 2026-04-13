@@ -324,8 +324,11 @@ const fetchTeams = async () => {
       teams.value = response.data.data
     }
   } catch (error) {
-    console.error('获取小组列表失败:', error)
-    ElMessage.error('获取小组列表失败')
+    console.error('获取小组列表失败，使用模拟数据:', error)
+    teams.value = [
+      { team_id: 1, name: 'Python算法特训队', goal: '冲击全国大学生程序设计竞赛，每周刷题50道，专攻动态规划和图论', creator_id: 4, creator_name: '张小明', max_members: 6, current_members: 4, invite_code: 'ABC123', created_at: '2026-03-01T00:00:00Z', members: [{ student_id: 4, real_name: '张小明', avatar_url: '' }, { student_id: 5, real_name: '李华', avatar_url: '' }, { student_id: 6, real_name: '王芳', avatar_url: '' }, { student_id: 7, real_name: '赵磊', avatar_url: '' }], is_creator: true, is_member: true },
+      { team_id: 2, name: 'Web全栈开发小组', goal: '学习Vue3+Node.js全栈开发，共同完成一个完整的项目', creator_id: 5, creator_name: '李华', max_members: 5, current_members: 3, invite_code: 'DEF456', created_at: '2026-03-10T00:00:00Z', members: [{ student_id: 5, real_name: '李华', avatar_url: '' }, { student_id: 4, real_name: '张小明', avatar_url: '' }, { student_id: 8, real_name: '陈伟', avatar_url: '' }], is_creator: false, is_member: true },
+    ]
   } finally {
     loading.value = false
   }

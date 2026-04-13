@@ -1,0 +1,50 @@
+{
+  "name": "wisdom-edu-frontend",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage",
+    "test:ui": "vitest --ui",
+    "lint": "eslint . --fix",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^7.1.0",
+    "@vitejs/plugin-vue": "^6.0.3",
+    "dayjs": "^1.11.13",
+    "element-plus": "^2.13.0",
+    "form-data": "^4.0.5",
+    "pinia": "^3.0.4",
+    "vue": "^3.5.26",
+    "vue-lazyload": "^3.0.0",
+    "vue-router": "^4.6.4"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^4.0.16",
+    "@vitest/ui": "^4.0.16",
+    "@vue/eslint-config-prettier": "^10.2.0",
+    "@vue/eslint-config-typescript": "^14.6.0",
+    "@vue/test-utils": "^2.4.6",
+    "autoprefixer": "^10.4.23",
+    "axios": "^1.13.2",
+    "eslint": "^9.39.2",
+    "eslint-plugin-prettier": "^5.5.4",
+    "eslint-plugin-vue": "^10.6.2",
+    "jsdom": "^27.4.0",
+    "postcss": "^8.5.6",
+    "prettier": "^3.7.4",
+    "rollup-plugin-visualizer": "^6.0.5",
+    "tailwindcss": "^3.4.19",
+    "terser": "^5.44.1",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.0",
+    "vite-plugin-pwa": "^1.2.0",
+    "vitest": "^4.0.16",
+    "vue-eslint-parser": "^10.2.0"
+  }
+}
