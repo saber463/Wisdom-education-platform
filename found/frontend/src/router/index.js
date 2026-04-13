@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import MainLayout from '@/components/layout/MainLayout.vue';
 import Home from '@/views/Home.vue';
-import Login from '@/views/auth/Login.vue';
 import Register from '@/views/auth/Register.vue';
 import Courses from '@/views/Courses.vue';
 import KnowledgeBase from '@/views/KnowledgeBase.vue';
@@ -254,12 +253,6 @@ const routes = [
   },
   // 认证路由
   {
-    path: '/login',
-    name: 'Login',
-    component: Login,
-    meta: { requiresAuth: false },
-  },
-  {
     path: '/register',
     name: 'Register',
     component: Register,
@@ -299,7 +292,7 @@ router.beforeEach((to, from, next) => {
     const token = safeLocalStorage.get(`${config.storagePrefix}token`);
     if (!userInfo || !token) {
       // 未登录，重定向到登录页
-      next({ name: 'Login', query: { redirect: to.fullPath } });
+      next({ name: 'Register', query: { redirect: to.fullPath } });
       return;
     }
     next();

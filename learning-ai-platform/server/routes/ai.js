@@ -298,6 +298,117 @@ router.post('/analyze-interests', auth, async (req, res) => {
 });
 
 // ============================================================
+// 内部AI路由 - 真正调用大模型生成学习路径
+// ============================================================
+
+/**
+ * POST /api/ai/internal/generate-path
+ * 内部接口：调用讯飞MaaS API（OpenAI兼容格式）生成结构化学习路径
+ * aiController 内部调用，不走 auth 中间件
+ */
+router.post('/internal/generate-path', async (req, res) => {
+  const { goal, days, intensity = 'medium', userInterests = [] } = req.body;
+
+  const intensityLabel = {
+    low: '轻松（每天30-60分钟）',
+    medium: '适中（每天60-90分钟）',
+    high: '高强度（每天90-120分钟）',
+  }[intensity] || '适中';
+
+  const systemPrompt = `你是一名专业的学习规划师，请根据用户提供的学习目标、天数和强度，生成一份详细的每日学习计划。
+要求：
+1. 严格按照JSON格式输出，不要包含任何其他文字
+2. 每天必须有独立的学习模块，共${days}个模块
+3. 内容要具体、可执行，不要空泛
+4. 只输出合法JSON，不加任何markdown代码块
+
+输出格式（严格遵守）：
+{"title":"学习目标名称","days":${days},"summary":"整体计划简介100字以内","certificateType":"领域分类计算机英语会计教师设计其他","modules":[{"day":1,"moduleName":"第1天主题","detailedContent":"具体学习内容","topics":["知识点1","知识点2"],"estimatedTime":"预计时间","resourceLink":""}]}`;
+
+  const userPrompt = `学习目标：${goal}
+学习天数：${days}天
+学习强度：${intensityLabel}
+用户兴趣：${userInterests.length > 0 ? userInterests.join('、') : '通用'}
+
+请生成完整的${days}天学习计划，modules数组必须有${days}个元素，day字段从1到${days}。`;
+
+  const apiKey = process.env.AI_API_KEY;
+  const apiUrl = process.env.CHATBOT_API_URL || 'https://maas-api.cn-huabei-1.xf-yun.com/v1';
+
+  if (!apiKey) {
+    console.error('❌ 未配置AI_API_KEY，无法调用AI服务');
+    return res.status(500).json({ success: false, message: '未配置AI_API_KEY' });
+  }
+
+  try {
+    console.log(`🤖 调用AI API: ${apiUrl}/chat/completions, goal="${goal}", days=${days}`);
+
+    const response = await axios.post(
+      `${apiUrl}/chat/completions`,
+      {
+        model: 'Qwen3-7B',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt },
+        ],
+        temperature: 0.7,
+        max_tokens: 4096,
+        top_p: 0.95,
+        stream: false,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        timeout: 60000,
+      }
+    );
+
+    const rawContent = response.data?.choices?.[0]?.message?.content || '';
+    console.log('🤖 AI原始返回（前300字）：', rawContent.slice(0, 300));
+
+    // 提取JSON（防止模型在JSON外包了多余文字或think标签）
+    const jsonMatch = rawContent.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      console.error('❌ AI返回内容无法提取JSON，原始内容：', rawContent.slice(0, 500));
+      return res.status(500).json({ success: false, message: 'AI返回格式异常，无法解析JSON' });
+    }
+
+    let plan;
+    try {
+      plan = JSON.parse(jsonMatch[0]);
+    } catch (parseErr) {
+      console.error('❌ JSON解析失败：', parseErr.message, '\n内容：', jsonMatch[0].slice(0, 300));
+      return res.status(500).json({ success: false, message: 'AI返回JSON解析失败' });
+    }
+
+    // 基础结构校验
+    if (!plan.modules || !Array.isArray(plan.modules) || plan.modules.length === 0) {
+      console.error('❌ AI返回计划缺少modules字段：', JSON.stringify(plan).slice(0, 200));
+      return res.status(500).json({ success: false, message: 'AI返回的计划缺少modules字段' });
+    }
+
+    console.log(`✅ AI学习路径生成成功：${plan.modules.length}个模块，目标="${plan.title}"`);
+    return res.status(200).json({ success: true, plan });
+
+  } catch (error) {
+    const errInfo = {
+      message: error.message,
+      code: error.code,
+      status: error.response?.status,
+      data: JSON.stringify(error.response?.data)?.slice(0, 300),
+    };
+    console.error('❌ 内部AI路由调用失败：', errInfo);
+    return res.status(500).json({
+      success: false,
+      message: `AI服务调用失败：${error.message}`,
+      detail: errInfo,
+    });
+  }
+});
+
+// ============================================================
 // 图片生成路由
 // ============================================================
 router.post('/generate-image', auth, generateImage);

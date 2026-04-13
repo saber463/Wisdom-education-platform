@@ -11,8 +11,8 @@ if (missingEnv.length > 0) {
   process.exit(1);
 }
 
-// 连接数据库
-connectDB();
+// 连接数据库（await确保连接成功后再监听端口）
+await connectDB();
 
 const PORT = process.env.PORT || 4001;
 

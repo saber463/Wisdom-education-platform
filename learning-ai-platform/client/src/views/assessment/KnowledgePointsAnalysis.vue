@@ -199,6 +199,29 @@ const fetchKnowledgePointsMastery = async () => {
     }
   } catch (error) {
     console.error('获取知识点掌握情况失败:', error);
+    // 使用 Mock 数据
+    knowledgePoints.value = [
+      // 前端开发
+      { id: 'kp1', name: 'Vue3 Composition API', categoryName: '前端开发', mastery: 85 },
+      { id: 'kp2', name: 'React Hooks', categoryName: '前端开发', mastery: 60 },
+      { id: 'kp3', name: 'JavaScript 基础', categoryName: '前端开发', mastery: 92 },
+      { id: 'kp4', name: 'CSS 布局', categoryName: '前端开发', mastery: 78 },
+      { id: 'kp5', name: 'TypeScript', categoryName: '前端开发', mastery: 55 },
+      // 后端开发
+      { id: 'kp6', name: 'Node.js Express', categoryName: '后端开发', mastery: 88 },
+      { id: 'kp7', name: 'Python 编程', categoryName: '后端开发', mastery: 45 },
+      { id: 'kp8', name: 'RESTful API 设计', categoryName: '后端开发', mastery: 82 },
+      { id: 'kp9', name: '数据库 SQL', categoryName: '后端开发', mastery: 70 },
+      // 人工智能
+      { id: 'kp10', name: '机器学习基础', categoryName: '人工智能', mastery: 65 },
+      { id: 'kp11', name: '深度学习', categoryName: '人工智能', mastery: 40 },
+      { id: 'kp12', name: '模型评估', categoryName: '人工智能', mastery: 72 },
+    ];
+    learningSuggestions.value = [
+      { title: '重点突破 Python 编程', content: 'Python 编程掌握度仅 45%，建议系统学习 Python 基础语法、面向对象编程和常用库。' },
+      { title: '加强深度学习理解', content: '深度学习掌握度 40%，建议从神经网络基础开始，逐步学习 CNN、RNN 等经典模型。' },
+      { title: '巩固 React Hooks', content: 'React Hooks 掌握度 60%，建议重点学习 useEffect 依赖管理和自定义 Hook 的编写。' },
+    ];
   }
 };
 

@@ -1,13 +1,6 @@
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+// 注意：dotenv 已在 server.js 入口通过 import 'dotenv/config' 加载
+// 此处不再重复加载，避免路径错误导致覆盖正确的环境变量
 
 /**
  * 连接MongoDB数据库

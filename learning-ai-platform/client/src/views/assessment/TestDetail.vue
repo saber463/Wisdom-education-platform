@@ -228,7 +228,40 @@ const selectAnswer = (questionId, optionIndex) => {
 // 获取测试详情和题目
 const fetchTestData = async () => {
   try {
-    // 获取测试详情
+    // 尝试从 sessionStorage 获取 mock 数据
+    const mockDataStr = sessionStorage.getItem(`mock_test_${testId}`);
+    if (mockDataStr) {
+      const mockData = JSON.parse(mockDataStr);
+      test.value = {
+        title: mockData.title,
+        description: mockData.description,
+        categoryName: mockData.categoryName,
+        difficulty: mockData.difficulty,
+        duration: mockData.duration,
+        totalQuestions: mockData.questions.length,
+      };
+      duration.value = mockData.duration;
+      remainingTime.value = mockData.duration * 60;
+      questions.value = mockData.questions.map(q => ({
+        ...q,
+        _id: q._id,
+        questionText: q.questionText,
+        questionType: q.questionType,
+        options: q.options || [],
+        correctAnswer: q.correctAnswer,
+        explanation: q.explanation || '',
+        knowledgePoints: q.knowledgePoints || [],
+      }));
+      // 初始化答案对象
+      questions.value.forEach(question => {
+        selectedAnswers.value[question._id] = null;
+      });
+      loading.value = false;
+      startTimer();
+      return;
+    }
+
+    // 获取测试详情（API模式）
     const testResponse = await testApi.getDetail(testId);
     test.value = testResponse.data.data;
 
@@ -305,7 +338,66 @@ const submitTest = async () => {
       })
       .filter(answer => answer !== null);
 
-    // 提交测试
+    // Mock 模式：本地计算成绩
+    const isMock = testId.toString().startsWith('mock');
+    if (isMock) {
+      let correctCount = 0;
+      const resultAnswers = answers.map(answer => {
+        const question = questions.value.find(q => q._id === answer.questionId);
+        const isCorrect = question && answer.selectedIndex === question.correctAnswer;
+        if (isCorrect) correctCount++;
+        return { ...answer, isCorrect };
+      });
+      const score = Math.round((correctCount / questions.value.length) * 100);
+
+      // 保存错题到本地存储
+      resultAnswers.forEach(answer => {
+        if (!answer.isCorrect) {
+          const question = questions.value.find(q => q._id === answer.questionId);
+          if (question) {
+            const STORAGE_KEY = 'wrong_questions';
+            const wrongQuestions = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            const wrongQuestion = {
+              questionId: question._id,
+              questionType: question.questionType,
+              questionText: question.questionText,
+              options: question.options,
+              selectedOption: answer.selectedIndex,
+              correctOption: question.correctAnswer,
+              explanation: question.explanation || '',
+              knowledgePoints: question.knowledgePoints || [],
+              wrongDate: new Date().toISOString(),
+              wrongCount: 1,
+            };
+            const existingIndex = wrongQuestions.findIndex(q => q.questionId === wrongQuestion.questionId);
+            if (existingIndex === -1) {
+              wrongQuestions.unshift(wrongQuestion);
+            } else {
+              wrongQuestions[existingIndex].wrongCount++;
+              wrongQuestions[existingIndex].wrongDate = wrongQuestion.wrongDate;
+            }
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(wrongQuestions.slice(0, 100)));
+          }
+        }
+      });
+
+      if (timer) clearInterval(timer);
+
+      notificationStore.success(`测试完成！得分：${score}分`);
+      router.push({
+        name: 'TestResult',
+        query: {
+          testId: testId,
+          score: score,
+          correctCount: correctCount,
+          totalCount: questions.value.length,
+          resultId: 'mock_' + Date.now(),
+        },
+      });
+      return;
+    }
+
+    // API 模式：提交测试
     const response = await testApi.submit(testId, {
       testId: testId,
       answers: answers,

@@ -64,10 +64,10 @@ api.interceptors.response.use(
             safeLocalStorage.remove(`${config.storagePrefix}user`);
           }
 
-          // 如果不是在登录页面，跳转到登录页面
-          if (router.currentRoute.value.name !== 'Login') {
+          // 如果不是在注册页面，跳转到注册页面
+          if (router.currentRoute.value.name !== 'Register') {
             router.push({
-              name: 'Login',
+              name: 'Register',
               query: { redirect: router.currentRoute.value.fullPath },
             });
           }
