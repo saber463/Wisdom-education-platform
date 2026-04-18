@@ -375,9 +375,28 @@ const fetchTweets = async () => {
   }
 };
 
+const fetchTweets = async () => {
+  loading.value = true;
+  try {
+    const res = await tweetApi.getTweets({
+      page: 1,
+      limit: MAX_TWEETS,
+      recommended: true, // 启用推荐算法
+    });
+    if (res.data.success) {
+      tweets.value = res.data.data;
+    }
+  } catch (error) {
+    console.error('获取推文失败，使用本地缓存:', error);
+    initializeTweets();
+  } finally {
+    loading.value = false;
+  }
+};
+
 onMounted(() => {
-  initializeTweets();
   fetchTweets();
+});  fetchTweets();
 });
 </script>
 

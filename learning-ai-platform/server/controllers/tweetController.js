@@ -58,13 +58,22 @@ export const publishTweet = async (req, res, next) => {
 // 获取推文列表
 export const getTweets = async (req, res, next) => {
   try {
-    const { page = 1, limit = 20, topic, userId } = req.query;
+    const { page = 1, limit = 20, topic, userId, recommended } = req.query;
     const skip = (page - 1) * limit;
     const query = { isDeleted: false };
 
     // 根据条件过滤
     if (topic) query.hashtags = topic;
     if (userId) query.user = userId;
+
+    // 推荐算法逻辑：如果设置了 recommended=true 且用户已登录
+    if (recommended === 'true' && req.user) {
+      const user = await User.findById(req.user._id).select('learningInterests');
+      if (user && user.learningInterests && user.learningInterests.length > 0) {
+        // 匹配用户感兴趣的任意一个标签
+        query.hashtags = { $in: user.learningInterests };
+      }
+    }
 
     // 获取推文列表
     const tweets = await Tweet.find(query)

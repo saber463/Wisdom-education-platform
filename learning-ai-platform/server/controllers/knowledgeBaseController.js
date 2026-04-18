@@ -3,13 +3,16 @@
  * 提供文章/教程内容
  */
 
+// 导入所需模块
+import User from '../models/User.js';
+
 // 知识库文章数据
 const knowledgeArticles = [
   {
     id: '1',
     title: 'JavaScript ES6+ 核心特性详解',
     category: 'JavaScript',
-    tags: ['ES6', '箭头函数', '解构赋值', 'Promise'],
+    tags: ['ES6', '箭头函数', '解构赋值', 'Promise', 'JavaScript'],
     summary: '全面介绍ES6及以后版本的核心特性，包括箭头函数、解构赋值、模块化、异步编程等',
     content: `# JavaScript ES6+ 核心特性详解
 
@@ -58,7 +61,7 @@ const greeting = \`Hello, \${name}!\`;
     id: '2',
     title: 'Vue3 Composition API 完整指南',
     category: 'Vue',
-    tags: ['Vue3', 'Composition API', 'reactive', 'ref'],
+    tags: ['Vue3', 'Composition API', 'reactive', 'ref', 'Vue', '前端框架'],
     summary: '从Options API到Composition API的完整迁移指南，深入理解响应式原理',
     content: `# Vue3 Composition API 完整指南
 
@@ -99,7 +102,7 @@ const state = reactive({
     id: '3',
     title: 'React Hooks 深度解析',
     category: 'React',
-    tags: ['React', 'Hooks', 'useState', 'useEffect'],
+    tags: ['React', 'Hooks', 'useState', 'useEffect', 'React', '前端框架'],
     summary: '深入理解React Hooks的工作原理和最佳实践模式',
     content: `# React Hooks 深度解析
 
@@ -153,7 +156,7 @@ function useLocalStorage(key, initialValue) {
     id: '4',
     title: 'Python 数据处理实战：Pandas 入门到精通',
     category: 'Python',
-    tags: ['Python', 'Pandas', '数据处理', '数据分析'],
+    tags: ['Python', 'Pandas', '数据处理', '数据分析', 'Python', '数据分析'],
     summary: '从零开始学习Pandas进行数据清洗、转换和分析的完整教程',
     content: `# Python 数据处理实战：Pandas 入门到精通
 
@@ -200,7 +203,7 @@ df['column'] = df['column'].astype('int')
     id: '5',
     title: 'Node.js 后端开发最佳实践',
     category: 'Node.js',
-    tags: ['Node.js', 'Express', 'REST API', '后端'],
+    tags: ['Node.js', 'Express', 'REST API', '后端', 'Node.js', '后端开发'],
     summary: '构建可扩展、安全的Node.js RESTful API的完整实践指南',
     content: `# Node.js 后端开发最佳实践
 
@@ -258,7 +261,7 @@ router.get('/users', async (req, res) => {
     id: '6',
     title: 'CSS Grid 与 Flexbox 布局完全指南',
     category: 'CSS',
-    tags: ['CSS', 'Grid', 'Flexbox', '布局', '响应式'],
+    tags: ['CSS', 'Grid', 'Flexbox', '布局', '响应式', 'CSS', '前端开发'],
     summary: '现代CSS布局技术详解，掌握Grid和Flexbox的所有核心概念',
     content: `# CSS Grid 与 Flexbox 布局完全指南
 
@@ -329,7 +332,7 @@ export const categories = [
 /**
  * 获取知识库文章列表
  */
-export function getArticles(req, res, next) {
+export async function getArticles(req, res, next) {
   try {
     let filtered = [...knowledgeArticles];
 
@@ -341,7 +344,20 @@ export function getArticles(req, res, next) {
       search,
       sort = 'createdAt',
       order = 'desc',
+      recommended = 'false',
     } = req.query;
+
+    // 推荐算法逻辑：如果设置了 recommended=true 且用户已登录
+    if (recommended === 'true' && req.user) {
+      const user = await User.findById(req.user._id).select('learningInterests');
+      if (user && user.learningInterests && user.learningInterests.length > 0) {
+        // 过滤出包含用户兴趣标签的文章
+        filtered = filtered.filter(article =>
+          article.tags.some(t => user.learningInterests.includes(t)) ||
+          user.learningInterests.includes(article.category)
+        );
+      }
+    }
 
     // 分类筛选
     if (category && category !== 'all') {

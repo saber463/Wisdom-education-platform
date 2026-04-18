@@ -17,9 +17,9 @@ async function createUsers() {
     await mongoose.connect(MONGODB_URI);
     console.log('Connected to MongoDB');
 
-    // 清除现有用户
-    await User.deleteMany({});
-    console.log('已清除现有用户\n');
+    // 移除清除现有用户的操作，改为保留现有数据
+    // await User.deleteMany({});
+    console.log('保留现有用户数据，仅追加缺失的测试账号\n');
 
     // 创建测试用户 - 传入明文密码，让 pre('save') hook 自动 hash
     const users = [
@@ -50,9 +50,14 @@ async function createUsers() {
     ];
 
     for (const u of users) {
-      const user = new User(u);
-      await user.save(); // 这会触发 pre('save') hook 自动 hash 密码
-      console.log(`创建用户: ${u.email} (${u.role})`);
+      const existingUser = await User.findOne({ email: u.email });
+      if (existingUser) {
+        console.log(`测试用户已存在，跳过创建: ${u.email}`);
+      } else {
+        const user = new User(u);
+        await user.save(); // 这会触发 pre('save') hook 自动 hash 密码
+        console.log(`成功追加创建测试用户: ${u.email} (${u.role})`);
+      }
     }
 
     console.log('\n=== 验证用户 ===');

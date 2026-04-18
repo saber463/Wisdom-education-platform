@@ -89,6 +89,20 @@ const interests = [
     color: 'linear-gradient(135deg, #f72585, #ff6b6b)',
   },
   {
+    id: 'ml',
+    name: '机器学习',
+    description: '监督学习, 无监督学习, 强化学习',
+    icon: 'fa fa-robot',
+    color: 'linear-gradient(135deg, #ff6b6b, #ff9f43)',
+  },
+  {
+    id: 'llm',
+    name: '大语言模型',
+    description: 'GPT-4, Claude, 文心一言, 智能对话',
+    icon: 'fa fa-comments',
+    color: 'linear-gradient(135deg, #ff9f43, #f72585)',
+  },
+  {
     id: 'algorithm',
     name: '算法与数据结构',
     description: 'LeetCode, 数据结构, 算法设计',

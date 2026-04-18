@@ -11,7 +11,7 @@ import { auth } from '../middleware/auth.js';
 const router = express.Router();
 
 // 公开路由
-router.get('/articles', getArticles);
+router.get('/articles', auth, getArticles);
 router.get('/articles/search', searchArticles);
 router.get('/articles/popular', getPopularArticles);
 router.get('/categories', getCategories);

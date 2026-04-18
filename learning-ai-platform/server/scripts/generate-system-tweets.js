@@ -1,10 +1,15 @@
-const mongoose = require('mongoose');
-const User = require('../models/User');
-const Tweet = require('../models/Tweet');
-const dotenv = require('dotenv');
+import mongoose from 'mongoose';
+import User from '../models/User.js';
+import Tweet from '../models/Tweet.js';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // 加载环境变量
-dotenv.config({ path: './.env' });
+dotenv.config({ path: path.join(__dirname, '../.env') });
 
 // 系统支持的兴趣标签列表
 const interestTags = [
@@ -45,6 +50,45 @@ const interestTags = [
   'HTML/CSS',
   'Shell脚本',
 ];
+
+// 技术标签到官方Logo的映射
+const techLogos = {
+  '前端开发': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg',
+  '后端开发': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg',
+  '移动开发': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/android/android-original.svg',
+  '人工智能': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg',
+  '机器学习': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tensorflow/tensorflow-original.svg',
+  '数据分析': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pandas/pandas-original.svg',
+  '云计算': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-original-wordmark.svg',
+  '大数据': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/apache/apache-original.svg',
+  '网络安全': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/ssh/ssh-original.svg',
+  '区块链': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/bitcoin/bitcoin-original.svg',
+  '算法': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg',
+  '设计模式': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg',
+  '前端框架': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg',
+  '后端框架': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/express/express-original.svg',
+  '数据库': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg',
+  'DevOps': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg',
+  '测试': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/jest/jest-plain.svg',
+  '产品设计': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg',
+  'UI设计': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/photoshop/photoshop-line.svg',
+  'UX设计': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/xd/xd-line.svg',
+  'JavaScript': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg',
+  'Python': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg',
+  'Java': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg',
+  'C++': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg',
+  'C#': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/csharp/csharp-original.svg',
+  'Go': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/go/go-original-wordmark.svg',
+  'Rust': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/rust/rust-plain.svg',
+  'TypeScript': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg',
+  'PHP': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg',
+  'Ruby': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/ruby/ruby-original.svg',
+  'Swift': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/swift/swift-original.svg',
+  'Kotlin': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kotlin/kotlin-original.svg',
+  'Dart': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/dart/dart-original.svg',
+  'HTML/CSS': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg',
+  'Shell脚本': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/bash/bash-original.svg',
+};
 
 // 为每个兴趣标签生成高质量帖子的内容模板
 const tweetTemplates = {
@@ -356,39 +400,39 @@ async function createSystemUser() {
 // 为每个兴趣标签生成50条帖子
 async function generateSystemTweets(systemUser) {
   try {
+    // 先清除旧的系统推文，确保更新为带有固定Logo的版本
+    console.log('正在清理旧的系统推文...');
+    await Tweet.deleteMany({ user: systemUser._id });
+    console.log('清理完成');
+
     for (const tag of interestTags) {
       console.log(`开始生成${tag}相关的帖子...`);
 
-      // 检查该标签下的帖子数量
-      const existingCount = await Tweet.countDocuments({
-        user: systemUser._id,
-        hashtags: tag,
-      });
-
-      if (existingCount >= 50) {
-        console.log(`${tag}标签下已有${existingCount}条帖子，跳过生成`);
-        continue;
-      }
-
-      // 需要生成的帖子数量
-      const needToGenerate = 50 - existingCount;
       const tweets = [];
+      const logoUrl = techLogos[tag] || 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg';
 
-      for (let i = 0; i < needToGenerate; i++) {
+      for (let i = 0; i < 50; i++) {
         const tweet = new Tweet({
           user: systemUser._id,
-          content: generateTweetContent(tag, existingCount + i),
+          content: generateTweetContent(tag, i),
           hashtags: [tag],
-          likes: Math.floor(Math.random() * 100), // 随机点赞数
-          reposts: Math.floor(Math.random() * 50), // 随机转发数
-          createdAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000), // 随机生成过去30天内的时间
+          images: [
+            {
+              filename: `${tag.toLowerCase()}-logo.svg`,
+              path: logoUrl,
+              originalname: `${tag} Logo`,
+            },
+          ],
+          likes: Math.floor(Math.random() * 100),
+          reposts: Math.floor(Math.random() * 50),
+          createdAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
         });
         tweets.push(tweet);
       }
 
       // 批量保存帖子
       await Tweet.insertMany(tweets);
-      console.log(`${tag}标签下成功生成${needToGenerate}条帖子`);
+      console.log(`${tag}标签下成功生成50条帖子`);
     }
 
     console.log('所有兴趣标签的系统帖子生成完成！');

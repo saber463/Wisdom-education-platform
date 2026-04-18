@@ -285,6 +285,97 @@ const BUILTIN_ROADMAPS = {
       },
     ],
   },
+  ncre_level1: {
+    title: '全国计算机等级考试一级 (NCRE-1) 30天满分通关路线图',
+    description: '针对计算机一级MS Office/WPS Office考试，从零基础到满分通关的科学备考路径。本路径涵盖理论选择题、Windows操作、Word/Excel/PPT三大组件、以及网络应用全流程。',
+    stages: [
+      {
+        stage: 1,
+        title: '计算机基础理论 - 选择题稳拿20分',
+        duration: '5天',
+        topics: [
+          '计算机发展史与分类(第一代到第四代)',
+          '数制转换(二/八/十/十六进制互转)',
+          '数据编码(ASCII码、国标码、机内码)',
+          '计算机硬件系统(CPU、存储器、总线)',
+          '计算机软件系统(OS、语言、应用软件)',
+          '多媒体与信息安全(病毒防护、版权法)'
+        ],
+        resources: ['NCRE一级官方大纲', '历年选择题高频考点总结', '进制转换专项练习题'],
+        description: '选择题分值占比20%，重点掌握进制转换、编码和硬件组成，确保理论部分不丢分。',
+      },
+      {
+        stage: 2,
+        title: 'Windows 操作系统 - 文件夹管理必拿分',
+        duration: '3天',
+        topics: [
+          '文件/文件夹的新建、重命名、删除、属性设置',
+          '文件/文件夹的搜索、移动、复制、创建快捷方式',
+          '控制面板常用设置与附件工具使用'
+        ],
+        resources: ['Windows文件管理实操演示', '文件夹管理模拟题库'],
+        description: 'Windows操作题通常是第一道实操题，重点在于文件属性（只读/隐藏）和路径查找。',
+      },
+      {
+        stage: 3,
+        title: 'Word 精英实战 - 格式化与排版艺术',
+        duration: '7天',
+        topics: [
+          '字符格式(字体/字号/颜色/间距/效果)',
+          '段落格式(缩进/对齐/行间距/段前段后)',
+          '页面设置(纸张大小/页边距/分栏/页码)',
+          '表格制作(插入表格/单元格合并/公式计算)',
+          '对象插入(图片/形状/艺术字/文本框)',
+          '样式应用(多级列表/目录生成/引用)',
+          'Word真题综合演练(公文/通知/简历)'
+        ],
+        resources: ['Word实战案例集', 'Word常用快捷键速查', 'Word真题解析视频'],
+        description: 'Word占30分左右，是考试的核心。重点掌握样式应用和复杂的表格边框底纹设置。',
+      },
+      {
+        stage: 4,
+        title: 'Excel 数据王牌 - 公式函数与统计分析',
+        duration: '7天',
+        topics: [
+          '单元格操作(相对/绝对/混合引用)',
+          '基础函数(SUM/AVERAGE/MAX/MIN/COUNT)',
+          '逻辑与查找函数(IF/VLOOKUP/LOOKUP)',
+          '数据处理(排序/筛选/分类汇总)',
+          '图表制作(柱形图/折线图/饼图/组合图)',
+          '数据透视表基础与实操',
+          'Excel真题综合演练(工资表/成绩表/库存)'
+        ],
+        resources: ['Excel函数公式大全', 'VLOOKUP专项突破指南', 'Excel实操常见坑点总结'],
+        description: 'Excel是考试的“大Boss”，公式函数是重灾区，需反复练习绝对引用($符号)的使用。',
+      },
+      {
+        stage: 5,
+        title: 'PowerPoint 创意设计 - 演示文稿全流程',
+        duration: '3天',
+        topics: [
+          '幻灯片版式、母版设计与主题应用',
+          '动画效果(进入/强调/退出/路径)',
+          '幻灯片切换效果与放映设置(自动/手动)'
+        ],
+        resources: ['PPT母版设计教程', 'PPT动画设计案例'],
+        description: 'PPT相对简单但细节多，重点关注母版修改和超链接设置。',
+      },
+      {
+        stage: 6,
+        title: '全真模拟与冲刺 - 提速增效不留遗憾',
+        duration: '5天',
+        topics: [
+          'IE浏览器操作与搜索引擎使用',
+          'Outlook/邮件发送与附件处理',
+          '全流程上机全真模拟考试(限时90分钟)',
+          '错题深度复盘与薄弱点专项加固',
+          '考前心态调节与考场注意事项'
+        ],
+        resources: ['全真模拟考试系统(破解版)', '考前押题最后5套卷', '上机考试流程避雷指南'],
+        description: '最后阶段重点在于模拟真实考试环境，训练在90分钟内完成所有题目的速度。',
+      },
+    ],
+  },
   general: {
     title: '通用学习与技能提升路线图',
     description: '基于科学学习方法的通用技能习得路径',
@@ -456,6 +547,8 @@ async function generateLearningPath(goal, days, intensity) {
     roadmapType = 'english';
   } else if (goalLower.includes('前端') || goalLower.includes('html') || goalLower.includes('css') || goalLower.includes('javascript') || goalLower.includes('vue') || goalLower.includes('react')) {
     roadmapType = 'frontend';
+  } else if (goalLower.includes('计算机一级') || goalLower.includes('ncre') || goalLower.includes('office') || goalLower.includes('wps')) {
+    roadmapType = 'ncre_level1';
   }
   
   const roadmap = BUILTIN_ROADMAPS[roadmapType] || BUILTIN_ROADMAPS.general;
