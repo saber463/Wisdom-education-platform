@@ -764,15 +764,19 @@ onBeforeUnmount(() => clearInterval(animTimer));
 
 // ─── 学生Dashboard原有数据 ─────────────────────────────────
 
-const profile = ref({
-  name: '李同学',
-  avatar: 'https://picsum.photos/seed/student_me/56/56',
+import { useUserStore } from '@/store/user';
+
+const userStore = useUserStore();
+
+const profile = computed(() => ({
+  name: userStore.userInfo?.username || '同学',
+  avatar: userStore.userInfo?.avatar || 'https://picsum.photos/seed/student_me/56/56',
   todayMinutes: 134,
   streak: 21,
   xp: 3420,
   nextXp: 5000,
   level: 8,
-});
+}));
 
 const tasks = ref([
   { id: 1, name: 'Python第10章：面向对象编程', subject: 'Python', deadline: '今天', progress: 80, done: false, image: 'https://picsum.photos/seed/task1/60/45' },

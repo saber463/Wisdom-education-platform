@@ -1,13 +1,13 @@
 <template>
-  <div class="bg-white rounded-xl shadow-md p-6">
-    <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-      <i class="fa fa-star text-blue-500 mr-2" />能力评级
+  <div class="bg-white/5 backdrop-blur-xl rounded-xl shadow-lg p-6 border border-white/10">
+    <h2 class="text-lg font-semibold text-white mb-4 flex items-center">
+      <i class="fa fa-star text-tech-blue mr-2" />能力评级
     </h2>
     <div class="flex flex-col items-center justify-center h-40">
       <div class="text-4xl font-bold mb-2" :style="{ color: ratingColor }">
         {{ abilityRating }}
       </div>
-      <div class="text-sm text-gray-600">
+      <div class="text-sm text-gray-400">
         {{ proficiencyDescription }}
       </div>
     </div>

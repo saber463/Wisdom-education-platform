@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-md p-6 mb-8">
+  <div class="max-w-2xl mx-auto bg-gray-800/80 rounded-xl shadow-lg p-6 mb-8 border border-gray-700">
     <div class="space-y-4">
       <GoalInput v-model="goal" :quick-targets="quickTargets" @input="handleGoalInput" />
 
@@ -8,8 +8,8 @@
       <IntensityInput v-model="intensity" />
 
       <button
-        :disabled="isLoading || !isFormValid || isAtLimit"
-        class="w-full btn-primary mt-4 py-2"
+        :disabled="isLoading || !localIsFormValid || isAtLimit"
+        class="w-full bg-gradient-to-r from-tech-blue to-tech-purple text-white py-3 rounded-lg font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed mt-4"
         @click="handleSubmit"
       >
         <i v-if="isLoading" class="fa fa-spinner fa-spin mr-2" />
@@ -20,12 +20,12 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import GoalInput from './GoalInput.vue';
 import DaysInput from './DaysInput.vue';
 import IntensityInput from './IntensityInput.vue';
 
-defineProps({
+const props = defineProps({
   isLoading: {
     type: Boolean,
     default: false,
@@ -40,7 +40,7 @@ defineProps({
   },
 });
 
-const emit = defineEmits(['submit']);
+const emit = defineEmits(['submit', 'update:formState']);
 
 const goal = ref('');
 const days = ref(30);
@@ -65,6 +65,31 @@ const hasDaysError = computed(() => {
     (days.value < 1 || days.value > 180 || isNaN(days.value))
   );
 });
+
+// 本地计算表单验证状态
+const localIsFormValid = computed(() => {
+  const g = goal.value;
+  const d = days.value;
+
+  const basicValid =
+    g.trim() !== '' &&
+    Number.isInteger(d) &&
+    d >= 1 &&
+    d <= 180;
+  const thirtyDaysValid = !g.includes('30天') || d >= 30;
+  const computerLevelOneValid = !g.includes('20天通过计算机一级');
+
+  return basicValid && thirtyDaysValid && computerLevelOneValid;
+});
+
+// 监听表单变化，同步到父组件
+watch([goal, days, intensity], () => {
+  emit('update:formState', {
+    goal: goal.value,
+    days: days.value,
+    intensity: intensity.value,
+  });
+}, { immediate: true });
 
 const handleGoalInput = () => {
   if (goal.value) {

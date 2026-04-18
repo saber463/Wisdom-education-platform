@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import dayjs from 'dayjs';
+import axios from 'axios';
 import config from '@/config';
 import { userApi, startLoginOperation, endLoginOperation } from '../utils/api';
 
@@ -86,6 +87,39 @@ export const useUserStore = defineStore('user', {
     isLoggedIn: state => !!state.userInfo,
 
     /**
+     * 获取用户等级
+     */
+    userLevel: state => state.userInfo?.level || '入门',
+
+    /**
+     * 获取用户角色（增加演示环境硬核推断）
+     */
+    userRole: state => {
+      // 修复账号切换逻辑：直接信赖后端返回的 role 字段，移除脆弱的邮箱关键字判断
+      return state.userInfo?.role || 'student';
+    },
+
+    /**
+     * 判断用户是否为VIP会员
+     * 1. 教师账号自带 VIP 权限
+     * 2. 指定测试账号拥有 VIP 权限
+     * 3. 用户信息中有 isVIP 标记 (如家长为孩子购买后)
+     */
+    isVIP: state => {
+      if (state.userInfo?.role === 'teacher') return true;
+      if (state.userInfo?.isVIP) return true;
+      const email = (state.userInfo?.email || '').toLowerCase();
+      if (email.includes('teacher')) return true;
+      const vipEmails = ['student1@test.com', 'vip_test@test.com'];
+      return email && vipEmails.includes(email);
+    },
+
+    /**
+     * 判断用户是否为中级
+     */
+    isIntermediate: state => state.userInfo?.level === '中级',
+
+    /**
      * 格式化浏览历史
      * - 按时间降序排序（最新的在前）
      * - 转换时间为可读性格式
@@ -104,10 +138,11 @@ export const useUserStore = defineStore('user', {
      * @param {string} username - 用户名
      * @param {string} email - 邮箱
      * @param {string} password - 密码
+     * @param {string} role - 角色（student/teacher/parent）
      * @returns {Promise<Object>} 新用户信息（不含密码）
      * @throws {Error} 注册失败时抛出错误
      */
-    async register(username, email, password) {
+    async register(username, email, password, role = 'student') {
       // 标记登录操作开始
       startLoginOperation();
       try {
@@ -140,7 +175,7 @@ export const useUserStore = defineStore('user', {
         }
 
         // 调用后端API注册
-        const response = await userApi.register({ username, email, password });
+        const response = await userApi.register({ username, email, password, role });
         const { token, user: userDataFromBackend } = response;
 
         // 存储用户登录状态（不含密码）
@@ -149,9 +184,13 @@ export const useUserStore = defineStore('user', {
           username: userDataFromBackend.username,
           email: userDataFromBackend.email,
           avatar:
-            userDataFromBackend.avatar || `https://picsum.photos/200/200?random=${Date.now()}`,
-          createdAt: Date.now(),
-          permissions: ['user'],
+            userDataFromBackend.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(userDataFromBackend.username)}&background=random`,
+          role: userDataFromBackend.role || 'student',
+          isVIP: userDataFromBackend.isVIP || userDataFromBackend.role === 'teacher',
+          createdAt: userDataFromBackend.createdAt || Date.now(),
+          permissions: userDataFromBackend.permissions || ['user'],
+          // 用户等级：入门 -> 中级（通过考试升级）
+          level: userDataFromBackend.level || '入门',
           learningInterests: userDataFromBackend.learningInterests || [],
           learningStats: userDataFromBackend.learningStats || {
             totalStudyTime: 0,
@@ -191,24 +230,22 @@ export const useUserStore = defineStore('user', {
      */
     async login(email, password) {
       this.loading = true;
-      // 标记登录操作开始，避免loadUserData中的401错误被误判
       startLoginOperation();
       try {
-        // 调用API进行登录
         const response = await userApi.login({ email, password });
-
-        // 提取登录结果数据 - 正确解析后端返回的结构
         const { token, user: userDataFromBackend } = response;
 
-        // 设置用户信息
+        // 修复：直接使用后端返回的角色，不在此处做邮箱关键字判断
         this.userInfo = {
-          id: userDataFromBackend._id, // 使用MongoDB返回的_id字段
+          id: userDataFromBackend._id,
           username: userDataFromBackend.username,
           email: userDataFromBackend.email,
-          avatar:
-            userDataFromBackend.avatar || `https://picsum.photos/200/200?random=${Date.now()}`,
-          createdAt: new Date().toISOString(),
-          permissions: ['user'],
+          avatar: userDataFromBackend.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(userDataFromBackend.username)}&background=random`,
+          role: userDataFromBackend.role || 'student',
+          isVIP: userDataFromBackend.isVIP || userDataFromBackend.role === 'teacher',
+          createdAt: userDataFromBackend.createdAt || new Date().toISOString(),
+          permissions: userDataFromBackend.permissions || ['user'],
+          level: userDataFromBackend.level || '入门',
           learningInterests: userDataFromBackend.learningInterests || [],
           learningStats: userDataFromBackend.learningStats || {
             totalStudyTime: 0,
@@ -218,25 +255,24 @@ export const useUserStore = defineStore('user', {
           },
         };
 
-        // 持久化存储到localStorage
         const userKey = `${config.storagePrefix}user`;
         const tokenKey = `${config.storagePrefix}token`;
         safeLocalStorage.set(userKey, this.userInfo);
         safeLocalStorage.set(tokenKey, token);
 
-        // 加载用户数据
-        await this.loadUserData();
+        // 仅加载周边数据，不重刷用户信息
+        try {
+          const historyResponse = await userApi.getBrowseHistory();
+          if (historyResponse?.success && historyResponse.data?.list) {
+            this.browseHistory = historyResponse.data.list;
+          }
+        } catch (e) { console.warn('加载浏览历史失败:', e); }
 
         return true;
       } catch (error) {
-        // 处理后端返回的错误信息
-        if (error.response?.data?.message) {
-          throw new Error(error.response.data.message);
-        }
-        throw new Error('邮箱或密码错误');
+        throw new Error(error.response?.data?.message || '登录失败');
       } finally {
         this.loading = false;
-        // 标记登录操作结束
         endLoginOperation();
       }
     },
@@ -246,10 +282,7 @@ export const useUserStore = defineStore('user', {
      */
     async logout() {
       try {
-        this.userInfo = null;
-        this.browseHistory = [];
-        // 清除认证token
-        safeLocalStorage.remove(`${config.storagePrefix}token`);
+        this.clearAllUserData();
       } catch (_error) {
         console.error('登出失败:', _error);
         throw _error;
@@ -377,19 +410,60 @@ export const useUserStore = defineStore('user', {
         // 检查响应格式
         if (userInfoResponse.success === true && userInfoResponse.data) {
           // 标准格式：{ success: true, data: {...} }
-          console.log('检测到标准响应格式，使用userInfoResponse.data');
-          this.userInfo = userInfoResponse.data;
+          
+          // 保留本地的 avatar 和其他重要字段（防止刷新后头像消失）
+          const localAvatar = this.userInfo?.avatar;
+          const localPermissions = this.userInfo?.permissions;
+          const localLevel = this.userInfo?.level;
+          const localLearningInterests = this.userInfo?.learningInterests;
+          
+          const rawUserInfo = userInfoResponse.data;
+          
+          // 修复：完全移除角色推断逻辑，直接信赖后端返回的 role
+          this.userInfo = {
+            ...rawUserInfo,
+            role: rawUserInfo.role || 'student'
+          };
+          
+          // 如果后端没有返回 avatar，保留本地 avatar
+          if (!this.userInfo.avatar && localAvatar) {
+            this.userInfo.avatar = localAvatar;
+          }
+          // 如果后端没有返回 permissions，保留本地 permissions
+          if (!this.userInfo.permissions && localPermissions) {
+            this.userInfo.permissions = localPermissions;
+          }
+          // 如果后端没有返回 level，保留本地 level
+          if (!this.userInfo.level && localLevel) {
+            this.userInfo.level = localLevel;
+          }
+          // 如果后端没有返回 learningInterests，保留本地 learningInterests
+          if ((!this.userInfo.learningInterests || this.userInfo.learningInterests.length === 0) && localLearningInterests) {
+            this.userInfo.learningInterests = localLearningInterests;
+          }
         } else if (userInfoResponse._id || userInfoResponse.username) {
           // 直接用户对象格式：{ _id: ..., username: ... }
-          console.log('检测到直接用户对象格式，直接使用userInfoResponse');
-          this.userInfo = userInfoResponse;
+          
+          // 保留本地的 avatar 和其他重要字段
+          const localAvatar = this.userInfo?.avatar;
+          const localPermissions = this.userInfo?.permissions;
+          
+          const rawUserInfo = userInfoResponse;
+          
+          this.userInfo = {
+            ...rawUserInfo,
+            role: rawUserInfo.role || 'student'
+          };
+          
+          if (!this.userInfo.avatar && localAvatar) {
+            this.userInfo.avatar = localAvatar;
+          }
+          if (!this.userInfo.permissions && localPermissions) {
+            this.userInfo.permissions = localPermissions;
+          }
         } else {
-          console.error('用户信息响应格式无效:', userInfoResponse);
           throw new Error('用户信息响应格式无效');
         }
-
-        console.log('用户信息已更新:', JSON.stringify(this.userInfo, null, 2));
-        console.log('用户信息包含learningStats:', !!this.userInfo.learningStats);
 
         // 更新浏览历史
         if (historyResponse && historyResponse.data && historyResponse.data.list) {
@@ -397,7 +471,7 @@ export const useUserStore = defineStore('user', {
         }
 
         // 持久化用户信息到本地存储
-        safeLocalStorage.set(`${config.storagePrefix}userInfo`, this.userInfo);
+        safeLocalStorage.set(`${config.storagePrefix}user`, this.userInfo);
 
         console.log('用户数据加载完成');
       } catch (error) {
@@ -409,23 +483,14 @@ export const useUserStore = defineStore('user', {
           status: error.response?.status,
         });
 
-        // 如果是401错误，需要判断是否真的是认证失败
+        // 如果是401错误，通常意味着令牌无效或用户已删除
         if (error.response?.status === 401) {
           const errorMessage = error.response?.data?.message || '';
-          const isTokenError = errorMessage.includes('token') || 
-                               errorMessage.includes('认证') || 
-                               errorMessage.includes('unauthorized') ||
-                               errorMessage.includes('未授权');
-          
-          if (isTokenError) {
-            console.log('检测到令牌无效错误，清除用户信息');
-            this.userInfo = null;
-            this.browseHistory = [];
-            safeLocalStorage.remove(`${config.storagePrefix}token`);
-            safeLocalStorage.remove(`${config.storagePrefix}user`);
-          } else {
-            console.error('加载用户数据时发生401错误，但非认证相关:', errorMessage);
-          }
+          console.log('检测到认证失败或用户不存在，清除本地状态:', errorMessage);
+          this.userInfo = null;
+          this.browseHistory = [];
+          safeLocalStorage.remove(`${config.storagePrefix}token`);
+          safeLocalStorage.remove(`${config.storagePrefix}user`);
         }
 
         throw error;
@@ -614,6 +679,37 @@ export const useUserStore = defineStore('user', {
         return updatedInfo;
       } catch (error) {
         console.error('更新用户信息失败:', error);
+        throw error;
+      }
+    },
+
+    /**
+     * 升级用户等级
+     * @param {string} newLevel - 新等级（入门 -> 中级 -> 高级）
+     * @returns {Promise<boolean>} 是否升级成功
+     */
+    async upgradeLevel(newLevel) {
+      try {
+        if (!this.userInfo) {
+          throw new Error('用户未登录');
+        }
+
+        // 验证等级顺序
+        const validLevels = ['入门', '中级', '高级'];
+        const currentIndex = validLevels.indexOf(this.userInfo.level);
+        const newIndex = validLevels.indexOf(newLevel);
+
+        if (newIndex <= currentIndex) {
+          throw new Error('只能升级到更高级别');
+        }
+
+        // 更新本地用户信息（前端先行，后续可调用API同步后端）
+        this.userInfo = { ...this.userInfo, level: newLevel };
+        safeLocalStorage.set(`${config.storagePrefix}user`, this.userInfo);
+
+        return true;
+      } catch (error) {
+        console.error('升级用户等级失败:', error);
         throw error;
       }
     },

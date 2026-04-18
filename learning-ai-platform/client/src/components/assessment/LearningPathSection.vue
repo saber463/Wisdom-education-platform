@@ -36,11 +36,12 @@ defineProps({
 
 <style scoped>
 .recommendation-section {
-  background: #fff;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
   border-radius: 12px;
   padding: 24px;
   margin-bottom: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .section-title {
@@ -50,7 +51,7 @@ defineProps({
 .section-title h3 {
   margin: 0;
   font-size: 20px;
-  color: #1a1a1a;
+  color: #ffffff;
 }
 
 .learning-path {
@@ -65,16 +66,16 @@ defineProps({
   top: 0;
   bottom: 0;
   width: 2px;
-  background: linear-gradient(to bottom, #1890ff, #52c41a);
+  background: linear-gradient(to bottom, #3b82f6, #22c41a);
 }
 
 .path-stage {
   position: relative;
   margin-bottom: 30px;
-  background: #fff;
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 12px;
   padding: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .stage-number {
@@ -83,7 +84,7 @@ defineProps({
   top: 20px;
   width: 30px;
   height: 30px;
-  background: linear-gradient(135deg, #1890ff, #52c41a);
+  background: linear-gradient(135deg, #3b82f6, #22c41a);
   color: #fff;
   border-radius: 50%;
   display: flex;
@@ -97,7 +98,7 @@ defineProps({
 .stage-content h4 {
   margin: 0 0 15px 0;
   font-size: 18px;
-  color: #1a1a1a;
+  color: #e5e7eb;
 }
 
 .stage-topics {
@@ -108,8 +109,8 @@ defineProps({
 }
 
 .topic-tag {
-  background: #f0f5ff;
-  color: #1890ff;
+  background: rgba(59, 130, 246, 0.1);
+  color: #60a5fa;
   padding: 6px 12px;
   border-radius: 20px;
   font-size: 14px;
@@ -118,11 +119,11 @@ defineProps({
 .stage-duration {
   margin: 0 0 10px 0;
   font-size: 14px;
-  color: #666;
+  color: #9ca3af;
 }
 
 .stage-focus {
-  background: #fff2e8;
+  background: rgba(250, 140, 22, 0.1);
   color: #fa8c16;
   padding: 10px;
   border-radius: 8px;

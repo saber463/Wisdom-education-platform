@@ -116,8 +116,6 @@ export const getPresetAvatars = async (req, res, next) => {
   }
 };
 
-
-
 export const uploadAvatar = async (req, res, next) => {
   try {
     if (!req.user || !req.user._id) {
@@ -128,7 +126,9 @@ export const uploadAvatar = async (req, res, next) => {
       return next(new BadRequestError('请选择要上传的头像文件'));
     }
 
-    const avatarUrl = `http://localhost:4001/uploads/avatars/custom/${req.file.filename}`;
+    // 修复硬编码的URL，使其动态获取当前主机地址
+    const baseUrl = `${req.protocol}://${req.get('host')}`;
+    const avatarUrl = `${baseUrl}/uploads/avatars/custom/${req.file.filename}`;
 
     const user = await User.findByIdAndUpdate(
       req.user._id,
@@ -303,10 +303,6 @@ export const completeDailyQuiz = async (req, res) => {
 
 export const getAllUsers = async (req, res) => {
   try {
-    if (req.user.role !== 'admin') {
-      return res.status(403).json({ success: false, message: '权限不足，需要管理员权限' });
-    }
-
     const users = await User.find().select('-password');
 
     res.status(200).json({
@@ -322,10 +318,6 @@ export const getAllUsers = async (req, res) => {
 
 export const getSystemStats = async (req, res) => {
   try {
-    if (req.user.role !== 'admin') {
-      return res.status(403).json({ success: false, message: '权限不足，需要管理员权限' });
-    }
-
     const totalUsers = await User.countDocuments();
 
     const today = new Date();

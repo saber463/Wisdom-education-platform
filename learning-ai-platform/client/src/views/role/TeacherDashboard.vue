@@ -140,6 +140,19 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+import { useUserStore } from '@/store/user';
+
+const userStore = useUserStore();
+
+const profile = computed(() => ({
+  name: userStore.userInfo?.username || '老师',
+  title: '高级讲师 · 物理组',
+  avatar: userStore.userInfo?.avatar || 'https://picsum.photos/seed/teacher1/56/56',
+  todayMinutes: 240,
+  streak: 15,
+  students: 128,
+  classes: 4
+}));
 
 // 统计数据
 const statsData = ref([

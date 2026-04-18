@@ -19,9 +19,14 @@ const UserSchema = new mongoose.Schema({
     lowercase: true,
     trim: true,
   },
+  role: {
+    type: String,
+    enum: ['student', 'teacher', 'parent'],
+    default: 'student',
+  },
   avatar: {
     type: String,
-    default: 'https://via.placeholder.com/150',
+    default: 'https://ui-avatars.com/api/?name=User&background=random',
   },
   resetPasswordToken: {
     type: String,

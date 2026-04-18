@@ -1,5 +1,6 @@
-const axios = require('axios');
-require('dotenv').config();
+import axios from 'axios';
+import dotenv from 'dotenv';
+dotenv.config();
 
 class ChatbotService {
   static #config = {
@@ -21,7 +22,7 @@ class ChatbotService {
     const response = await axios.post(
       `${this.#config.url}/chat/completions`,
       {
-        model: 'Qwen3-7B', // 使用Qwen3-7B模型
+        model: 'qwen-turbo', // 使用阿里云qwen-turbo模型
         messages: [
           {
             role: 'system',
@@ -206,4 +207,4 @@ class ChatbotService {
   }
 }
 
-module.exports = ChatbotService;
+export default ChatbotService;

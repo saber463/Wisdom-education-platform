@@ -67,6 +67,13 @@
           <div
             class="course-card-header bg-gradient-to-r from-tech-blue to-tech-purple text-white p-6 relative overflow-hidden"
           >
+            <!-- VIP标识 -->
+            <div v-if="category.isVIP" class="absolute top-3 right-3 z-10">
+              <span class="inline-flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold rounded-full shadow-lg">
+                <i class="fa fa-crown"></i> VIP
+              </span>
+            </div>
+
             <!-- 装饰元素 -->
             <div class="absolute -top-6 -right-6 w-24 h-24 bg-white/10 rounded-full" />
             <div class="absolute bottom-6 right-6 w-12 h-12 bg-white/10 rounded-full" />
@@ -84,6 +91,18 @@
             <p class="text-white/80 text-sm mt-3 relative z-10">
               {{ category.description }}
             </p>
+            <!-- 价格信息 -->
+            <div class="mt-3 flex items-center gap-2 relative z-10">
+              <span v-if="category.isVIP" class="text-amber-300 font-bold">
+                <i class="fa fa-crown mr-1"></i>会员免费
+              </span>
+              <span v-else class="text-white/90">
+                ¥{{ category.price || 0 }}
+              </span>
+              <span v-if="!category.isVIP && category.originalPrice" class="text-white/50 line-through text-sm">
+                ¥{{ category.originalPrice }}
+              </span>
+            </div>
           </div>
 
           <!-- 分类卡片内容 -->
@@ -205,16 +224,16 @@ const kbExpanded = ref(false);
 
 // Mock数据：API失败时的fallback
 const mockCategories = [
-  { _id: 'mock1', name: 'JavaScript', description: '从ES6到现代JS，掌握前端核心语言', knowledgePointCount: 128, level: 2, cover: 'https://picsum.photos/seed/jscat/300/180' },
-  { _id: 'mock2', name: 'Python', description: '数据分析、机器学习、爬虫全覆盖', knowledgePointCount: 156, level: 2, cover: 'https://picsum.photos/seed/pycat/300/180' },
-  { _id: 'mock3', name: 'Java', description: '面向对象编程到SpringBoot企业开发', knowledgePointCount: 204, level: 3, cover: 'https://picsum.photos/seed/javacat/300/180' },
-  { _id: 'mock4', name: 'Vue3', description: 'Composition API + Pinia + Vite全栈实战', knowledgePointCount: 98, level: 2, cover: 'https://picsum.photos/seed/vuecat/300/180' },
-  { _id: 'mock5', name: 'React', description: 'Hooks+Redux+Next.js现代React开发', knowledgePointCount: 112, level: 2, cover: 'https://picsum.photos/seed/reactcat/300/180' },
-  { _id: 'mock6', name: '数据结构与算法', description: '从基础到LeetCode高频题，面试必备', knowledgePointCount: 180, level: 3, cover: 'https://picsum.photos/seed/dsacat/300/180' },
-  { _id: 'mock7', name: '数据库', description: 'MySQL/PostgreSQL/Redis从入门到优化', knowledgePointCount: 89, level: 2, cover: 'https://picsum.photos/seed/dbcat/300/180' },
-  { _id: 'mock8', name: 'Go语言', description: '并发编程、微服务、云原生开发', knowledgePointCount: 76, level: 2, cover: 'https://picsum.photos/seed/gocat/300/180' },
-  { _id: 'mock9', name: 'DevOps', description: 'Docker/K8s/CI-CD流水线实战', knowledgePointCount: 64, level: 3, cover: 'https://picsum.photos/seed/devopscat/300/180' },
-  { _id: 'mock10', name: '英语学习', description: '四六级、雅思、托福、商务英语', knowledgePointCount: 220, level: 1, cover: 'https://picsum.photos/seed/engcat/300/180' },
+  { _id: 'mock1', name: 'JavaScript', description: '从ES6到现代JS，掌握前端核心语言', knowledgePointCount: 128, level: 2, cover: 'https://ui-avatars.com/api/?name=JS&background=random', isVIP: false, price: 299, originalPrice: 499 },
+  { _id: 'mock2', name: 'Python', description: '数据分析、机器学习、爬虫全覆盖', knowledgePointCount: 156, level: 2, cover: 'https://ui-avatars.com/api/?name=Py&background=random', isVIP: true, price: 0, originalPrice: 599 },
+  { _id: 'mock3', name: 'Java', description: '面向对象编程到SpringBoot企业开发', knowledgePointCount: 204, level: 3, cover: 'https://ui-avatars.com/api/?name=Java&background=random', isVIP: false, price: 399, originalPrice: 699 },
+  { _id: 'mock4', name: 'Vue3', description: 'Composition API + Pinia + Vite全栈实战', knowledgePointCount: 98, level: 2, cover: 'https://ui-avatars.com/api/?name=Vue&background=random', isVIP: true, price: 0, originalPrice: 499 },
+  { _id: 'mock5', name: 'React', description: 'Hooks+Redux+Next.js现代React开发', knowledgePointCount: 112, level: 2, cover: 'https://ui-avatars.com/api/?name=React&background=random', isVIP: false, price: 349, originalPrice: 549 },
+  { _id: 'mock6', name: '数据结构与算法', description: '从基础到LeetCode高频题，面试必备', knowledgePointCount: 180, level: 3, cover: 'https://ui-avatars.com/api/?name=Algo&background=random', isVIP: true, price: 0, originalPrice: 699 },
+  { _id: 'mock7', name: '数据库', description: 'MySQL/PostgreSQL/Redis从入门到优化', knowledgePointCount: 89, level: 2, cover: 'https://ui-avatars.com/api/?name=DB&background=random', isVIP: false, price: 279, originalPrice: 449 },
+  { _id: 'mock8', name: 'Go语言', description: '并发编程、微服务、云原生开发', knowledgePointCount: 76, level: 2, cover: 'https://ui-avatars.com/api/?name=Go&background=random', isVIP: true, price: 0, originalPrice: 599 },
+  { _id: 'mock9', name: 'DevOps', description: 'Docker/K8s/CI-CD流水线实战', knowledgePointCount: 64, level: 3, cover: 'https://ui-avatars.com/api/?name=Ops&background=random', isVIP: false, price: 459, originalPrice: 799 },
+  { _id: 'mock10', name: '英语学习', description: '四六级、雅思、托福、商务英语', knowledgePointCount: 220, level: 1, cover: 'https://ui-avatars.com/api/?name=Eng&background=random', isVIP: false, price: 199, originalPrice: 399 },
 ];
 
 // 计算属性：过滤后的分类

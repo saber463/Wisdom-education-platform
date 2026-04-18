@@ -182,9 +182,10 @@ export const purchaseMembership = async (req, res) => {
     });
 
     const now = new Date();
-    const currentExpireDate = user.membership?.expireDate && new Date(user.membership.expireDate) > now
-      ? new Date(user.membership.expireDate)
-      : now;
+    const currentExpireDate =
+      user.membership?.expireDate && new Date(user.membership.expireDate) > now
+        ? new Date(user.membership.expireDate)
+        : now;
 
     user.membership = {
       level: level,
@@ -227,11 +228,14 @@ export const getMembershipInfo = async (req, res) => {
     res.json({
       success: true,
       data: {
-        level: isExpired ? 'free' : (user.membership?.level || 'free'),
+        level: isExpired ? 'free' : user.membership?.level || 'free',
         expireDate: user.membership?.expireDate,
         isExpired: isExpired,
         daysRemaining: user.membership?.expireDate
-          ? Math.max(0, Math.ceil((new Date(user.membership.expireDate) - now) / (1000 * 60 * 60 * 24)))
+          ? Math.max(
+              0,
+              Math.ceil((new Date(user.membership.expireDate) - now) / (1000 * 60 * 60 * 24))
+            )
           : 0,
       },
     });

@@ -3,37 +3,37 @@
     <div class="container mx-auto px-4 py-8">
       <!-- 页面标题 -->
       <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-800">知识点掌握度分析</h1>
-        <p class="text-gray-600 mt-2">了解您对各个知识点的掌握程度，针对性提升学习效果</p>
+        <h1 class="text-3xl font-bold text-white">知识点掌握度分析</h1>
+        <p class="text-gray-400 mt-2">了解您对各个知识点的掌握程度，针对性提升学习效果</p>
       </div>
 
       <!-- 整体掌握情况 -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="bg-white rounded-lg shadow-md p-6 text-center">
+        <div class="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 text-center border border-white/10">
           <div class="text-4xl font-bold text-primary mb-2">{{ overallMastery }}%</div>
-          <div class="text-gray-600">整体掌握度</div>
+          <div class="text-gray-400">整体掌握度</div>
         </div>
-        <div class="bg-white rounded-lg shadow-md p-6 text-center">
-          <div class="text-4xl font-bold text-blue-600 mb-2">
+        <div class="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 text-center border border-white/10">
+          <div class="text-4xl font-bold text-green-400 mb-2">
             {{ masteredCount }}
           </div>
-          <div class="text-gray-600">已掌握知识点</div>
+          <div class="text-gray-400">已掌握知识点</div>
         </div>
-        <div class="bg-white rounded-lg shadow-md p-6 text-center">
-          <div class="text-4xl font-bold text-orange-600 mb-2">
+        <div class="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 text-center border border-white/10">
+          <div class="text-4xl font-bold text-orange-400 mb-2">
             {{ totalKnowledgePoints }}
           </div>
-          <div class="text-gray-600">总知识点数量</div>
+          <div class="text-gray-400">总知识点数量</div>
         </div>
       </div>
 
       <!-- 知识点掌握度图表 -->
-      <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-        <h2 class="text-xl font-semibold text-gray-800 mb-6">知识点掌握度分布</h2>
+      <div class="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 mb-8 border border-white/10">
+        <h2 class="text-xl font-semibold text-white mb-6">知识点掌握度分布</h2>
         <div class="space-y-6">
           <!-- 前端开发知识点 -->
           <div v-if="getCategoryKnowledgePoints('前端开发').length > 0">
-            <h3 class="text-lg font-medium text-gray-800 mb-4">前端开发</h3>
+            <h3 class="text-lg font-medium text-gray-300 mb-4">前端开发</h3>
             <div class="space-y-3">
               <div
                 v-for="kp in getCategoryKnowledgePoints('前端开发')"
@@ -41,13 +41,13 @@
                 class="flex items-center justify-between"
               >
                 <div class="flex-1 pr-4">
-                  <div class="font-medium text-gray-800">
+                  <div class="font-medium text-white">
                     {{ kp.name }}
                   </div>
                   <div class="text-sm text-gray-500">{{ kp.mastery }}% 掌握度</div>
                 </div>
                 <div class="w-2/3">
-                  <div class="w-full bg-gray-200 rounded-full h-3">
+                  <div class="w-full bg-gray-700 rounded-full h-3">
                     <div
                       class="h-3 rounded-full transition-all duration-1000"
                       :class="{
@@ -59,14 +59,14 @@
                     />
                   </div>
                 </div>
-                <div class="ml-4 font-medium text-gray-800 w-12 text-right">{{ kp.mastery }}%</div>
+                <div class="ml-4 font-medium text-white w-12 text-right">{{ kp.mastery }}%</div>
               </div>
             </div>
           </div>
 
           <!-- 后端开发知识点 -->
           <div v-if="getCategoryKnowledgePoints('后端开发').length > 0">
-            <h3 class="text-lg font-medium text-gray-800 mb-4">后端开发</h3>
+            <h3 class="text-lg font-medium text-gray-300 mb-4">后端开发</h3>
             <div class="space-y-3">
               <div
                 v-for="kp in getCategoryKnowledgePoints('后端开发')"
@@ -74,13 +74,13 @@
                 class="flex items-center justify-between"
               >
                 <div class="flex-1 pr-4">
-                  <div class="font-medium text-gray-800">
+                  <div class="font-medium text-white">
                     {{ kp.name }}
                   </div>
                   <div class="text-sm text-gray-500">{{ kp.mastery }}% 掌握度</div>
                 </div>
                 <div class="w-2/3">
-                  <div class="w-full bg-gray-200 rounded-full h-3">
+                  <div class="w-full bg-gray-700 rounded-full h-3">
                     <div
                       class="h-3 rounded-full transition-all duration-1000"
                       :class="{
@@ -92,14 +92,14 @@
                     />
                   </div>
                 </div>
-                <div class="ml-4 font-medium text-gray-800 w-12 text-right">{{ kp.mastery }}%</div>
+                <div class="ml-4 font-medium text-white w-12 text-right">{{ kp.mastery }}%</div>
               </div>
             </div>
           </div>
 
           <!-- 人工智能知识点 -->
           <div v-if="getCategoryKnowledgePoints('人工智能').length > 0">
-            <h3 class="text-lg font-medium text-gray-800 mb-4">人工智能</h3>
+            <h3 class="text-lg font-medium text-gray-300 mb-4">人工智能</h3>
             <div class="space-y-3">
               <div
                 v-for="kp in getCategoryKnowledgePoints('人工智能')"
@@ -107,13 +107,13 @@
                 class="flex items-center justify-between"
               >
                 <div class="flex-1 pr-4">
-                  <div class="font-medium text-gray-800">
+                  <div class="font-medium text-white">
                     {{ kp.name }}
                   </div>
                   <div class="text-sm text-gray-500">{{ kp.mastery }}% 掌握度</div>
                 </div>
                 <div class="w-2/3">
-                  <div class="w-full bg-gray-200 rounded-full h-3">
+                  <div class="w-full bg-gray-700 rounded-full h-3">
                     <div
                       class="h-3 rounded-full transition-all duration-1000"
                       :class="{
@@ -125,7 +125,7 @@
                     />
                   </div>
                 </div>
-                <div class="ml-4 font-medium text-gray-800 w-12 text-right">{{ kp.mastery }}%</div>
+                <div class="ml-4 font-medium text-white w-12 text-right">{{ kp.mastery }}%</div>
               </div>
             </div>
           </div>
@@ -133,8 +133,8 @@
       </div>
 
       <!-- 学习建议 -->
-      <div class="bg-white rounded-lg shadow-md p-6">
-        <h2 class="text-xl font-semibold text-gray-800 mb-4">学习建议</h2>
+      <div class="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-white/10">
+        <h2 class="text-xl font-semibold text-white mb-4">学习建议</h2>
         <div v-if="learningSuggestions.length > 0" class="space-y-3">
           <div
             v-for="(suggestion, index) in learningSuggestions"
@@ -147,10 +147,10 @@
               {{ index + 1 }}
             </div>
             <div class="flex-1">
-              <div class="font-medium text-gray-800">
+              <div class="font-medium text-white">
                 {{ suggestion.title }}
               </div>
-              <div class="text-gray-600 mt-1">
+              <div class="text-gray-400 mt-1">
                 {{ suggestion.content }}
               </div>
             </div>

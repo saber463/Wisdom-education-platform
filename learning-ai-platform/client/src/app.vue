@@ -6,16 +6,18 @@
       @retry="handleRetry"
     >
       <router-view />
-      <UpdatePopup />
-      <InterestPopup @interest-selected="handleInterestSelected" @skipped="handleInterestSkipped" />
+      <!-- 仅在非家长角色时显示兴趣选择 -->
+      <template v-if="userStore.userRole !== 'parent'">
+        <InterestPopup @interest-selected="handleInterestSelected" @skipped="handleInterestSkipped" />
+      </template>
     </ErrorBoundary>
   </div>
 </template>
 
 <script setup>
 import { onMounted } from 'vue';
-import { useUserStore } from './store/user';
-import UpdatePopup from './components/common/UpdatePopup.vue';
+import { useUserStore, safeLocalStorage } from './store/user';
+import config from './config';
 import InterestPopup from './components/common/InterestPopup.vue';
 import ErrorBoundary from './components/common/ErrorBoundary.vue';
 import { userApi } from './utils/api';
@@ -28,7 +30,8 @@ const userStore = useUserStore();
 // 初始化用户状态
 onMounted(async () => {
   try {
-    await userStore.initUser();
+    // 检查用户登录状态并加载用户数据
+    await userStore.loadUserData();
   } catch (error) {
     logger.error('初始化用户状态失败', error, 'App.vue');
     ElNotification.error({
@@ -65,12 +68,8 @@ const handleInterestSelected = async interests => {
       // 更新本地用户信息
       if (userStore.userInfo) {
         userStore.userInfo.learningInterests = interests;
-        // 保存到localStorage
-        import('./store/user').then(({ safeLocalStorage }) => {
-          import('./config').then(({ default: config }) => {
-            safeLocalStorage.set(`${config.storagePrefix}user`, userStore.userInfo);
-          });
-        });
+      // 保存到localStorage
+      safeLocalStorage.set(`${config.storagePrefix}user`, userStore.userInfo);
       }
       ElNotification.success({
         message: '兴趣选择成功',
@@ -90,11 +89,7 @@ const handleInterestSelected = async interests => {
 const handleInterestSkipped = () => {
   // 可以记录用户跳过的状态，避免下次登录再次显示
   try {
-    import('./store/user').then(({ safeLocalStorage }) => {
-      import('./config').then(({ default: config }) => {
-        safeLocalStorage.set(`${config.storagePrefix}interestSkipped`, true);
-      });
-    });
+    safeLocalStorage.set(`${config.storagePrefix}interestSkipped`, true);
   } catch (error) {
     logger.error('保存兴趣跳过状态失败', error, 'App.vue');
   }

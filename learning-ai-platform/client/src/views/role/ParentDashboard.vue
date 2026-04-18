@@ -110,7 +110,107 @@
               <div v-if="!msg.read" class="unread-dot" />
             </div>
           </div>
+          <div class="panel-footer">
+            <button class="btn-full-outline" @click="contactAllTeachers">联系所有任课老师</button>
+          </div>
         </section>
+
+        <!-- 家长课堂 -->
+        <section class="panel education-panel">
+          <div class="panel-header">
+            <h3>🎓 家长教育课堂</h3>
+            <router-link to="/parent-classroom" class="more-link">进入课堂</router-link>
+          </div>
+          <div class="edu-list">
+            <div
+              v-for="item in parentEducation"
+              :key="item.id"
+              class="edu-item cursor-pointer hover:border-primary/40 transition-all"
+              @click="router.push('/parent-classroom')"
+            >
+              <div class="edu-icon">{{ item.icon }}</div>
+              <div class="edu-info">
+                <div class="edu-title">{{ item.title }}</div>
+                <div class="edu-desc">{{ item.desc }}</div>
+              </div>
+              <i class="fa fa-chevron-right text-gray-300" />
+            </div>
+          </div>
+        </section>
+
+        <!-- 推荐导师 -->
+        <section class="panel tutor-panel">
+          <div class="panel-header">
+            <h3>🌟 AI 智能导师推荐</h3>
+            <div class="flex items-center gap-2">
+              <button 
+                class="text-xs bg-blue-600/10 text-blue-600 px-2 py-1 rounded-lg hover:bg-blue-600 hover:text-white transition-all"
+                @click="refreshTutors"
+              >
+                <i class="fa fa-sync-alt" :class="{ 'fa-spin': isRefreshingTutors }"></i> 换一批
+              </button>
+              <router-link to="/star-teachers" class="more-link">查看全部</router-link>
+            </div>
+          </div>
+          <div class="p-4 mb-4 bg-primary/5 rounded-xl border border-primary/10">
+            <p class="text-xs text-primary font-medium mb-1">💡 智能分析：</p>
+            <p class="text-[11px] text-gray-500 leading-relaxed">
+              基于孩子在“{{ learningRecords[0]?.subject }}”模块的 {{ learningRecords[0]?.score }} 分表现，我们为您匹配了具备“{{ learningRecords[0]?.subject === '数学' ? '逻辑强化' : '编程进阶' }}”专长的导师。
+            </p>
+          </div>
+          <div class="tutor-list">
+            <div class="tutor-item" v-for="tutor in recommendedTutors" :key="tutor.id">
+              <img :src="tutor.avatar" class="tutor-avatar" />
+              <div class="tutor-info">
+                <div class="tutor-name">{{ tutor.name }}</div>
+                <div class="tutor-tags">
+                  <span v-for="tag in tutor.tags" :key="tag" class="tutor-tag">{{ tag }}</span>
+                </div>
+              </div>
+              <button class="btn-consult" @click="consultTutor(tutor)">咨询</button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- 底部功能入口 -->
+    <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div
+        class="feature-card group cursor-pointer"
+        @click="router.push('/parent/report')"
+      >
+        <div class="card-icon bg-blue-500/10 text-blue-500 group-hover:bg-blue-500 group-hover:text-white">
+          <i class="fa fa-file-invoice" />
+        </div>
+        <div class="card-text">
+          <h4>深度月度报告</h4>
+          <p>全方位分析孩子本月的进步与不足</p>
+        </div>
+      </div>
+      <div
+        class="feature-card group cursor-pointer"
+        @click="router.push('/tweets')"
+      >
+        <div class="card-icon bg-purple-500/10 text-purple-500 group-hover:bg-purple-500 group-hover:text-white">
+          <i class="fa fa-users" />
+        </div>
+        <div class="card-text">
+          <h4>家校互动社区</h4>
+          <p>与其他家长和老师交流教育心得</p>
+        </div>
+      </div>
+      <div
+        class="feature-card group cursor-pointer"
+        @click="router.push('/user/center')"
+      >
+        <div class="card-icon bg-green-500/10 text-green-500 group-hover:bg-green-500 group-hover:text-white">
+          <i class="fa fa-cog" />
+        </div>
+        <div class="card-text">
+          <h4>账号与孩子设置</h4>
+          <p>管理绑定的孩子信息与接收通知偏好</p>
+        </div>
       </div>
     </div>
   </div>
@@ -118,6 +218,17 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
+import { ElMessage, ElMessageBox } from 'element-plus';
+import { useUserStore } from '@/store/user';
+
+const userStore = useUserStore();
+const router = useRouter();
+
+const profile = computed(() => ({
+  name: userStore.userInfo?.username || '家长',
+  avatar: userStore.userInfo?.avatar || 'https://picsum.photos/seed/parent/200/200',
+}));
 
 const child = ref({
   name: '王小明',
@@ -141,21 +252,11 @@ const learningRecords = ref([
   { id: 1, subject: '数学', title: '二次函数图像与性质', duration: 45, date: '今天', score: 92, image: 'https://picsum.photos/seed/math1/64/48' },
   { id: 2, subject: 'Python', title: '列表推导式与生成器', duration: 60, date: '今天', score: 88, image: 'https://picsum.photos/seed/py1/64/48' },
   { id: 3, subject: '英语', title: '阅读理解：科技专题', duration: 30, date: '昨天', score: 76, image: 'https://picsum.photos/seed/eng1/64/48' },
-  { id: 4, subject: '物理', title: '牛顿运动定律应用', duration: 50, date: '昨天', score: 95, image: 'https://picsum.photos/seed/phy1/64/48' },
-  { id: 5, subject: '化学', title: '酸碱盐反应方程式', duration: 35, date: '前天', score: 68, image: 'https://picsum.photos/seed/chem1/64/48' },
-  { id: 6, subject: '编程', title: '算法：动态规划入门', duration: 90, date: '前天', score: 91, image: 'https://picsum.photos/seed/algo1/64/48' },
-  { id: 7, subject: '历史', title: '近代史：洋务运动', duration: 25, date: '3天前', score: 83, image: 'https://picsum.photos/seed/hist1/64/48' },
-  { id: 8, subject: '地理', title: '中国地形与气候', duration: 40, date: '3天前', score: 79, image: 'https://picsum.photos/seed/geo1/64/48' },
-  { id: 9, subject: '语文', title: '议论文写作技巧', duration: 55, date: '4天前', score: 87, image: 'https://picsum.photos/seed/chi1/64/48' },
-  { id: 10, subject: '生物', title: '细胞分裂与遗传', duration: 45, date: '5天前', score: 94, image: 'https://picsum.photos/seed/bio1/64/48' },
 ]);
 
 const gradeReports = ref([
   { subject: '数学', icon: '📐', score: 94, rank: 3, trend: '↑2名', color: '#00f2ff' },
   { subject: '英语', icon: '🌍', score: 82, rank: 8, trend: '→持平', color: '#7209b7' },
-  { subject: '语文', icon: '📝', score: 88, rank: 5, trend: '↑1名', color: '#f72585' },
-  { subject: '物理', icon: '⚡', score: 91, rank: 4, trend: '↑3名', color: '#4cc9f0' },
-  { subject: '编程', icon: '💻', score: 97, rank: 1, trend: '↑2名', color: '#43aa8b' },
 ]);
 
 const todayStr = new Date().toLocaleDateString('zh-CN', { month: 'long', day: 'numeric', weekday: 'long' });
@@ -163,23 +264,50 @@ const todayStr = new Date().toLocaleDateString('zh-CN', { month: 'long', day: 'n
 const todayPlan = ref([
   { id: 1, time: '07:30', name: '英语晨读', teacher: '李老师', duration: '30分钟', done: true },
   { id: 2, time: '08:00', name: '数学第7章练习', teacher: '王老师', duration: '45分钟', done: true },
-  { id: 3, time: '14:00', name: 'Python编程作业', teacher: '张老师', duration: '60分钟', done: false },
-  { id: 4, time: '16:00', name: '物理实验报告', teacher: '陈老师', duration: '40分钟', done: false },
-  { id: 5, time: '19:30', name: '英语阅读练习', teacher: '李老师', duration: '20分钟', done: false },
 ]);
 
 const messages = ref([
   { id: 1, teacher: '张老师', subject: 'Python', content: '小明今天的课堂表现非常出色，积极回答问题！', time: '09:23', read: false, teacherAvatar: 'https://picsum.photos/seed/teacher1/36/36' },
   { id: 2, teacher: '王老师', subject: '数学', content: '期中考试临近，请督促孩子复习第5-8章重点内容。', time: '昨天', read: false, teacherAvatar: 'https://picsum.photos/seed/teacher2/36/36' },
-  { id: 3, teacher: '李老师', subject: '英语', content: '作文已批改，整体不错，词汇量还需加强，可以多读英文原著。', time: '昨天', read: true, teacherAvatar: 'https://picsum.photos/seed/teacher3/36/36' },
-  { id: 4, teacher: '陈老师', subject: '物理', content: '下周实验课请提前预习牛顿第二定律实验步骤。', time: '前天', read: true, teacherAvatar: 'https://picsum.photos/seed/teacher4/36/36' },
-  { id: 5, teacher: '刘老师', subject: '化学', content: '今日作业有3题错误，已在系统中标注，请孩子今晚重做。', time: '前天', read: false, teacherAvatar: 'https://picsum.photos/seed/teacher5/36/36' },
-  { id: 6, teacher: '赵老师', subject: '语文', content: '作文《我的梦想》写得很有深度，已推荐参加校刊投稿。', time: '3天前', read: true, teacherAvatar: 'https://picsum.photos/seed/teacher6/36/36' },
-  { id: 7, teacher: '吴老师', subject: '历史', content: '近代史这一章比较重要，请孩子整理知识思维导图。', time: '3天前', read: true, teacherAvatar: 'https://picsum.photos/seed/teacher7/36/36' },
-  { id: 8, teacher: '孙老师', subject: '生物', content: '下周实验：显微镜的使用，请准备好实验服。', time: '4天前', read: true, teacherAvatar: 'https://picsum.photos/seed/teacher8/36/36' },
-  { id: 9, teacher: '周老师', subject: '地理', content: '地图作业画得很工整，地形分析准确！继续保持。', time: '4天前', read: true, teacherAvatar: 'https://picsum.photos/seed/teacher9/36/36' },
-  { id: 10, teacher: '张老师', subject: '编程', content: '恭喜小明在本周算法竞赛中获得年级第1名！', time: '5天前', read: true, teacherAvatar: 'https://picsum.photos/seed/teacher10/36/36' },
 ]);
+
+const parentEducation = ref([
+  { id: 1, icon: '💡', title: '如何培养孩子的编程兴趣？', desc: '从兴趣出发，让孩子爱上逻辑思考' },
+  { id: 2, icon: '🛡️', title: '网络安全教育：引导孩子正确上网', desc: '建立健康的上网习惯，识别网络风险' },
+]);
+
+const recommendedTutors = ref([
+  { id: 1, name: '李明哲', avatar: 'https://ui-avatars.com/api/?name=李明哲&background=6366f1&color=fff', tags: ['前端架构', '耐心细致'] },
+]);
+
+const isRefreshingTutors = ref(false);
+const refreshTutors = () => {
+  isRefreshingTutors.value = true;
+  // 模拟 API 调用
+  setTimeout(() => {
+    const tutorsPool = [
+      { id: 1, name: '李明哲', avatar: 'https://ui-avatars.com/api/?name=李明哲&background=6366f1&color=fff', tags: ['前端架构', '耐心细致'] },
+      { id: 2, name: '张婉如', avatar: 'https://ui-avatars.com/api/?name=张婉如&background=ec4899&color=fff', tags: ['心理疏导', '升学规划'] },
+      { id: 3, name: '王浩然', avatar: 'https://ui-avatars.com/api/?name=王浩然&background=10b981&color=fff', tags: ['算法竞赛', '严谨治学'] },
+    ];
+    // 随机选一个
+    const random = Math.floor(Math.random() * tutorsPool.length);
+    recommendedTutors.value = [tutorsPool[random]];
+    isRefreshingTutors.value = false;
+    ElMessage.success('已根据孩子最新进度重新匹配导师');
+  }, 1000);
+};
+
+const contactAllTeachers = () => {
+  router.push('/contact-teachers');
+};
+
+const consultTutor = (tutor) => {
+  router.push({
+    path: '/contact-teachers',
+    query: { teacherId: tutor.id, teacherName: tutor.name }
+  });
+};
 </script>
 
 <style scoped>
@@ -190,7 +318,6 @@ const messages = ref([
   color: var(--text-primary);
 }
 
-/* 孩子卡 */
 .child-hero {
   background: linear-gradient(135deg, var(--primary-soft), var(--accent-soft));
   border: 1px solid var(--border-accent);
@@ -207,27 +334,19 @@ const messages = ref([
   border-radius: 50%;
   object-fit: cover;
   border: 3px solid var(--accent);
-  box-shadow: var(--shadow-glow-accent);
 }
-.child-name { font-size: 20px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
-.child-grade { font-size: 13px; color: var(--accent); margin-left: 8px; font-weight: 500; }
-.child-school { font-size: 13px; color: var(--text-secondary); margin-bottom: 10px; }
-.child-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+.child-name { font-size: 20px; font-weight: 700; }
+.child-grade { font-size: 13px; color: var(--accent); margin-left: 8px; }
+.child-school { font-size: 13px; color: var(--text-secondary); }
+.child-tags { display: flex; gap: 8px; margin-top: 8px; }
 .tag {
   background: var(--primary-soft);
-  border: 1px solid var(--border-accent);
-  color: var(--primary-light);
   padding: 2px 10px;
   border-radius: 20px;
   font-size: 11px;
-  font-weight: 500;
 }
 .checkin-status { margin-left: auto; text-align: center; }
-.checkin-icon { font-size: 34px; margin-bottom: 4px; }
-.checkin-label { font-size: 13px; color: var(--text-secondary); }
-.checkin-time { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
 
-/* 统计行 */
 .stats-row {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -240,13 +359,10 @@ const messages = ref([
   border-radius: var(--radius-md);
   padding: 16px;
   text-align: center;
-  transition: border-color 0.2s, transform 0.2s;
 }
-.stat-item:hover { border-color: var(--border-strong); transform: translateY(-2px); }
-.stat-v { font-size: 20px; font-weight: 700; color: var(--accent); margin-bottom: 4px; }
+.stat-v { font-size: 20px; font-weight: 700; color: var(--accent); }
 .stat-l { font-size: 11px; color: var(--text-muted); }
 
-/* 主网格 */
 .main-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -254,7 +370,6 @@ const messages = ref([
 }
 .col-left, .col-right { display: flex; flex-direction: column; gap: 20px; }
 
-/* 面板通用 */
 .panel {
   background: var(--bg-surface);
   border: 1px solid var(--border);
@@ -267,120 +382,82 @@ const messages = ref([
   justify-content: space-between;
   margin-bottom: 16px;
 }
-.panel-header h3 { font-size: 15px; font-weight: 700; color: var(--text-primary); margin: 0; }
-.plan-date { font-size: 12px; color: var(--text-muted); }
-.unread-badge {
-  background: var(--danger-soft);
-  color: var(--danger);
-  font-size: 11px;
-  padding: 2px 10px;
-  border-radius: 20px;
-  font-weight: 600;
-}
+.panel-header h3 { font-size: 15px; font-weight: 700; }
 
-/* 学习记录 */
-.learning-records { display: flex; flex-direction: column; gap: 10px; max-height: 420px; overflow-y: auto; }
-.record-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px;
-  background: var(--bg-elevated);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border);
-}
-.rec-img { width: 62px; height: 46px; object-fit: cover; border-radius: 8px; flex-shrink: 0; }
+.learning-records { display: flex; flex-direction: column; gap: 12px; }
+.record-item { display: flex; align-items: center; gap: 12px; }
+.rec-img { width: 64px; height: 48px; border-radius: 4px; object-fit: cover; }
 .rec-info { flex: 1; }
-.rec-subject { font-size: 11px; color: var(--accent); font-weight: 600; margin-bottom: 2px; }
-.rec-title { font-size: 13px; color: var(--text-primary); font-weight: 500; margin-bottom: 3px; }
-.rec-meta { display: flex; gap: 10px; font-size: 11px; color: var(--text-muted); }
-.rec-score { font-size: 15px; font-weight: 700; white-space: nowrap; }
+.rec-subject { font-size: 12px; color: var(--accent); }
+.rec-title { font-size: 14px; font-weight: 600; }
+.rec-meta { font-size: 11px; color: var(--text-muted); }
+.rec-score { font-weight: 700; }
 .rec-score.high { color: var(--success); }
-.rec-score.mid  { color: var(--warning); }
-.rec-score.low  { color: var(--danger); }
 
-/* 成绩卡 */
-.grade-cards { display: flex; flex-direction: column; gap: 10px; }
-.grade-card {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px;
-  background: var(--bg-elevated);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border);
-}
-.grade-subject { width: 70px; font-size: 13px; color: var(--text-primary); font-weight: 600; }
-.grade-score { width: 44px; font-size: 18px; font-weight: 700; color: var(--primary-light); }
-.grade-rank { width: 80px; font-size: 11px; color: var(--text-muted); }
-.grade-bar { flex: 1; height: 5px; background: var(--bg-base); border-radius: 3px; }
-.grade-fill { height: 100%; border-radius: 3px; transition: width 0.4s; }
-.grade-trend { width: 50px; text-align: right; font-size: 11px; color: var(--success); font-weight: 600; }
+.grade-cards { display: flex; flex-direction: column; gap: 12px; }
+.grade-card { padding: 12px; border: 1px solid var(--border); border-radius: 8px; }
+.grade-bar { height: 6px; background: var(--bg-base); border-radius: 3px; margin: 8px 0; }
+.grade-fill { height: 100%; border-radius: 3px; }
 
-/* 今日计划 */
-.plan-list { display: flex; flex-direction: column; gap: 10px; }
-.plan-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px;
-  background: var(--bg-elevated);
-  border-radius: var(--radius-md);
-  border-left: 3px solid var(--accent);
-  border-top: 1px solid var(--border);
-  border-right: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-}
-.plan-item.done { opacity: 0.5; border-left-color: var(--success); }
-.plan-time { font-size: 13px; color: var(--accent); font-weight: 700; width: 44px; }
+.plan-list { display: flex; flex-direction: column; gap: 12px; }
+.plan-item { display: flex; align-items: center; gap: 12px; }
+.plan-time { font-size: 12px; color: var(--text-muted); }
 .plan-body { flex: 1; }
-.plan-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
-.plan-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-.plan-status { font-size: 17px; }
 
-/* 消息 */
-.msg-list { display: flex; flex-direction: column; gap: 10px; max-height: 380px; overflow-y: auto; }
-.msg-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 12px;
-  background: var(--bg-elevated);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border);
-  position: relative;
-}
-.msg-item.unread { background: var(--primary-soft); border-color: var(--border-accent); }
-.msg-avatar { width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0; }
+.msg-list { display: flex; flex-direction: column; gap: 12px; }
+.msg-item { display: flex; gap: 12px; }
+.msg-avatar { width: 36px; height: 36px; border-radius: 50%; }
 .msg-body { flex: 1; }
-.msg-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
-.msg-teacher { font-size: 13px; font-weight: 600; color: var(--text-primary); }
-.msg-time { font-size: 10px; color: var(--text-muted); }
-.msg-text { font-size: 12px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 6px; }
-.msg-subject-tag {
-  display: inline-block;
-  background: var(--primary-soft);
-  color: var(--primary-light);
-  font-size: 10px;
-  padding: 1px 8px;
-  border-radius: 20px;
-  font-weight: 500;
-}
-.unread-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--danger);
-  flex-shrink: 0;
-  margin-top: 5px;
-}
+.msg-header { display: flex; justify-content: space-between; }
+.msg-teacher { font-weight: 600; }
+.msg-text { font-size: 13px; color: var(--text-secondary); }
 
-@media (max-width: 1200px) {
-  .main-grid { grid-template-columns: 1fr; }
-  .stats-row { grid-template-columns: repeat(3, 1fr); }
+.unread-badge { background: var(--danger-soft); color: var(--danger); padding: 2px 8px; border-radius: 10px; font-size: 11px; }
+
+.btn-full-outline { width: 100%; padding: 10px; border: 1px solid var(--primary); color: var(--primary); border-radius: 8px; cursor: pointer; background: transparent; }
+
+.edu-list { display: flex; flex-direction: column; gap: 12px; }
+.edu-item { display: flex; align-items: center; gap: 12px; padding: 12px; border: 1px solid var(--border); border-radius: 8px; }
+.edu-icon { font-size: 24px; }
+.edu-info { flex: 1; }
+.edu-title { font-size: 14px; font-weight: 600; }
+.edu-desc { font-size: 12px; color: var(--text-muted); }
+
+.tutor-list { display: flex; flex-direction: column; gap: 12px; }
+.tutor-item { display: flex; align-items: center; gap: 12px; padding: 12px; border: 1px solid var(--border); border-radius: 8px; }
+.tutor-avatar { width: 44px; height: 44px; border-radius: 50%; }
+.tutor-info { flex: 1; }
+.tutor-tags { display: flex; gap: 4px; margin-top: 4px; }
+.tutor-tag { font-size: 10px; background: var(--primary-soft); padding: 1px 6px; border-radius: 4px; }
+.btn-consult { padding: 4px 12px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer; }
+
+.more-link { font-size: 12px; color: var(--primary); text-decoration: none; }
+
+.feature-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: all 0.3s ease;
 }
-@media (max-width: 768px) {
-  .stats-row { grid-template-columns: 1fr 1fr; }
-  .child-hero { flex-direction: column; text-align: center; }
+.feature-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--primary);
+  box-shadow: var(--shadow-lg);
 }
+.card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  transition: all 0.3s ease;
+}
+.card-text h4 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+.card-text p { font-size: 12px; color: var(--text-muted); }
 </style>

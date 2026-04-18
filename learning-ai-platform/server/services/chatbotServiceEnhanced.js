@@ -1,5 +1,6 @@
-const axios = require('axios');
-require('dotenv').config();
+import axios from 'axios';
+import dotenv from 'dotenv';
+dotenv.config();
 
 class ChatbotServiceEnhanced {
   // 静态配置
@@ -32,7 +33,7 @@ class ChatbotServiceEnhanced {
 
       // 构建请求数据
       const requestData = {
-        model: 'Qwen3-7B',
+        model: 'qwen-turbo', // 使用阿里云qwen-turbo模型
         messages: [
           {
             role: 'system',
@@ -310,4 +311,4 @@ class ChatbotServiceEnhanced {
   }
 }
 
-module.exports = ChatbotServiceEnhanced;
+export default ChatbotServiceEnhanced;

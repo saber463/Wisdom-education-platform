@@ -1,6 +1,8 @@
 import 'dotenv/config';
 import app from './app.js';
 import connectDB from './config/db.js';
+import { getRedisClient } from './services/redisService.js';
+import { startEmailWorker } from './services/emailQueueService.js';
 
 // 检查必要环境变量
 const requiredEnv = ['MONGO_URI', 'JWT_SECRET'];
@@ -13,6 +15,21 @@ if (missingEnv.length > 0) {
 
 // 连接数据库
 connectDB();
+
+// 连接 Redis
+getRedisClient()
+  .then(client => {
+    if (client) {
+      console.log('✅ Redis 连接成功');
+      // 启动邮件队列工作器
+      startEmailWorker();
+    } else {
+      console.warn('⚠️  Redis 连接失败，邮件队列将使用同步发送');
+    }
+  })
+  .catch(err => {
+    console.warn('⚠️  Redis 连接失败，邮件队列将使用同步发送:', err.message);
+  });
 
 const PORT = process.env.PORT || 4001;
 

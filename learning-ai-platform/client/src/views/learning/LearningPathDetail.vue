@@ -109,13 +109,13 @@ const currentPath = computed(() => learningStore.currentPath);
 
 // 所有推荐资源（去重）
 const allResources = computed(() => {
-  if (!currentPath.value) return [];
+  if (!currentPath.value?.stages) return [];
   const resources = [];
   const resourceMap = new Map();
 
   currentPath.value.stages.forEach(stage => {
-    stage.days.forEach(day => {
-      day.recommendedResources.forEach(resource => {
+    (stage.days || []).forEach(day => {
+      (day.recommendedResources || []).forEach(resource => {
         if (!resourceMap.has(resource.name)) {
           resourceMap.set(resource.name, resource);
           resources.push(resource);
@@ -141,7 +141,7 @@ const updateProgress = day => {
 // 如果没有路径，3秒后自动跳转到生成页
 if (!currentPath.value) {
   setTimeout(() => {
-    router.push('/learning/generate');
+    router.push('/learning-path/generate');
   }, 3000);
 }
 </script>

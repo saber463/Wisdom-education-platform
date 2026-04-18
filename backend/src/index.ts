@@ -1,6 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import helmet from 'helmet';
+import hpp from 'hpp';
+import xss from 'xss-clean';
 import { initEncodingFix, logger } from './utils/encoding-fix.js';
 import { testConnection } from './config/database.js';
 import { initRedisClient } from './config/redis.js';
@@ -63,6 +66,11 @@ app.use(performanceMonitor); // 性能优化：性能监控
 app.use(cacheHeaders); // 性能优化：缓存头
 app.use(express.json({ limit: '10mb' })); // 性能优化：限制请求体大小
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// 网络安全加固配置
+app.use(helmet()); // 设置各种HTTP安全头
+app.use(xss()); // 清理用户输入中的跨站脚本 (XSS)
+app.use(hpp()); // 防止HTTP参数污染
 
 // 健康检查接口
 app.get('/health', (_req, res) => {

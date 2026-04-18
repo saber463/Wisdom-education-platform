@@ -126,9 +126,7 @@ export async function getRustServiceStatus() {
 // 启动时立即检测（不阻塞）
 checkRustService().then(available => {
   console.log(
-    available
-      ? '✅ Rust高性能服务已连接'
-      : '⚠️  Rust服务未启动，使用Node.js fallback（功能完整）'
+    available ? '✅ Rust高性能服务已连接' : '⚠️  Rust服务未启动，使用Node.js fallback（功能完整）'
   );
 });
 

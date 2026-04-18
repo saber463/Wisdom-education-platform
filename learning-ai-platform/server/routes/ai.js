@@ -4,6 +4,7 @@ import 'dotenv/config';
 import { auth } from '../middleware/auth.js';
 import { generateLearningPath, testGenerateLearningPath } from '../controllers/aiController.js';
 import { generateImage, getGenerationStatus } from '../controllers/imageGenerationController.js';
+import { getAvailableRoadmaps } from '../services/xunfeiRoadmapService.js';
 import User from '../models/User.js';
 
 const router = express.Router();
@@ -12,9 +13,9 @@ const router = express.Router();
 // Qwen3 Embedding 配置（含超时/重试 - AI改进计划落地）
 // ============================================================
 const QWEN3_CONFIG = {
-  timeout: 30000,       // 30秒超时
-  retryAttempts: 2,     // 最多重试2次
-  retryDelay: 1000,     // 重试间隔1秒
+  timeout: 30000, // 30秒超时
+  retryAttempts: 2, // 最多重试2次
+  retryDelay: 1000, // 重试间隔1秒
 };
 
 class Qwen3EmbeddingService {
@@ -112,7 +113,9 @@ class Qwen3EmbeddingService {
   static calculateCosineSimilarity(vec1, vec2) {
     if (vec1.length !== vec2.length) return 0;
 
-    let dotProduct = 0, norm1 = 0, norm2 = 0;
+    let dotProduct = 0,
+      norm1 = 0,
+      norm2 = 0;
     for (let i = 0; i < vec1.length; i++) {
       dotProduct += vec1[i] * vec2[i];
       norm1 += vec1[i] * vec1[i];
@@ -189,13 +192,38 @@ router.get('/learning-paths', auth, validateLearningPathParams, generateLearning
 router.post('/generate-plan', auth, validateLearningPathParams, generateLearningPath);
 router.post('/test/generate-learning-path', validateLearningPathParams, testGenerateLearningPath);
 
+// 获取可用的开发者路线图列表
+router.get('/roadmaps', async (req, res) => {
+  try {
+    const roadmaps = getAvailableRoadmaps();
+    res.status(200).json({
+      success: true,
+      data: roadmaps,
+      message: '获取成功',
+    });
+  } catch (error) {
+    handleAIError(error, req, res, null);
+  }
+});
+
 // ============================================================
 // 内容推荐路由（AI改进计划落地 - 2.2.1）
 // ============================================================
 router.post('/recommend', auth, async (req, res) => {
   try {
     const { query } = req.body;
-    const topics = ['JavaScript', 'Python', 'React', 'Node.js', 'Vue3', '英语', '会计', '设计', 'Java', 'C++'];
+    const topics = [
+      'JavaScript',
+      'Python',
+      'React',
+      'Node.js',
+      'Vue3',
+      '英语',
+      '会计',
+      '设计',
+      'Java',
+      'C++',
+    ];
 
     if (!query) {
       return res.status(400).json({ success: false, message: '缺少查询参数' });
@@ -222,13 +250,13 @@ router.post('/recommend-content', auth, async (req, res) => {
     const { interests = [], topic } = req.body;
 
     const learningContent = {
-      '计算机': ['JavaScript高级编程', 'Python数据分析', 'React基础', 'Vue3实战', 'Node.js后端'],
-      '英语': ['商务英语写作', '英语口语表达', '英语听力提升', '四六级备考', '雅思冲刺'],
-      '会计': ['财务报表分析', '税务筹划', '成本核算', '管理会计', '审计基础'],
-      '教师': ['教学设计', '课堂管理', '教育心理学', '班级管理', '教育信息化'],
-      '设计': ['UI设计原则', '色彩搭配', '用户体验设计', 'Figma实战', 'Photoshop技巧'],
-      '数学': ['高等数学', '线性代数', '概率统计', '数据结构', '算法导论'],
-      '编程': ['算法与数据结构', '设计模式', '系统设计', '数据库优化', '微服务架构'],
+      计算机: ['JavaScript高级编程', 'Python数据分析', 'React基础', 'Vue3实战', 'Node.js后端'],
+      英语: ['商务英语写作', '英语口语表达', '英语听力提升', '四六级备考', '雅思冲刺'],
+      会计: ['财务报表分析', '税务筹划', '成本核算', '管理会计', '审计基础'],
+      教师: ['教学设计', '课堂管理', '教育心理学', '班级管理', '教育信息化'],
+      设计: ['UI设计原则', '色彩搭配', '用户体验设计', 'Figma实战', 'Photoshop技巧'],
+      数学: ['高等数学', '线性代数', '概率统计', '数据结构', '算法导论'],
+      编程: ['算法与数据结构', '设计模式', '系统设计', '数据库优化', '微服务架构'],
     };
 
     let allContent = [];
@@ -274,12 +302,24 @@ router.post('/analyze-interests', auth, async (req, res) => {
     }
 
     const availableTopics = [
-      '编程开发', '数据分析', 'UI设计', '英语学习',
-      '财务管理', '教育教学', '机器学习', '网络安全',
-      '前端开发', '后端开发', '移动开发', '数据库',
+      '编程开发',
+      '数据分析',
+      'UI设计',
+      '英语学习',
+      '财务管理',
+      '教育教学',
+      '机器学习',
+      '网络安全',
+      '前端开发',
+      '后端开发',
+      '移动开发',
+      '数据库',
     ];
 
-    const rankedInterests = await Qwen3EmbeddingService.rankLearningTopics(userInput, availableTopics);
+    const rankedInterests = await Qwen3EmbeddingService.rankLearningTopics(
+      userInput,
+      availableTopics
+    );
     const topInterests = rankedInterests.slice(0, 5);
 
     // 更新用户兴趣字段
@@ -309,11 +349,12 @@ router.post('/analyze-interests', auth, async (req, res) => {
 router.post('/internal/generate-path', async (req, res) => {
   const { goal, days, intensity = 'medium', userInterests = [] } = req.body;
 
-  const intensityLabel = {
-    low: '轻松（每天30-60分钟）',
-    medium: '适中（每天60-90分钟）',
-    high: '高强度（每天90-120分钟）',
-  }[intensity] || '适中';
+  const intensityLabel =
+    {
+      low: '轻松（每天30-60分钟）',
+      medium: '适中（每天60-90分钟）',
+      high: '高强度（每天90-120分钟）',
+    }[intensity] || '适中';
 
   const systemPrompt = `你是一名专业的学习规划师，请根据用户提供的学习目标、天数和强度，生成一份详细的每日学习计划。
 要求：
@@ -391,7 +432,6 @@ router.post('/internal/generate-path', async (req, res) => {
 
     console.log(`✅ AI学习路径生成成功：${plan.modules.length}个模块，目标="${plan.title}"`);
     return res.status(200).json({ success: true, plan });
-
   } catch (error) {
     const errInfo = {
       message: error.message,

@@ -2,10 +2,15 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import crypto from 'crypto';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 import sensitiveImageDetector from '../utils/sensitiveImageDetector.js';
 
-// 确保上传目录存在
-const uploadDir = path.join(process.cwd(), 'server', 'uploads');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// 确保上传目录存在（修复路径错误，使用相对于当前文件的路径）
+const uploadDir = path.join(__dirname, '../uploads');
 const tweetsDir = path.join(uploadDir, 'tweets');
 const avatarsDir = path.join(uploadDir, 'avatars');
 const customAvatarsDir = path.join(avatarsDir, 'custom');

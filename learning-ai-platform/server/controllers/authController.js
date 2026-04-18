@@ -28,24 +28,28 @@ const register = async (req, res, next) => {
     const existingUser = await User.findOne({ email: lowercaseEmail });
 
     if (existingUser) {
-      return next(new ConflictError('User already exists with this email'));
+      return next(new ConflictError('该邮箱已被注册'));
     }
 
     // 检查密码是否匹配
     if (password !== confirmPassword) {
-      return next(new BadRequestError('Passwords do not match'));
+      return next(new BadRequestError('两次输入的密码不一致'));
     }
 
     // 验证密码长度
     if (password.length < 6) {
-      return next(new BadRequestError('Password must be at least 6 characters'));
+      return next(new BadRequestError('密码长度至少为 6 个字符'));
     }
 
     // 验证邮箱格式
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return next(new BadRequestError('Invalid email format'));
+      return next(new BadRequestError('邮箱格式不正确'));
     }
+
+    // 安全漏洞修复：禁止用户在注册时自行指定角色，默认为 'student'
+    // 管理员账号应由系统初始化或通过特定的管理后台创建
+    const role = 'student';
 
     // 创建用户
     const user = await User.create({
@@ -53,6 +57,7 @@ const register = async (req, res, next) => {
       email: lowercaseEmail, // 存储为小写
       password,
       learningInterests,
+      role, // 强制设置为 student
     });
 
     // 生成JWT令牌
@@ -66,6 +71,7 @@ const register = async (req, res, next) => {
         username: user.username,
         email: user.email,
         avatar: user.avatar,
+        role: user.role,
         learningInterests: user.learningInterests,
         learningStats: user.learningStats,
       },
@@ -130,6 +136,7 @@ const login = async (req, res, next) => {
         username: user.username,
         email: user.email,
         avatar: user.avatar,
+        role: user.role,
         learningInterests: user.learningInterests,
         learningStats: user.learningStats,
       },

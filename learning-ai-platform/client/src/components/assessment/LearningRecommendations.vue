@@ -22,11 +22,12 @@ defineProps({
 
 <style scoped>
 .recommendation-section {
-  background: #fff;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
   border-radius: 12px;
   padding: 24px;
   margin-bottom: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .section-title {
@@ -36,20 +37,20 @@ defineProps({
 .section-title h3 {
   margin: 0;
   font-size: 20px;
-  color: #1a1a1a;
+  color: #ffffff;
 }
 
 .recommendation-card {
-  background: #f8fafc;
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 8px;
   padding: 20px;
-  border-left: 4px solid #1890ff;
+  border-left: 4px solid #3b82f6;
 }
 
 .recommendation-text {
   margin: 0;
   font-size: 16px;
   line-height: 1.6;
-  color: #333;
+  color: #e5e7eb;
 }
 </style>

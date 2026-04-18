@@ -47,10 +47,11 @@ const verifyCsrfToken = (req, res, next) => {
     }
 
     const tokenFromHeader = req.headers['x-csrf-token'];
-    const tokenFromCookie = req.cookies?.['XSRF-TOKEN'];
     const tokenFromBody = req.body?._csrf;
 
-    const providedToken = tokenFromHeader || tokenFromCookie || tokenFromBody;
+    // 安全漏洞修复：CSRF令牌不应从Cookie中读取进行验证，因为浏览器会自动发送Cookie
+    // 令牌必须从自定义头部或请求体中获取
+    const providedToken = tokenFromHeader || tokenFromBody;
 
     if (!providedToken || providedToken !== csrfData.token) {
       return res.status(403).json({

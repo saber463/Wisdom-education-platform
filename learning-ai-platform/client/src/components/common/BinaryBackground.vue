@@ -32,9 +32,10 @@ const generateBinaryColumn = x => {
     bits.push({
       value: Math.random() > 0.5 ? '1' : '0',
       y: i * 20,
-      opacity: 0.1 + Math.random() * 0.3,
-      speed: 0.5 + Math.random() * 1.5,
+      opacity: 0.15 + Math.random() * 0.15, // 固定范围，减少闪烁
+      speed: 0.3 + Math.random() * 0.5, // 降低速度，减少更新频率
       direction: Math.random() > 0.5 ? 1 : -1,
+      fontSize: 12 + Math.random() * 4, // 固定字体大小范围
     });
   }
 
@@ -43,7 +44,7 @@ const generateBinaryColumn = x => {
 
 const initBinaryBackground = () => {
   const columns = [];
-  const columnWidth = 30;
+  const columnWidth = 35; // 增加列宽，减少列数
   const columnCount = Math.ceil(window.innerWidth / columnWidth);
 
   for (let i = 0; i < columnCount; i++) {
@@ -54,35 +55,48 @@ const initBinaryBackground = () => {
 };
 
 const getBitStyle = bit => {
+  // '1' 用青色，'0' 用浅紫色提高对比度
+  const isBlue = bit.value === '1';
   return {
     top: `${bit.y}px`,
     opacity: bit.opacity,
-    color: bit.value === '1' ? '#00f2ff' : '#7209b7',
-    fontSize: '14px',
+    color: isBlue ? '#00f2ff' : '#b388ff', // 提高'0'的对比度
+    fontSize: `${bit.fontSize}px`,
     fontFamily: 'Courier New, monospace',
-    textShadow:
-      bit.value === '1' ? '0 0 5px #00f2ff, 0 0 10px #00f2ff' : '0 0 5px #7209b7, 0 0 10px #7209b7',
+    textShadow: isBlue
+      ? '0 0 8px #00f2ff, 0 0 15px rgba(0,242,255,0.5)'
+      : '0 0 8px #b388ff, 0 0 15px rgba(179,136,255,0.5)', // 增强发光效果
   };
 };
 
+let frameCount = 0;
+
 const updateBinaryPositions = () => {
+  frameCount++;
+
   binaryColumns.value.forEach(column => {
     column.bits.forEach(bit => {
-      bit.y += bit.speed * bit.direction;
+      // 每2帧更新一次位置，大幅减少计算量
+      if (frameCount % 2 === 0) {
+        bit.y += bit.speed * bit.direction;
+      }
 
       if (bit.y > window.innerHeight) {
         bit.y = -20;
         bit.direction = -1;
+        bit.value = Math.random() > 0.5 ? '1' : '0';
       } else if (bit.y < -20) {
         bit.y = window.innerHeight;
         bit.direction = 1;
+        bit.value = Math.random() > 0.5 ? '1' : '0';
       }
-
-      bit.opacity = 0.1 + Math.random() * 0.3;
     });
   });
 
-  animationFrameId = requestAnimationFrame(updateBinaryPositions);
+  // 降低帧率到30fps，避免过度渲染
+  setTimeout(() => {
+    animationFrameId = requestAnimationFrame(updateBinaryPositions);
+  }, 33);
 };
 
 onMounted(() => {

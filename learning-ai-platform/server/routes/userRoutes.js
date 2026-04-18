@@ -10,7 +10,7 @@ import {
   getSystemStats,
   uploadAvatar,
 } from '../controllers/userController.js';
-import { auth } from '../middleware/auth.js';
+import { auth, checkRole } from '../middleware/auth.js';
 import { checkSensitive } from '../middleware/sensitiveCheck.js';
 import { validate } from '../middleware/validation/validationUtils.js';
 import {
@@ -45,7 +45,8 @@ router.post('/upload-avatar', auth, verifyCsrfToken, uploadAvatarImage, uploadAv
 router.get('/daily-quiz', auth, checkDailyQuiz);
 router.post('/daily-quiz/complete', auth, verifyCsrfToken, completeDailyQuiz);
 
-router.get('/all-users', auth, getAllUsers);
-router.get('/system-stats', auth, getSystemStats);
+// 管理员专用接口
+router.get('/all-users', auth, checkRole(['admin']), getAllUsers);
+router.get('/system-stats', auth, checkRole(['admin']), getSystemStats);
 
 export default router;

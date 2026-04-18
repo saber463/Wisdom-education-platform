@@ -20,6 +20,11 @@ import learningProgressRoutes from './learningProgressRoutes.js';
 import notificationRoutes from './notificationRoutes.js';
 import membershipRoutes from './membershipRoutes.js'; // 添加会员路由
 import walletRoutes from './walletRoutes.js'; // 添加钱包路由
+import subscriptionRoutes from './subscriptionRoutes.js'; // 添加订阅路由
+import roadmapRoutes from './roadmapRoutes.js'; // 添加路线图路由
+import codeGeneratorRoutes from './codeGeneratorRoutes.js'; // 代码生成路由
+import knowledgeBaseRoutes from './knowledgeBaseRoutes.js'; // 知识库路由
+import batchRoutes from './batchRoutes.js'; // 批处理API路由
 
 const API_PREFIX = '';
 
@@ -43,6 +48,11 @@ router.use(`${API_PREFIX}/learning-progress`, learningProgressRoutes);
 router.use(`${API_PREFIX}/notifications`, notificationRoutes);
 router.use(`${API_PREFIX}/membership`, membershipRoutes); // 添加会员路由挂载
 router.use(`${API_PREFIX}/wallet`, walletRoutes); // 添加钱包路由挂载
+router.use(`${API_PREFIX}/subscriptions`, subscriptionRoutes); // 添加订阅路由挂载
+router.use(`${API_PREFIX}/roadmaps`, roadmapRoutes); // 添加路线图路由挂载
+router.use(`${API_PREFIX}/code`, codeGeneratorRoutes); // 代码生成路由挂载
+router.use(`${API_PREFIX}/knowledge`, knowledgeBaseRoutes); // 知识库路由挂载
+router.use(`${API_PREFIX}/ai/batch`, batchRoutes); // 批处理API路由挂载
 
 // 健康检查路由已移至app.js（无需API前缀即可访问）
 

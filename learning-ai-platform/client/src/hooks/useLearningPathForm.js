@@ -5,26 +5,36 @@ export function useLearningPathForm() {
   const isFormTouched = ref(false);
   const customErrorMsg = ref('');
 
+  // 表单数据 - 由父组件通过 updateFormState 更新
+  const formState = ref({
+    goal: '',
+    days: 30,
+  });
+
+  const updateFormState = (goal, days) => {
+    formState.value = { goal, days };
+  };
+
   const isFormValid = computed(() => {
-    const goal = ref('');
-    const days = ref(30);
+    const goal = formState.value.goal;
+    const days = formState.value.days;
 
     const basicValid =
-      goal.value.trim() !== '' &&
-      Number.isInteger(days.value) &&
-      days.value >= 1 &&
-      days.value <= 180;
-    const thirtyDaysValid = !goal.value.includes('30天') || days.value >= 30;
-    const computerLevelOneValid = !goal.value.includes('20天通过计算机一级');
+      goal.trim() !== '' &&
+      Number.isInteger(days) &&
+      days >= 1 &&
+      days <= 180;
+    const thirtyDaysValid = !goal.includes('30天') || days >= 30;
+    const computerLevelOneValid = !goal.includes('20天通过计算机一级');
 
     const isValid = basicValid && thirtyDaysValid && computerLevelOneValid;
 
-    if (!isValid) {
+    if (!isValid && isFormTouched.value) {
       let validationError = '';
       if (!basicValid) {
-        validationError = !goal.value.trim()
+        validationError = !goal.trim()
           ? '学习目标不能为空'
-          : !Number.isInteger(days.value)
+          : !Number.isInteger(days)
             ? '天数必须为整数'
             : '天数必须在1-180之间';
       } else if (!thirtyDaysValid) {
@@ -34,8 +44,8 @@ export function useLearningPathForm() {
       }
 
       LearningPathLogger.logValidationFailed({
-        goal: goal.value,
-        days: days.value,
+        goal,
+        days,
         validationError,
       });
     }
@@ -54,10 +64,10 @@ export function useLearningPathForm() {
   };
 
   const daysInputClass = computed(() => {
-    const goal = ref('');
+    const goal = formState.value.goal;
     const hasError =
       !isFormValid.value &&
-      (goal.value.includes('30天') || goal.value.includes('20天通过计算机一级'));
+      (goal.includes('30天') || goal.includes('20天通过计算机一级'));
     return {
       error: hasError,
     };
@@ -69,5 +79,7 @@ export function useLearningPathForm() {
     isFormValid,
     daysInputClass,
     updateCustomErrorMsg,
+    updateFormState,
+    formState,
   };
 }

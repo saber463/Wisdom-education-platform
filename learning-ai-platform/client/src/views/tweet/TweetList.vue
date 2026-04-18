@@ -134,9 +134,11 @@
 import { ref, onMounted } from 'vue';
 import TweetCard from '@/components/business/TweetCard.vue';
 import { tweetApi } from '@/utils/api';
+import { useUserStore } from '@/store/user';
 
 const tweets = ref([]);
 const loading = ref(false);
+const userStore = useUserStore();
 
 const STORAGE_KEY = 'learning_tweets';
 const MAX_TWEETS = 50;
@@ -282,6 +284,70 @@ const initializeTweets = () => {
     tweets.value = sampleTweets;
     saveTweets();
   }
+  // 按用户兴趣权重排序推文
+  sortTweetsByInterest();
+};
+
+/**
+ * 按用户兴趣权重排序推文
+ * - 第一兴趣标签匹配的推文权重 × 3
+ * - 其他兴趣标签匹配的推文权重 × 1.5
+ * - 无匹配时按热度（likes）排序
+ */
+const sortTweetsByInterest = () => {
+  const userInterests = userStore.userInfo?.learningInterests || [];
+
+  if (userInterests.length === 0) {
+    // 无兴趣数据，按热度排序
+    tweets.value.sort((a, b) => (b.likes || 0) - (a.likes || 0));
+    return;
+  }
+
+  const firstInterest = userInterests[0]; // 第一兴趣（最高权重）
+
+  tweets.value.sort((a, b) => {
+    const scoreA = calculateTweetScore(a, firstInterest, userInterests);
+    const scoreB = calculateTweetScore(b, firstInterest, userInterests);
+
+    // 分数相同时按热度排序
+    if (scoreB === scoreA) {
+      return (b.likes || 0) - (a.likes || 0);
+    }
+    return scoreB - scoreA;
+  });
+};
+
+/**
+ * 计算推文兴趣匹配分数
+ */
+const calculateTweetScore = (tweet, firstInterest, allInterests) => {
+  let score = 0;
+  const tags = tweet.tags || [];
+  const category = tweet.category || '';
+
+  // 检查是否匹配第一兴趣（最高权重 ×3）
+  const isFirstMatch =
+    tags.some(tag => tag.toLowerCase().includes(firstInterest.toLowerCase())) ||
+    category.toLowerCase().includes(firstInterest.toLowerCase());
+
+  if (isFirstMatch) {
+    score += 3;
+  }
+
+  // 检查是否匹配其他兴趣（权重 ×1.5）
+  allInterests.slice(1).forEach(interest => {
+    const isMatch =
+      tags.some(tag => tag.toLowerCase().includes(interest.toLowerCase())) ||
+      category.toLowerCase().includes(interest.toLowerCase());
+    if (isMatch) {
+      score += 1.5;
+    }
+  });
+
+  // 基础热度分数
+  score += (tweet.likes || 0) / 100;
+
+  return score;
 };
 
 const saveTweets = () => {

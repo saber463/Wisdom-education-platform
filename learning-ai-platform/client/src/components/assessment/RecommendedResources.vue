@@ -36,11 +36,12 @@ defineProps({
 
 <style scoped>
 .recommendation-section {
-  background: #fff;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
   border-radius: 12px;
   padding: 24px;
   margin-bottom: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .section-title {
@@ -50,7 +51,7 @@ defineProps({
 .section-title h3 {
   margin: 0;
   font-size: 20px;
-  color: #1a1a1a;
+  color: #ffffff;
 }
 
 .resource-list {
@@ -61,10 +62,10 @@ defineProps({
 }
 
 .resource-item {
-  background: #fff;
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 12px;
   padding: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: flex-start;
   transition:
@@ -74,7 +75,7 @@ defineProps({
 
 .resource-item:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.2);
 }
 
 .resource-icon {
@@ -90,17 +91,17 @@ defineProps({
 .resource-info h4 {
   margin: 0 0 8px 0;
   font-size: 16px;
-  color: #1a1a1a;
+  color: #e5e7eb;
 }
 
 .resource-type {
   font-size: 14px;
-  color: #666;
+  color: #9ca3af;
   margin: 0;
 }
 
 .resource-link {
-  color: #1890ff;
+  color: #60a5fa;
   text-decoration: none;
   font-size: 14px;
   display: flex;

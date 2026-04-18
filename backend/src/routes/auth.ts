@@ -8,6 +8,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { executeQuery } from '../config/database.js';
 import { memoryCache } from '../config/memory-cache.js';
+import { strictRateLimit } from '../middleware/rate-limit.js';
 
 const router = Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'edu-platform-secret-key-2024';
@@ -63,7 +64,7 @@ interface RegisterRequest {
  *   }
  * }
  */
-router.post('/register', async (req: Request, res: Response): Promise<void> => {
+router.post('/register', strictRateLimit, async (req: Request, res: Response): Promise<void> => {
   try {
     const { username, password, real_name, role, email } = req.body as RegisterRequest;
     
@@ -145,7 +146,7 @@ router.post('/register', async (req: Request, res: Response): Promise<void> => {
  *   }
  * }
  */
-router.post('/login', async (req: Request, res: Response): Promise<void> => {
+router.post('/login', strictRateLimit, async (req: Request, res: Response): Promise<void> => {
   try {
     const { username, password } = req.body as LoginRequest;
     

@@ -1,19 +1,45 @@
 <template>
   <div
-    class="name-avatar flex items-center justify-center rounded-full"
+    class="name-avatar flex items-center justify-center rounded-full overflow-hidden"
     :style="{
-      backgroundColor: bgColor,
+      backgroundColor: showImage ? 'transparent' : bgColor,
       width: `${props.size}px`,
       height: `${props.size}px`,
       fontSize: `${Math.floor(props.size * 0.4)}px`,
     }"
   >
-    <span :class="textSizeClass">{{ displayText }}</span>
+    <!-- 固定头像类型 -->
+    <img
+      v-if="fixedAvatarSrc"
+      :src="fixedAvatarSrc"
+      :alt="props.name"
+      class="w-full h-full object-cover"
+    />
+    <!-- 有图片且未加载失败时显示图片 -->
+    <img
+      v-else-if="showImage"
+      :src="props.src"
+      :alt="props.name"
+      class="w-full h-full object-cover"
+      @error="onImageError"
+    />
+    <!-- 无图片或加载失败时显示名字首字母 -->
+    <span v-else :class="textSizeClass">{{ displayText }}</span>
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { ref, computed } from 'vue';
+
+// 固定头像映射
+const FIXED_AVATARS = {
+  ai: '/avatar-ai.svg',
+  system: '/avatar-system.svg',
+  male: '/avatar-male.svg',
+  female: '/avatar-female.svg',
+  vip: '/avatar-vip.svg',
+  default: '/avatar-default.svg',
+};
 
 // 组件属性
 const props = defineProps({
@@ -25,7 +51,34 @@ const props = defineProps({
     type: Number,
     default: 40,
   },
+  src: {
+    type: String,
+    default: '',
+  },
+  type: {
+    type: String,
+    default: '', // 可选: ai, system, male, female, vip, default
+  },
 });
+
+// 图片加载失败标记
+const imageError = ref(false);
+
+// 是否显示图片
+const showImage = computed(() => props.src && !imageError.value);
+
+// 固定头像路径
+const fixedAvatarSrc = computed(() => {
+  if (props.type && FIXED_AVATARS[props.type]) {
+    return FIXED_AVATARS[props.type];
+  }
+  return null;
+});
+
+// 图片加载失败时回退到名字首字母
+const onImageError = () => {
+  imageError.value = true;
+};
 
 // 计算显示文本
 const displayText = computed(() => {

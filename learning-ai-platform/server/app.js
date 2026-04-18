@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import routes from './routes/index.js';
 import helmet from 'helmet';
@@ -36,6 +37,7 @@ const limiter = rateLimit({
 });
 
 // 全局中间件（跨域+解析请求体+安全防护）
+app.use(cookieParser());
 // 更新CORS配置，使其更加严格
 app.use(
   cors({
@@ -181,7 +183,7 @@ app.use((req, res, next) => {
 // 在路由挂载之前添加全局缓存中间件
 // 注意：这个中间件会缓存所有GET请求的响应
 // 对于不需要缓存的路由，可以在路由处理函数中使用redisCache.noCache()中间件
-app.use('/api', redisCache.cacheMiddleware(60 * 60)); // 默认缓存1小时
+// app.use('/api', redisCache.cacheMiddleware(60 * 60)); // 默认缓存1小时
 
 // 健康检查路由（不需要API前缀）
 app.get('/health', (req, res) => {

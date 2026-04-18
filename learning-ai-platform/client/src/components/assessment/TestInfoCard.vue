@@ -41,3 +41,7 @@ defineProps({
   testDifficulty: String,
 });
 </script>
+
+<style scoped>
+/* 深色模式适配 - 已在模板中使用 dark: 类 */
+</style>

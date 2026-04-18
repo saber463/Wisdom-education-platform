@@ -51,11 +51,15 @@
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue';
 import { useUserStore } from '@/store/user';
+import { useRoute } from 'vue-router';
 import config from '@/config';
 import { safeLocalStorage } from '@/store/user';
 
 // 弹窗显示状态
 const showPopup = ref(false);
+
+// 路由
+const route = useRoute();
 
 // 兴趣标签列表
 const interestTags = [
@@ -94,6 +98,11 @@ const userStore = useUserStore();
 const shouldShowPopup = computed(() => {
   if (!userStore.isLogin) return false;
 
+  // 如果在登录或注册页面，不显示
+  if (['/login', '/register', '/auth/login', '/auth/register'].includes(route.path)) {
+    return false;
+  }
+
   // 检查用户是否已经选择了兴趣
   const hasSelectedInterests = userStore.userInfo?.learningInterests?.length > 0;
   if (hasSelectedInterests) return false;
@@ -101,6 +110,10 @@ const shouldShowPopup = computed(() => {
   // 检查用户是否跳过了兴趣选择
   const hasSkipped = safeLocalStorage.get(`${config.storagePrefix}interestSkipped`);
   if (hasSkipped) return false;
+
+  // 检查是否已经显示过（本次会话或持久化）
+  const hasShown = safeLocalStorage.get(`${config.storagePrefix}interestModalShown`);
+  if (hasShown) return false;
 
   return true;
 });
@@ -138,6 +151,8 @@ const closePopup = () => {
 onMounted(() => {
   if (shouldShowPopup.value) {
     showPopup.value = true;
+    // 一旦显示，就标记为已显示，避免多次弹出
+    safeLocalStorage.set(`${config.storagePrefix}interestModalShown`, true);
   }
 });
 
@@ -147,6 +162,21 @@ watch(
   newVal => {
     if (newVal && shouldShowPopup.value) {
       showPopup.value = true;
+      safeLocalStorage.set(`${config.storagePrefix}interestModalShown`, true);
+    }
+  }
+);
+
+// 监听路由变化，如果在登录页显示了，则关闭它
+watch(
+  () => route.path,
+  newPath => {
+    if (['/login', '/register', '/auth/login', '/auth/register'].includes(newPath)) {
+      showPopup.value = false;
+    } else if (userStore.isLogin && !showPopup.value && shouldShowPopup.value) {
+      // 如果从登录页跳出到其他页，且还没显示过，则显示
+      showPopup.value = true;
+      safeLocalStorage.set(`${config.storagePrefix}interestModalShown`, true);
     }
   }
 );

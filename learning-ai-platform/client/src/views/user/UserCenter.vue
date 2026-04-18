@@ -646,7 +646,7 @@ const showInterestPopup = () => {
 };
 
 // 处理头像上传
-const handleAvatarChange = event => {
+const handleAvatarChange = async event => {
   const file = event.target.files[0];
   if (!file) return;
 
@@ -662,22 +662,26 @@ const handleAvatarChange = event => {
     return;
   }
 
-  // 读取文件并预览
-  const reader = new FileReader();
-  reader.onload = async e => {
-    try {
-      // 更新本地头像预览
-      userInfo.value.avatar = e.target.result;
-
-      // 上传头像到服务器
-      await userStore.updateAvatar(e.target.result);
-      notificationStore.success('头像更新成功！');
-    } catch (error) {
-      console.error('更新头像失败:', error);
-      notificationStore.error('头像更新失败，请稍后重试');
+  try {
+    const formData = new FormData();
+    formData.append('avatar', file);
+    
+    // 使用专用的上传接口
+    const response = await userApi.uploadAvatar(formData);
+    if (response.success && response.data && response.data.avatar) {
+      const avatarUrl = response.data.avatar;
+      
+      // 更新本地预览
+      userInfo.value.avatar = avatarUrl;
+      
+      // 更新store
+      await userStore.updateAvatar(avatarUrl);
+      notificationStore.success('头像上传成功！');
     }
-  };
-  reader.readAsDataURL(file);
+  } catch (error) {
+    console.error('上传头像失败:', error);
+    notificationStore.error('头像上传失败，请稍后重试');
+  }
 };
 </script>
 

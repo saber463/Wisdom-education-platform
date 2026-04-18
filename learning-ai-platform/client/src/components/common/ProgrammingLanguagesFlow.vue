@@ -31,11 +31,12 @@ const initLanguages = () => {
     ...lang,
     x: -200 - Math.random() * 300,
     y: 50 + Math.random() * (window.innerHeight - 100),
-    speed: 1 + Math.random() * 2,
+    speed: 0.5 + Math.random() * 1, // 降低速度
     isBouncing: false,
     bounceSpeed: 0,
     bounceHeight: 0,
     originalY: 50 + Math.random() * (window.innerHeight - 100),
+    fontSize: 14 + Math.random() * 10, // 固定字体大小
   }));
 };
 
@@ -44,48 +45,48 @@ const getLanguageStyle = language => {
     left: `${language.x}px`,
     top: `${language.y}px`,
     color: language.color,
-    fontSize: `${16 + Math.random() * 12}px`,
+    fontSize: `${language.fontSize}px`, // 使用固定的字体大小
     fontWeight: 'bold',
     fontFamily: 'Arial, sans-serif',
-    textShadow: `0 0 10px ${language.color}, 0 0 20px ${language.color}`,
+    textShadow: `0 0 10px ${language.color}`,
     transform: `translateY(${language.bounceHeight}px)`,
+    opacity: 0.6, // 降低不透明度，减少视觉干扰
   };
 };
 
+let frameCount = 0;
+
 const updatePositions = () => {
-  flowingLanguages.value.forEach(language => {
-    if (language.isBouncing) {
-      language.bounceHeight -= language.bounceSpeed;
-      language.bounceSpeed -= 0.5;
+  frameCount++;
 
-      if (language.bounceHeight <= 0) {
-        language.bounceHeight = 0;
-        language.isBouncing = false;
-        language.bounceSpeed = 0;
-      }
-    } else {
-      language.x += language.speed;
+  // 每2帧更新一次，减少性能消耗
+  if (frameCount % 2 === 0) {
+    flowingLanguages.value.forEach(language => {
+      if (language.isBouncing) {
+        language.bounceHeight -= language.bounceSpeed;
+        language.bounceSpeed -= 0.5;
 
-      if (language.x > window.innerWidth + 100) {
-        language.x = -200 - Math.random() * 300;
-        language.y = 50 + Math.random() * (window.innerHeight - 100);
-        language.originalY = language.y;
-      }
-
-      if (language.y > window.innerHeight - 50) {
-        if (Math.random() < 0.3) {
-          language.isBouncing = true;
-          language.bounceSpeed = 8 + Math.random() * 5;
+        if (language.bounceHeight <= 0) {
           language.bounceHeight = 0;
-        } else {
+          language.isBouncing = false;
+          language.bounceSpeed = 0;
+        }
+      } else {
+        language.x += language.speed;
+
+        if (language.x > window.innerWidth + 100) {
+          language.x = -200 - Math.random() * 300;
           language.y = 50 + Math.random() * (window.innerHeight - 100);
           language.originalY = language.y;
         }
       }
-    }
-  });
+    });
+  }
 
-  animationFrameId = requestAnimationFrame(updatePositions);
+  // 降低帧率到30fps
+  setTimeout(() => {
+    animationFrameId = requestAnimationFrame(updatePositions);
+  }, 33);
 };
 
 onMounted(() => {

@@ -12,6 +12,12 @@ import {
 import http from 'http';
 import https from 'https';
 
+// 引入讯飞星火API路线图服务
+import {
+  generateLearningPath as xunfeiGeneratePath,
+  getAvailableRoadmaps,
+} from '../services/xunfeiRoadmapService.js';
+
 class PerformanceMonitor {
   static performanceBaselines = {
     学习路径生成: {
@@ -227,47 +233,235 @@ class AiController {
 
     // 根据学习目标选择证书类型
     let certificateType = '计算机';
-    if (goal.includes('英语') || goal.includes('雅思') || goal.includes('四六级')) {
+    let detailedTopics = [];
+
+    if (
+      goal.includes('英语') ||
+      goal.includes('雅思') ||
+      goal.includes('四六级') ||
+      goal.includes('托福')
+    ) {
       certificateType = '英语';
-    } else if (goal.includes('会计') || goal.includes('财务')) {
+      detailedTopics = [
+        {
+          name: '英语基础音标与发音',
+          desc: '学习48个国际音标，掌握正确发音技巧，练习单词重音和句子语调。每天练习30分钟，模仿标准发音。',
+        },
+        {
+          name: '核心词汇积累',
+          desc: '每天记忆30-50个核心词汇，使用词根词缀法记忆，理解词汇在不同语境中的用法。推荐使用Anki进行间隔重复记忆。',
+        },
+        {
+          name: '基础语法体系',
+          desc: '系统学习十大词性、八大时态、三大从句等核心语法知识，建立完整语法框架。做练习题巩固所学。',
+        },
+        {
+          name: '听力训练',
+          desc: '从简单听力材料开始，逐步过渡到新闻、演讲、电影等复杂材料。每天精听30分钟泛听20分钟。',
+        },
+        {
+          name: '口语表达',
+          desc: '跟读模仿地道表达，练习日常对话，描述图片和事件。可使用HelloTalk等APP与母语者交流。',
+        },
+        {
+          name: '阅读理解技巧',
+          desc: '学习快速阅读技巧，掌握扫读、略读方法，提高阅读速度和理解准确率。每天阅读2-3篇英文文章。',
+        },
+        {
+          name: '写作能力提升',
+          desc: '学习不同文体写作格式，练习句型转换和段落展开，背诵经典句式和模板。每周写2篇作文。',
+        },
+        {
+          name: '综合应用与模拟',
+          desc: '做历年真题和模拟试题，熟悉考试题型和时间分配，提升应考技巧和心理素质。',
+        },
+      ];
+    } else if (
+      goal.includes('会计') ||
+      goal.includes('财务') ||
+      goal.includes('CPA') ||
+      goal.includes('ACCA')
+    ) {
       certificateType = '会计';
+      detailedTopics = [
+        {
+          name: '会计基础理论',
+          desc: '理解会计基本假设、会计要素、会计等式，掌握复式记账法原理和借贷记账规则。',
+        },
+        {
+          name: '财务会计实务',
+          desc: '学习资产、负债、所有者权益的核算方法，掌握收入、费用、利润的确认与计量。',
+        },
+        {
+          name: '财务报表分析',
+          desc: '解读资产负债表、利润表、现金流量表，进行比率分析和趋势分析，评估企业财务状况。',
+        },
+        {
+          name: '成本会计与管理会计',
+          desc: '掌握成本计算方法（品种法、分批法、分步法），学习本量利分析、预算管理。',
+        },
+        {
+          name: '税法与税务实务',
+          desc: '学习增值税、消费税、企业所得税、个人所得税等主要税种的计算方法和申报流程。',
+        },
+        {
+          name: '审计基础',
+          desc: '了解审计基本原理、审计程序、审计证据、审计报告等核心概念和实务操作。',
+        },
+        {
+          name: '财务管理与投资决策',
+          desc: '学习资金时间价值、证券估值、资本预算方法，优化企业投资和融资决策。',
+        },
+        {
+          name: '综合案例分析与模拟',
+          desc: '通过真实企业案例进行综合分析，做历年真题和模拟试卷，提升应试能力。',
+        },
+      ];
     } else if (goal.includes('教师') || goal.includes('教育')) {
       certificateType = '教师';
-    } else if (goal.includes('设计') || goal.includes('UI')) {
+      detailedTopics = [
+        {
+          name: '教育学基础理论',
+          desc: '学习教育的本质、目的、功能，了解教育与政治经济文化的关系，树立正确教育观。',
+        },
+        {
+          name: '教育心理学',
+          desc: '掌握学生认知发展、学习动机、知识技能习得规律，应用心理学原理优化教学。',
+        },
+        {
+          name: '课程与教学设计',
+          desc: '学习课程设计原理、教学目标编写、教学过程组织、教学方法选择与运用。',
+        },
+        {
+          name: '课堂教学技能',
+          desc: '练习导入、讲授、提问、互动、板书、总结等教学基本技能，提升课堂掌控力。',
+        },
+        {
+          name: '学生管理与沟通',
+          desc: '学习班级管理技巧、学生行为引导、与家长沟通方法，建立良好师生关系。',
+        },
+        {
+          name: '教育法律法规',
+          desc: '掌握教育法、教师法、未成年人保护法等重要教育法规，依法执教。',
+        },
+        {
+          name: '信息技术与融合',
+          desc: '学习现代教育技术（多媒体、智慧教室、在线教学平台），探索信息技术与学科融合。',
+        },
+        {
+          name: '教学实践与反思',
+          desc: '进行教学观摩、试讲、评课，反思教学实践，不断改进教学方法和策略。',
+        },
+      ];
+    } else if (goal.includes('设计') || goal.includes('UI') || goal.includes('UX')) {
       certificateType = '设计';
+      detailedTopics = [
+        {
+          name: '设计基础理论',
+          desc: '学习设计史论、设计思维、用户中心设计理念，理解设计的本质和价值。',
+        },
+        {
+          name: '色彩理论与配色',
+          desc: '掌握色彩心理学、色彩搭配原则、冷暖色对比，练习不同风格的配色方案。',
+        },
+        {
+          name: '排版与字体设计',
+          desc: '学习字体分类、字号层级、行距字距、版式布局原则，提升文字信息传达效率。',
+        },
+        {
+          name: '图形与图标设计',
+          desc: '练习几何图形绘制、图标设计（线性、填充、扁平风格）、品牌视觉元素。',
+        },
+        {
+          name: '用户体验研究',
+          desc: '学习用户研究方法（访谈、问卷、可用性测试）、用户画像、用户体验地图。',
+        },
+        {
+          name: '界面设计规范',
+          desc: '掌握iOS Human Interface Guidelines和Material Design规范，设计符合平台标准的界面。',
+        },
+        {
+          name: '交互设计与原型',
+          desc: '学习交互设计原则、手势操作、流程设计，使用Figma/Axure制作高保真原型。',
+        },
+        {
+          name: '作品集与求职指导',
+          desc: '整理优秀作品集，优化简历和面试技巧，准备设计岗位求职材料。',
+        },
+      ];
+    } else {
+      // 默认计算机方向
+      detailedTopics = [
+        {
+          name: '编程基础入门',
+          desc: '学习变量、数据类型、运算符、控制结构（if/else、循环）等编程基础概念，使用Python或JavaScript入门。',
+        },
+        {
+          name: '算法与数据结构基础',
+          desc: '掌握数组、链表、栈、队列、树等基础数据结构，学习排序、查找、递归等基本算法思想。',
+        },
+        {
+          name: '前端开发技术',
+          desc: '学习HTML标签、CSS样式、JavaScript交互，使用Vue或React框架进行组件化开发。',
+        },
+        {
+          name: '后端开发技术',
+          desc: '学习Node.js或Python Flask/Django框架，掌握路由设计、数据库操作、API开发。',
+        },
+        {
+          name: '数据库技术',
+          desc: '学习MySQL数据库设计（表、索引、视图），掌握SQL查询优化，了解Redis缓存应用。',
+        },
+        {
+          name: 'Git版本控制',
+          desc: '熟练使用Git进行代码版本管理，掌握分支创建、合并、冲突处理等协作开发技能。',
+        },
+        {
+          name: '网络与安全基础',
+          desc: '理解HTTP协议、TCP/IP模型、前端安全（XSS、CSRF、SQL注入）及防护措施。',
+        },
+        {
+          name: '项目实战与部署',
+          desc: '完成一个完整项目的设计、开发、测试和部署，熟悉Docker容器化和云服务器部署。',
+        },
+      ];
     }
 
-    // 根据强度调整每天的学习模块数
-    const modulesPerDay = intensity === 'high' ? 3 : intensity === 'medium' ? 2 : 1;
-    const learningHours =
-      intensity === 'high' ? '3-4小时' : intensity === 'medium' ? '2-3小时' : '1-2小时';
-
-    // 生成简化的学习路径
-    const modules = [];
-    const topicsMap = {
-      计算机: ['编程基础', '数据结构', '算法', '数据库', 'Web开发', '系统设计'],
-      英语: ['词汇', '语法', '听力', '口语', '阅读', '写作'],
-      会计: ['会计基础', '财务报表', '成本会计', '管理会计', '审计', '税法'],
-      教师: ['教育学', '心理学', '教学设计', '课堂管理', '教育技术', '教育法规'],
-      设计: ['设计基础', '色彩理论', '排版', '用户体验', '界面设计', '交互设计'],
+    // 根据强度调整学习时间
+    const timeMap = {
+      low: { daily: '30-60分钟', session: '上午30分钟 + 下午30分钟' },
+      medium: { daily: '60-90分钟', session: '上午45分钟 + 下午45分钟' },
+      high: { daily: '90-120分钟', session: '上午60分钟 + 下午60分钟' },
     };
+    const timeConfig = timeMap[intensity] || timeMap.medium;
 
-    const topics = topicsMap[certificateType] || topicsMap['计算机'];
+    // 生成详细的学习路径
+    const modules = [];
 
+    // 将详细主题循环分配到每天
     for (let day = 1; day <= days; day++) {
-      const dayTopics = [];
-      for (let i = 0; i < modulesPerDay; i++) {
-        const topicIndex = (day - 1 + i) % topics.length;
-        dayTopics.push(topics[topicIndex]);
-      }
+      // 使用循环索引获取主题，确保每天都充实
+      const topicIndex = (day - 1) % detailedTopics.length;
+      const topic = detailedTopics[topicIndex];
+
+      // 为每个主题添加每日具体安排
+      const dailySchedule = [
+        { time: '上午', content: `复习前一天内容 + 学习${topic.name}核心概念`, duration: '30分钟' },
+        { time: '中午', content: `整理笔记 + 绘制思维导图`, duration: '20分钟' },
+        { time: '下午', content: `${topic.desc.split('。')[0]}，做配套练习`, duration: '45分钟' },
+        { time: '晚上', content: `项目实践/刷题 + 总结今日学习内容`, duration: '30分钟' },
+      ];
 
       modules.push({
         day: day,
-        moduleName: `${certificateType}学习 - 第${day}天`,
-        detailedContent: `第${day}天：${dayTopics.join('、')}。建议学习时长${learningHours}。`,
-        topics: dayTopics,
-        resourceLink: `https://example.com/${certificateType.toLowerCase()}/day-${day}`,
-        estimatedTime: learningHours,
+        moduleName: `${topic.name}`,
+        detailedContent: `${topic.desc}\n\n📅 每日学习安排：\n${dailySchedule.map(s => `• ${s.time}（${s.duration}）：${s.content}`).join('\n')}`,
+        topics: [topic.name],
+        estimatedTime: timeConfig.daily,
+        dailySchedule: dailySchedule,
+        resourceLink: '',
+        practice: `完成本知识点的练习题和实践项目，整理学习笔记`,
+        checkpoint: `自我检测：能用自己的话复述${topic.name}的核心内容`,
       });
     }
 
@@ -277,8 +471,8 @@ class AiController {
       certificateType: certificateType,
       intensity: intensity,
       modules: modules,
-      summary: `为您生成了${days}天的${goal}学习计划，涵盖${certificateType}专业知识体系。学习强度：${intensity}。`,
-      isFallback: true, // 标记为降级方案
+      summary: `📚 ${days}天${goal}学习计划\n\n本计划涵盖${detailedTopics.length}个核心知识模块，采用「理论学习→实践巩固→总结复盘」的学习方法。每天建议学习${timeConfig.daily}，分${timeConfig.session}两个时段进行。\n\n🎯 学习目标：\n1. 掌握${certificateType}领域核心理论知识\n2. 完成配套练习和实践项目\n3. 建立完整的知识体系框架\n4. 提升解决实际问题的能力\n\n💡 学习建议：\n• 坚持每日学习，保持连贯性\n• 做好学习笔记，定期回顾\n• 遇到问题及时记录并解决\n• 适时进行阶段性测试检验学习效果`,
+      isFallback: true,
       generatedAt: new Date().toISOString(),
     };
 
@@ -431,15 +625,22 @@ class AiController {
           'AI学习路径生成'
         );
       } catch (aiError) {
-        console.error('❌ AI服务调用失败，使用降级方案:', {
+        console.error('❌ AI服务调用失败，使用讯飞路线图服务:', {
           error: aiError.message,
           code: aiError.code,
           status: aiError.response?.status,
         });
 
-        // 降级策略：使用本地生成的学习路径
-        learningPath = AiController.getFallbackPath(goal, days, intensity);
-        useFallback = true;
+        // 降级策略：使用讯飞星火API路线图服务生成
+        try {
+          learningPath = await xunfeiGeneratePath(goal, days, intensity);
+          useFallback = true;
+          console.log('✅ 使用讯飞路线图服务生成成功');
+        } catch (roadmapError) {
+          // 最终降级：使用内置fallback
+          learningPath = AiController.getFallbackPath(goal, days, intensity);
+          console.log('⚠️ 讯飞服务也失败了，使用内置fallback');
+        }
       }
 
       // 6. 更新用户生成历史记录
@@ -509,8 +710,37 @@ class AiController {
 
       console.log(`🧪 测试环境生成学习路径: goal="${goal}", days=${days}, intensity=${intensity}`);
 
-      // 2. 直接使用降级策略生成学习路径（用于测试）
-      const learningPath = AiController.getFallbackPath(goal, days, intensity);
+      // 2. 尝试调用真正的AI接口生成学习路径
+      let learningPath;
+      let useFallback = false;
+
+      try {
+        const axiosInstance = axios.create(AiController.getRequestConfig());
+
+        const response = await axiosInstance.post('/ai/internal/generate-path', {
+          goal: goal.trim(),
+          days: days,
+          intensity: intensity,
+          userInterests: [],
+        });
+
+        if (response.data.success) {
+          learningPath = response.data.plan;
+          console.log(`✅ 测试接口 AI 生成成功: ${learningPath?.modules?.length || 0} 个模块`);
+        } else {
+          throw new Error(response.data.message || 'AI服务返回失败');
+        }
+      } catch (aiError) {
+        console.error('⚠️  测试接口 AI 调用失败，使用讯飞路线图服务:', aiError.message);
+        try {
+          learningPath = await xunfeiGeneratePath(goal, days, intensity);
+          useFallback = true;
+          console.log('✅ 使用讯飞路线图服务生成成功');
+        } catch (roadmapError) {
+          learningPath = AiController.getFallbackPath(goal, days, intensity);
+          console.log('⚠️ 讯飞服务也失败了，使用内置fallback');
+        }
+      }
 
       // 3. 返回成功响应
       const duration = Date.now() - startTime;
@@ -518,17 +748,19 @@ class AiController {
         goal,
         days,
         intensity,
+        isFallback: useFallback,
         moduleCount: learningPath.modules?.length || 0,
       });
 
       res.status(200).json({
         success: true,
-        message: '测试环境学习路径生成成功',
+        message: useFallback ? '测试环境学习路径生成成功（降级方案）' : '测试环境学习路径生成成功',
         plan: learningPath,
         metadata: {
           generatedAt: new Date().toISOString(),
           duration: `${duration}ms`,
           isTest: true,
+          isFallback: useFallback,
         },
       });
     } catch (error) {

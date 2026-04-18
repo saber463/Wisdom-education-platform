@@ -138,18 +138,10 @@ const toggleInterest = interestId => {
   }
 };
 
-const handleSkip = async () => {
-  try {
-    await userApi.updateProfile({
-      learningInterests: [],
-    });
-    localStorage.setItem('has_shown_interest_modal', 'true');
-    showModal.value = false;
-    notificationStore.success('您可以随时在个人中心修改兴趣设置');
-  } catch (error) {
-    console.error('更新用户信息失败:', error);
-    notificationStore.error('操作失败，请稍后重试');
-  }
+const handleSkip = () => {
+  // 纯本地存储控制，不调用API
+  localStorage.setItem('has_shown_interest_modal', 'true');
+  showModal.value = false;
 };
 
 const handleSave = async () => {
@@ -159,18 +151,25 @@ const handleSave = async () => {
       return interest ? interest.name : id;
     });
 
-    await userApi.updateProfile({
-      learningInterests: interestNames,
-    });
+    // 尝试保存到后端
+    try {
+      await userApi.updateProfile({
+        learningInterests: interestNames,
+      });
+    } catch (apiErr) {
+      console.warn('API保存失败，使用本地存储:', apiErr.message);
+    }
 
+    // 本地标记已显示
     localStorage.setItem('has_shown_interest_modal', 'true');
     showModal.value = false;
-    notificationStore.success('兴趣设置已保存');
 
-    await userStore.loadUserData();
+    // 更新用户store的本地状态
+    if (userStore.userInfo) {
+      userStore.userInfo.learningInterests = interestNames;
+    }
   } catch (error) {
-    console.error('更新用户信息失败:', error);
-    notificationStore.error('保存失败，请稍后重试');
+    console.error('操作失败:', error);
   }
 };
 
@@ -221,6 +220,8 @@ defineExpose({
   flex-direction: column;
   overflow: hidden;
   animation: slideUp 0.4s ease;
+  position: relative;
+  z-index: 10000;
 }
 
 @keyframes slideUp {

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import config from '../config';
-import { safeLocalStorage } from '../store/user';
+import { safeLocalStorage, useUserStore } from '../store/user';
 import router from '../router';
 import { ElMessage } from 'element-plus';
 
@@ -19,6 +19,13 @@ api.interceptors.request.use(
     if (token) {
       axiosConfig.headers.Authorization = `Bearer ${token}`;
     }
+
+    // 添加CSRF Token到POST/PUT/DELETE请求
+    const csrfToken = localStorage.getItem('csrf_token');
+    if (csrfToken && ['post', 'put', 'patch', 'delete'].includes(axiosConfig.method?.toLowerCase())) {
+      axiosConfig.headers['X-CSRF-Token'] = csrfToken;
+    }
+
     return axiosConfig;
   },
   error => Promise.reject(error)
@@ -51,7 +58,6 @@ api.interceptors.response.use(
           }
 
           try {
-            const { useUserStore } = await import('../store/user');
             const userStore = useUserStore();
             if (userStore.clearAllUserData) {
               userStore.clearAllUserData();
@@ -158,6 +164,10 @@ export const userApi = {
   removeBrowseHistoryItem: params => api.delete('/history/item', { params }),
   // 更新头像
   updateAvatar: avatarUrl => api.put('/users/update-avatar', { avatar: avatarUrl }),
+  // 上传头像文件
+  uploadAvatar: formData => api.post('/users/upload-avatar', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
   // 获取预设头像列表
   getPresetAvatars: params => api.get('/users/preset-avatars', { params }),
 };

@@ -94,7 +94,6 @@ export const useNotificationStore = defineStore('notification', {
           throw new Error('通知必须包含标题和内容');
         }
 
-        const { useUserStore } = await import('./user');
         const userStore = useUserStore();
 
         if (!userStore.isLogin) {
@@ -118,7 +117,6 @@ export const useNotificationStore = defineStore('notification', {
 
     async markAsRead(notificationId) {
       try {
-        const { useUserStore } = await import('./user');
         const userStore = useUserStore();
 
         if (!userStore.isLogin) {
@@ -149,7 +147,6 @@ export const useNotificationStore = defineStore('notification', {
 
     async markAllAsRead() {
       try {
-        const { useUserStore } = await import('./user');
         const userStore = useUserStore();
 
         if (!userStore.isLogin) {
@@ -169,9 +166,27 @@ export const useNotificationStore = defineStore('notification', {
       }
     },
 
+    /**
+     * 清空所有通知
+     */
+    async clearAllNotifications() {
+      try {
+        const userStore = useUserStore();
+        if (!userStore.isLogin) return false;
+
+        this.notifications = [];
+        this.unreadCount = 0;
+
+        await notificationApi.clearAll();
+        return true;
+      } catch (error) {
+        console.error('清空通知失败:', error);
+        return false;
+      }
+    },
+
     async deleteNotification(notificationId) {
       try {
-        const { useUserStore } = await import('./user');
         const userStore = useUserStore();
 
         if (!userStore.isLogin) {
@@ -269,12 +284,23 @@ export const useNotificationStore = defineStore('notification', {
     },
 
     /**
+     * 显示警告通知
+     * @param {string} content - 警告消息内容
+     */
+    warning(content) {
+      return this.addNotification({
+        title: '警告',
+        content,
+        type: 'warning',
+      });
+    },
+
+    /**
      * 清空所有通知
      */
     async clearAllNotifications() {
       try {
         // 检查用户是否已登录
-        const { useUserStore } = await import('./user');
         const userStore = useUserStore();
 
         if (!userStore.isLogin) {

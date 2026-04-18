@@ -134,8 +134,8 @@
                   <div
                     class="flex-1 flex items-center justify-center p-3 border rounded-lg cursor-pointer transition-colors"
                     :class="{
-                      'border-primary bg-blue-50': selectedAnswers[question._id] === true,
-                      'hover:border-primary hover:bg-gray-50':
+                      'border-tech-blue bg-tech-blue/10': selectedAnswers[question._id] === true,
+                      'border-gray-200 dark:border-white/10 hover:border-tech-blue/50 hover:bg-gray-50 dark:hover:bg-white/5':
                         selectedAnswers[question._id] !== true,
                     }"
                     @click="selectAnswer(question._id, true)"
@@ -143,9 +143,9 @@
                     <div
                       class="w-5 h-5 rounded-full border-2 mr-3 flex items-center justify-center"
                       :class="{
-                        'border-primary text-primary bg-primary':
+                        'border-tech-blue bg-tech-blue text-white':
                           selectedAnswers[question._id] === true,
-                        'border-gray-300': selectedAnswers[question._id] !== true,
+                        'border-gray-300 dark:border-white/30': selectedAnswers[question._id] !== true,
                       }"
                     >
                       <div
@@ -153,13 +153,13 @@
                         class="w-2 h-2 bg-white rounded-full"
                       />
                     </div>
-                    <span class="font-medium">正确</span>
+                    <span class="font-medium text-gray-700 dark:text-gray-300">正确</span>
                   </div>
                   <div
                     class="flex-1 flex items-center justify-center p-3 border rounded-lg cursor-pointer transition-colors"
                     :class="{
-                      'border-primary bg-blue-50': selectedAnswers[question._id] === false,
-                      'hover:border-primary hover:bg-gray-50':
+                      'border-tech-blue bg-tech-blue/10': selectedAnswers[question._id] === false,
+                      'border-gray-200 dark:border-white/10 hover:border-tech-blue/50 hover:bg-gray-50 dark:hover:bg-white/5':
                         selectedAnswers[question._id] !== false,
                     }"
                     @click="selectAnswer(question._id, false)"
@@ -167,9 +167,9 @@
                     <div
                       class="w-5 h-5 rounded-full border-2 mr-3 flex items-center justify-center"
                       :class="{
-                        'border-primary text-primary bg-primary':
+                        'border-tech-blue bg-tech-blue text-white':
                           selectedAnswers[question._id] === false,
-                        'border-gray-300': selectedAnswers[question._id] !== false,
+                        'border-gray-300 dark:border-white/30': selectedAnswers[question._id] !== false,
                       }"
                     >
                       <div
@@ -177,7 +177,7 @@
                         class="w-2 h-2 bg-white rounded-full"
                       />
                     </div>
-                    <span class="font-medium">错误</span>
+                    <span class="font-medium text-gray-700 dark:text-gray-300">错误</span>
                   </div>
                 </div>
               </div>

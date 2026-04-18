@@ -101,7 +101,7 @@
             </div>
 
             <!-- 描述 -->
-            <div class="mt-2 text-gray-600 dark:text-gray-300 text-sm line-clamp-2 h-10 overflow-hidden">
+            <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm line-clamp-3">
               {{ test.description }}
             </div>
 
@@ -265,6 +265,68 @@ const mockTests = [
       { _id: 'mq6_3', questionType: 'truefalse', questionText: 'K-Means 聚类算法需要预先指定聚类的数量 K。', options: [], correctAnswer: true, knowledgePoints: ['K-Means', '无监督学习'], explanation: 'K-Means 是一种需要预先指定聚类数 K 的无监督学习算法。可以使用肘部法则（Elbow Method）或轮廓系数来确定最佳 K 值。' },
       { _id: 'mq6_4', questionType: 'single', questionText: '在分类问题中，当正负样本严重不平衡时，以下哪个评估指标最不可靠？', options: [{ text: '精确率（Precision）' }, { text: '召回率（Recall）' }, { text: '准确率（Accuracy）' }, { text: 'F1-Score' }], correctAnswer: 2, knowledgePoints: ['模型评估', '不平衡数据'], explanation: '当正负样本严重不平衡时（如99%为负样本），模型只需全部预测为负类就能获得99%的准确率，但这个指标没有意义。F1-Score、Precision 和 Recall 更适合评估不平衡场景。' },
       { _id: 'mq6_5', questionType: 'single', questionText: '以下哪个是卷积神经网络（CNN）的核心组件？', options: [{ text: '循环层' }, { text: '注意力机制' }, { text: '卷积层和池化层' }, { text: '全连接层' }], correctAnswer: 2, knowledgePoints: ['CNN', '深度学习'], explanation: 'CNN 的核心是卷积层（提取局部特征）和池化层（降维和特征选择），它们通过参数共享和局部连接大大减少了参数数量。' },
+      { _id: 'mq6_6', questionType: 'single', questionText: 'ResNet（残差网络）解决的主要问题是什么？', options: [{ text: '梯度消失问题' }, { text: '梯度爆炸问题' }, { text: '网络退化问题' }, { text: '过拟合问题' }], correctAnswer: 2, knowledgePoints: ['ResNet', '深度学习'], explanation: 'ResNet通过残差连接（skip connection）解决了深层网络退化问题，使得训练上百层的网络成为可能。' },
+      { _id: 'mq6_7', questionType: 'single', questionText: '在NLP中，BERT模型使用的是哪种架构？', options: [{ text: 'LSTM' }, { text: 'Transformer编码器' }, { text: 'Transformer解码器' }, { text: 'CNN' }], correctAnswer: 1, knowledgePoints: ['BERT', 'NLP', 'Transformer'], explanation: 'BERT使用的是Transformer的编码器部分，通过双向注意力机制捕捉上下文信息。' },
+      { _id: 'mq6_8', questionType: 'single', questionText: 'Softmax函数的作用是什么？', options: [{ text: '激活函数' }, { text: '将 logits 转换为概率分布' }, { text: '防止过拟合' }, { text: '加速梯度下降' }], correctAnswer: 1, knowledgePoints: ['Softmax', '多分类'], explanation: 'Softmax函数将神经网络输出的logits转换为概率分布，所有输出值的和为1，常用于多分类问题。' },
+      { _id: 'mq6_9', questionType: 'single', questionText: '以下哪种优化器使用了动量（Momentum）的概念？', options: [{ text: 'SGD' }, { text: 'Adam' }, { text: 'RMSprop' }, { text: 'Adagrad' }], correctAnswer: 1, knowledgePoints: ['Adam', '优化器', '动量'], explanation: 'Adam（Adaptive Moment Estimation）结合了动量优化和RMSprop的优点，使用了一阶和二阶矩估计。' },
+      { _id: 'mq6_10', questionType: 'single', questionText: 'LSTM中遗忘门（Forget Gate）的作用是什么？', options: [{ text: '决定保留多少上一层的记忆' }, { text: '决定添加多少新信息' }, { text: '决定输出多少信息' }, { text: '防止梯度消失' }], correctAnswer: 0, knowledgePoints: ['LSTM', '门控机制'], explanation: '遗忘门控制有多少之前的记忆应该被遗忘，值接近1时保留，接近0时遗忘。' },
+    ],
+  },
+  // 追加更多测试
+  {
+    id: 'mock7', title: 'TypeScript 类型系统专项测试',
+    description: 'TypeScript类型注解、泛型、接口、类型守卫、条件类型等核心概念全面考察',
+    categoryName: '前端开发', difficulty: '困难', duration: 50, totalQuestions: 25,
+    lastScore: 0, participants: 678, passRate: 65,
+    icon: 'fa fa-ts fa-bold', iconBg: 'bg-gradient-to-br from-blue-500 to-blue-700 text-white',
+    mockQuestions: [
+      { _id: 'mq7_1', questionType: 'single', questionText: 'TypeScript中，interface和type的区别是什么？', options: [{ text: 'interface可以被声明多次，type只能声明一次' }, { text: 'interface可以声明多次合并，type不能' }, { text: '没有区别，只是语法不同' }, { text: 'type可以表达联合类型，interface不能' }], correctAnswer: 1, knowledgePoints: ['TypeScript', 'interface', 'type'], explanation: 'interface具有声明合并特性，可以被多次声明并自动合并。type别名不能声明合并，但可以表达联合类型、交叉类型等更复杂的类型。' },
+      { _id: 'mq7_2', questionType: 'single', questionText: '以下哪个是TypeScript中的类型守卫？', options: [{ text: 'typeof' }, { text: 'instanceof' }, { text: 'in' }, { text: '以上都是' }], correctAnswer: 3, knowledgePoints: ['类型守卫', '类型 narrowing'], explanation: 'typeof、instanceof、in和自定义类型守卫都是TypeScript中的类型守卫，用于在条件块中缩小变量类型。' },
+      { _id: 'mq7_3', questionType: 'single', questionText: 'TypeScript泛型中的T extends关键字用于什么？', options: [{ text: '约束泛型类型' }, { text: '继承泛型类型' }, { text: '限制泛型范围' }, { text: '泛型默认值' }], correctAnswer: 0, knowledgePoints: ['泛型', '约束'], explanation: 'extends用于约束泛型参数的类型范围，确保传入的类型满足特定条件。' },
+      { _id: 'mq7_4', questionType: 'truefalse', questionText: 'TypeScript中，any类型会跳过类型检查。', options: [], correctAnswer: true, knowledgePoints: ['any', '类型安全'], explanation: 'any类型表示任意类型，绕过TypeScript的类型检查器，应尽量避免使用或使用unknown替代。' },
+      { _id: 'mq7_5', questionType: 'single', questionText: '下面哪个不是TypeScript的基本类型？', options: [{ text: 'string' }, { text: 'number' }, { text: 'boolean' }, { text: 'array' }], correctAnswer: 3, knowledgePoints: ['TypeScript类型'], explanation: 'array不是TypeScript的基本类型，应该使用string[]或Array<string>来声明数组类型。' },
+    ],
+  },
+  {
+    id: 'mock8', title: 'SQL查询与数据库设计测试',
+    description: 'SQL查询、JOIN操作、索引优化、数据库设计范式、事务隔离级别综合考察',
+    categoryName: '后端开发', difficulty: '中等', duration: 45, totalQuestions: 25,
+    lastScore: 0, participants: 1123, passRate: 70,
+    icon: 'fa fa-database', iconBg: 'bg-gradient-to-br from-green-500 to-emerald-600 text-white',
+    mockQuestions: [
+      { _id: 'mq8_1', questionType: 'single', questionText: 'SQL中，INNER JOIN和LEFT JOIN的主要区别是？', options: [{ text: 'INNER JOIN只返回匹配的行，LEFT JOIN返回左表所有行' }, { text: '性能不同' }, { text: '语法不同' }, { text: '没有区别' }], correctAnswer: 0, knowledgePoints: ['JOIN', 'SQL'], explanation: 'INNER JOIN只返回两个表中都匹配的行，LEFT JOIN会返回左表所有记录，右表不匹配的用NULL填充。' },
+      { _id: 'mq8_2', questionType: 'single', questionText: 'MySQL中，以下哪种索引最适合字符串前缀查询？', options: [{ text: 'B-Tree索引' }, { text: 'Hash索引' }, { text: '全文索引' }, { text: 'R-Tree索引' }], correctAnswer: 0, knowledgePoints: ['索引', 'MySQL'], explanation: 'B-Tree索引支持前缀匹配查询，可以利用LIKE \'prefix%\'进行范围查询。Hash索引不支持范围查询。' },
+      { _id: 'mq8_3', questionType: 'single', questionText: '数据库第三范式（3NF）要求？', options: [{ text: '消除部分函数依赖' }, { text: '消除传递函数依赖' }, { text: '非主属性完全依赖于主键' }, { text: '每个非主属性既不部分依赖于主键，也不传递依赖于主键' }], correctAnswer: 3, knowledgePoints: ['数据库范式', '设计'], explanation: '第三范式要求在满足第二范式的基础上，消除非主属性对主键的传递依赖。' },
+      { _id: 'mq8_4', questionType: 'truefalse', questionText: 'SQL中，GROUP BY子句后必须包含所有SELECT中的聚合函数参数。', options: [], correctAnswer: false, knowledgePoints: ['GROUP BY', 'SQL'], explanation: 'GROUP BY后的列必须包含所有SELECT中的非聚合列，但聚合函数参数（如COUNT(*)）不需要包含在GROUP BY中。' },
+      { _id: 'mq8_5', questionType: 'single', questionText: '以下哪个SQL语句用于创建索引？', options: [{ text: 'CREATE INDEX' }, { text: 'ADD INDEX' }, { text: 'SET INDEX' }, { text: 'MAKE INDEX' }], correctAnswer: 0, knowledgePoints: ['索引', 'DDL'], explanation: 'CREATE INDEX用于创建索引，语法为CREATE INDEX index_name ON table_name(column)。' },
+    ],
+  },
+  {
+    id: 'mock9', title: 'Git版本控制进阶测试',
+    description: 'Git分支管理、合并冲突、Rebase vs Merge、Git Flow工作流程、 submodule使用',
+    categoryName: '计算机基础', difficulty: '中等', duration: 35, totalQuestions: 20,
+    lastScore: 0, participants: 892, passRate: 75,
+    icon: 'fa fa-git-square', iconBg: 'bg-gradient-to-br from-orange-500 to-orange-600 text-white',
+    mockQuestions: [
+      { _id: 'mq9_1', questionType: 'single', questionText: 'Git中，rebase和merge的主要区别是？', options: [{ text: 'rebase创建线性历史，merge保留完整分支历史' }, { text: 'rebase会修改提交历史，merge不会' }, { text: 'merge会丢失提交历史' }, { text: 'rebase性能更好' }], correctAnswer: 0, knowledgePoints: ['Git', 'rebase', 'merge'], explanation: 'rebase将提交"移植"到另一个分支顶端，创建线性历史；merge将两个分支合并，保留完整历史但会产生合并提交。' },
+      { _id: 'mq9_2', questionType: 'single', questionText: '如何撤销已经推送到远程的提交？', options: [{ text: 'git revert' }, { text: 'git reset --hard' }, { text: 'git checkout' }, { text: '直接修改远程' }], correctAnswer: 0, knowledgePoints: ['Git', '版本控制'], explanation: '对于已推送的提交，应使用git revert创建新提交来撤销更改，这是最安全的做法。reset会修改历史，不适合已推送的提交。' },
+      { _id: 'mq9_3', questionType: 'single', questionText: 'Git中，哪个命令可以暂存当前工作目录的修改？', options: [{ text: 'git stash' }, { text: 'git save' }, { text: 'git hold' }, { text: 'git pause' }], correctAnswer: 0, knowledgePoints: ['Git', '暂存'], explanation: 'git stash可以暂存工作目录和暂存区的修改，之后可以恢复继续工作。' },
+      { _id: 'mq9_4', questionType: 'truefalse', questionText: 'git cherry-pick可以将一个分支上的特定提交应用到当前分支。', options: [], correctAnswer: true, knowledgePoints: ['Git', 'cherry-pick'], explanation: 'cherry-pick可以选中某个分支的特定提交，将其"摘取"到当前分支并创建新提交。' },
+      { _id: 'mq9_5', questionType: 'single', questionText: '如何创建一个名为feature的新分支并切换到该分支？', options: [{ text: 'git checkout -b feature' }, { text: 'git branch feature' }, { text: 'git create feature' }, { text: 'git switch feature' }], correctAnswer: 0, knowledgePoints: ['Git', '分支'], explanation: 'git checkout -b feature会创建并切换到新分支。git branch feature只创建不切换。' },
+    ],
+  },
+  {
+    id: 'mock10', title: 'Docker容器化实战测试',
+    description: 'Docker镜像构建、容器管理、数据卷、网络配置、Docker Compose使用',
+    categoryName: 'DevOps', difficulty: '中等', duration: 40, totalQuestions: 20,
+    lastScore: 0, participants: 756, passRate: 68,
+    icon: 'fa fa-docker', iconBg: 'bg-gradient-to-br from-blue-400 to-cyan-500 text-white',
+    mockQuestions: [
+      { _id: 'mq10_1', questionType: 'single', questionText: 'Docker中，如何在容器和宿主机之间复制文件？', options: [{ text: 'docker cp' }, { text: 'docker transfer' }, { text: 'docker move' }, { text: 'docker sync' }], correctAnswer: 0, knowledgePoints: ['Docker', '容器管理'], explanation: 'docker cp命令可以在容器和宿主机之间复制文件，语法为docker cp container:path host:path。' },
+      { _id: 'mq10_2', questionType: 'single', questionText: 'Dockerfile中，COPY和ADD指令的区别是？', options: [{ text: 'ADD支持从URL添加文件，COPY不支持' }, { text: 'COPY性能更好，ADD功能更多' }, { text: '没有区别' }, { text: 'COPY支持解压tar文件' }], correctAnswer: 0, knowledgePoints: ['Dockerfile', '镜像构建'], explanation: 'ADD支持从URL获取文件和自动解压tar包，但COPY是更推荐的基本复制方式。' },
+      { _id: 'mq10_3', questionType: 'truefalse', questionText: 'Docker容器的进程是隔离的，但共享宿主机的内核。', options: [], correctAnswer: true, knowledgePoints: ['Docker', '容器原理'], explanation: 'Docker容器使用 namespace 实现资源隔离，但共享宿主机的Linux内核，这是容器与虚拟机的主要区别。' },
+      { _id: 'mq10_4', questionType: 'single', questionText: '如何查看Docker容器的实时日志？', options: [{ text: 'docker logs -f container_id' }, { text: 'docker log container_id' }, { text: 'docker container log' }, { text: 'docker watch container_id' }], correctAnswer: 0, knowledgePoints: ['Docker', '日志'], explanation: 'docker logs -f可以实时查看容器日志，-f等同于--follow参数。' },
+      { _id: 'mq10_5', questionType: 'single', questionText: 'Docker Compose主要用于什么场景？', options: [{ text: '多容器应用的编排和管理' }, { text: '构建镜像' }, { text: '监控容器' }, { text: '容器安全' }], correctAnswer: 0, knowledgePoints: ['Docker Compose', '容器编排'], explanation: 'Docker Compose用于定义和运行多容器Docker应用，通过YAML文件配置服务、网络和数据卷。' },
     ],
   },
 ];
@@ -281,22 +343,28 @@ const filteredTests = computed(() => {
 const fetchTests = async () => {
   loading.value = true;
   try {
+    // 先尝试从API获取
     const params = { isPublished: true };
     const response = await testApi.getList(params);
-    const difficultyMap = { easy: '简单', medium: '中等', hard: '困难' };
-    tests.value = response.data.data.map(test => ({
-      id: test._id,
-      title: test.title,
-      description: test.description,
-      categoryName: test.category?.name || '未分类',
-      difficulty: difficultyMap[test.difficulty] || test.difficulty,
-      duration: test.duration,
-      totalQuestions: test.totalQuestions || 0,
-      lastScore: test.lastScore || 0,
-    }));
-    if (tests.value.length === 0) tests.value = mockTests;
+    if (response?.data?.data && response.data.data.length > 0) {
+      const difficultyMap = { easy: '简单', medium: '中等', hard: '困难' };
+      tests.value = response.data.data.map(test => ({
+        id: test._id,
+        title: test.title,
+        description: test.description,
+        categoryName: test.category?.name || '未分类',
+        difficulty: difficultyMap[test.difficulty] || test.difficulty,
+        duration: test.duration,
+        totalQuestions: test.totalQuestions || 0,
+        lastScore: test.lastScore || 0,
+      }));
+    } else {
+      // API返回空数据，使用mock数据
+      tests.value = mockTests;
+    }
   } catch (error) {
     console.error('获取测试列表失败:', error);
+    // API失败，使用mock数据
     tests.value = mockTests;
   } finally {
     loading.value = false;

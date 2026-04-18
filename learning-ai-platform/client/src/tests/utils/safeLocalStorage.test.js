@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { safeLocalStorage } from '@/utils/safeLocalStorage';
+import { safeLocalStorage } from '@/store/user';
 
 describe('safeLocalStorage', () => {
   beforeEach(() => {

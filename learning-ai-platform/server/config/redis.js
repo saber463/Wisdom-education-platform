@@ -6,31 +6,36 @@ const redisConfig = {
   url: process.env.REDIS_URL || 'redis://localhost:6379',
   socket: {
     reconnectStrategy: retries => {
-      if (retries > 10) {
-        console.error('❌ Redis重连失败，已达到最大重试次数');
-        return new Error('Redis重连失败');
+      // 如果已明确连接失败并降级，则不再重连
+      if (!redisConnected && connectionAttempts > 0) {
+        return false;
+      }
+      if (retries > 3) {
+        console.warn('⚠️ Redis重连达到上限，将使用内存缓存模式运行');
+        return false; // 返回 false 停止重连
       }
       const delay = Math.min(retries * 100, 3000);
-      console.log(`⚠️  Redis连接断开，${delay}ms后尝试重连 (第${retries}次)`);
       return delay;
     },
     connectTimeout: 5000, // 5秒连接超时
-    lazyConnect: false, // 立即连接
-    keepAlive: 30000, // 30秒保持连接
+    lazyConnect: true, // 延迟连接，在显式调用 connect 时连接
   },
   legacyMode: true, // 启用旧版模式以兼容connect-redis
   password: process.env.REDIS_PASSWORD || undefined, // Redis密码
   database: parseInt(process.env.REDIS_DB || '0'), // Redis数据库编号
 };
 
-// 创建Redis客户端
-const redisClient = createClient(redisConfig);
-
 // Redis连接状态
 let redisConnected = false;
 let connectionAttempts = 0;
 const maxConnectionAttempts = 3;
 let connectionPromise = null;
+
+// 创建Redis客户端
+let redisClient = createClient(redisConfig);
+
+// 为了避免控制台被无限重试的错误刷屏，我们给 error 事件绑定一个空处理
+redisClient.on('error', () => {});
 
 // 连接Redis服务器
 const connectRedis = async () => {
@@ -40,32 +45,35 @@ const connectRedis = async () => {
 
   connectionPromise = (async () => {
     try {
-      console.log('🔄 正在连接 Redis...');
+      console.log('🔄 正在尝试连接 Redis...');
+      // 捕获连接错误
       await redisClient.connect();
-      console.log('✅ Redis连接成功');
+      console.log('✅ Redis 连接成功');
       redisConnected = true;
       connectionAttempts = 0;
       return true;
     } catch (err) {
-      connectionAttempts++;
-      console.error(
-        `❌ Redis连接失败 (尝试 ${connectionAttempts}/${maxConnectionAttempts}):`,
-        err.message
-      );
-      console.log('💡 提示：如果您没有安装 Redis，系统将自动使用内存缓存模式');
-      console.log('💡 要使用 Redis，请确保 Redis 服务正在运行或设置环境变量 REDIS_URL');
-
-      if (connectionAttempts < maxConnectionAttempts) {
-        console.log(`⏳ 3秒后尝试重新连接...`);
-        await new Promise(resolve => setTimeout(resolve, 3000));
-        connectionPromise = null;
-        return connectRedis();
-      } else {
-        console.warn('⚠️  已达到最大连接尝试次数，切换到内存缓存模式');
-        redisConnected = false;
-        connectionPromise = null;
-        return false;
+      console.log(`⚠️ Redis 连接失败，已自动切换为内存缓存模式`);
+      redisConnected = false;
+      // 在这里强制断开并销毁客户端，避免内部重连机制不断报错
+      try {
+        await redisClient.quit();
+      } catch(e) {
+        try {
+           redisClient.disconnect();
+        } catch(e2) {}
       }
+      // 将 redisClient 指向一个虚拟对象，防止后续代码调用出错
+      redisClient = {
+         get: async () => null,
+         setEx: async () => null,
+         keys: async () => [],
+         del: async () => null,
+         on: () => {},
+         quit: async () => null,
+         disconnect: async () => null
+      };
+      return false; // 不再递归重连，直接返回 false
     }
   })();
 
@@ -75,21 +83,6 @@ const connectRedis = async () => {
 // 初始化连接（不等待，避免阻塞应用启动）
 connectRedis().catch(() => {
   console.log('ℹ️  Redis 连接初始化完成（使用内存缓存模式）');
-});
-
-// 监听连接错误
-redisClient.on('error', err => {
-  console.error('❌ Redis客户端错误:', err.message);
-  redisConnected = false;
-});
-
-redisClient.on('disconnect', () => {
-  console.warn('⚠️  Redis连接断开');
-  redisConnected = false;
-});
-
-redisClient.on('reconnecting', () => {
-  console.log('🔄 Redis正在重新连接...');
 });
 
 // 内存缓存实现（带LRU淘汰策略）

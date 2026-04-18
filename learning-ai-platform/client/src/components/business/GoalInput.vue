@@ -13,19 +13,21 @@
     </p>
 
     <div class="mt-3">
-      <label class="block text-white mb-2 text-sm font-medium">快捷选择目标</label>
+      <label class="block text-white mb-2 text-sm font-medium">快捷选择目标（单选）</label>
       <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
         <label
           v-for="(target, index) in quickTargets"
           :key="index"
           class="flex items-center p-2 border border-white/10 rounded-lg cursor-pointer hover:bg-white/10 bg-white/5 transition-colors"
+          :class="{ 'bg-tech-blue/20 border-tech-blue': modelValue === target }"
         >
           <input
             type="radio"
+            name="quickTarget"
             :value="target"
-            :checked="selectedTarget === target"
-            class="mr-2"
-            @change="handleQuickTargetChange"
+            :checked="modelValue === target"
+            class="mr-2 accent-tech-blue"
+            @change="handleQuickTargetChange(target)"
           />
           <span class="text-sm text-gray-300">{{ target }}</span>
         </label>
@@ -57,16 +59,6 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'input']);
 
 const isFormTouched = ref(false);
-const selectedTarget = ref('');
-
-watch(
-  () => props.modelValue,
-  newVal => {
-    if (newVal) {
-      selectedTarget.value = '';
-    }
-  }
-);
 
 const handleInput = event => {
   isFormTouched.value = true;
@@ -74,9 +66,9 @@ const handleInput = event => {
   emit('input', event.target.value);
 };
 
-const handleQuickTargetChange = event => {
-  selectedTarget.value = event.target.value;
-  emit('update:modelValue', event.target.value);
-  emit('input', event.target.value);
+const handleQuickTargetChange = (target) => {
+  emit('update:modelValue', target);
+  emit('input', target);
+  isFormTouched.value = true;
 };
 </script>

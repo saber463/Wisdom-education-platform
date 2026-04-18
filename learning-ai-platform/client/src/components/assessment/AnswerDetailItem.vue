@@ -2,15 +2,15 @@
   <div
     class="border rounded-xl overflow-hidden transition-all duration-300 hover:shadow-md"
     :class="{
-      'border-green-200': isCorrect,
-      'border-red-200': !isCorrect,
+      'border-green-500/30': isCorrect,
+      'border-red-500/30': !isCorrect,
     }"
   >
     <div
       class="p-4"
       :class="{
-        'bg-green-50': isCorrect,
-        'bg-red-50': !isCorrect,
+        'bg-green-500/5': isCorrect,
+        'bg-red-500/5': !isCorrect,
       }"
     >
       <div class="flex items-center justify-between mb-3">
@@ -18,8 +18,8 @@
           <div
             class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-medium mr-3"
             :class="{
-              'bg-green-500 text-white': isCorrect,
-              'bg-red-500 text-white': !isCorrect,
+              'bg-green-500/20 text-green-400': isCorrect,
+              'bg-red-500/20 text-red-400': !isCorrect,
             }"
           >
             {{ questionNumber }}
@@ -27,17 +27,17 @@
           <span
             class="text-sm font-medium"
             :class="{
-              'text-green-700': isCorrect,
-              'text-red-700': !isCorrect,
+              'text-green-400': isCorrect,
+              'text-red-400': !isCorrect,
             }"
           >
             {{ isCorrect ? '回答正确' : '回答错误' }}
           </span>
         </div>
-        <div class="text-sm font-medium text-gray-600">分值: {{ score }}/{{ totalPoints }}</div>
+        <div class="text-sm font-medium text-gray-400">分值: {{ score }}/{{ totalPoints }}</div>
       </div>
 
-      <div class="font-medium text-gray-800 mb-3 truncate">
+      <div class="font-medium text-gray-200 mb-3 truncate">
         {{ question }}
       </div>
 
@@ -50,20 +50,20 @@
 
       <NonQuestionAnswer v-else :selected="selected" :correct="correct" />
 
-      <div class="bg-white border border-gray-200 rounded-lg p-4 mt-4">
-        <div class="text-xs font-medium text-gray-700 mb-2">解析：</div>
-        <div class="text-sm text-gray-600 whitespace-pre-line">
+      <div class="bg-white/5 border border-white/10 rounded-lg p-4 mt-4">
+        <div class="text-xs font-medium text-gray-400 mb-2">解析：</div>
+        <div class="text-sm text-gray-300 whitespace-pre-line">
           {{ explanation || '暂无解析' }}
         </div>
       </div>
 
       <div v-if="knowledgePoints && knowledgePoints.length > 0" class="mt-4">
-        <div class="text-xs font-medium text-gray-700 mb-2">涉及知识点：</div>
+        <div class="text-xs font-medium text-gray-400 mb-2">涉及知识点：</div>
         <div class="flex flex-wrap gap-2">
           <span
             v-for="(kp, idx) in knowledgePoints"
             :key="idx"
-            class="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded-full"
+            class="px-2 py-1 bg-blue-500/10 text-blue-400 text-xs rounded-full"
           >
             {{ kp }}
           </span>
