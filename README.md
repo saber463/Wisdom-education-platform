@@ -35,6 +35,7 @@
 - **AI代码编辑器**: 在线运行 + AI逐行解析 + 自动生成流程图，零配置
 - **错题协同过滤预测**: 不只推给答错学生，还预测"潜在易错"学生，个性化精准度领先行业
 - **Rust-WASM前端计算**: 客观题批改速度比纯Python快8倍
+- **FEN-SAFE自研轻量分组密码**: 为FaceGuard人脸特征加密场景自研128bit分组/128bit密钥轻量分组密码（LIGHT 5轮+SECURE 7轮双版本），与AES-128对照测试：SAC雪崩达64bit理论最优、S盒非线性度112（达AES同级）、NIST SP800-22随机性11/11全PASS、LIGHT 2μs/分组快于AES软件基准（完整权威测试报告见 [docs/加密算法_权威测试报告.md](docs/加密算法_权威测试报告.md)）
 - **BERT主观题评分**: 教育领域优化，准确率≥92%
 - **多语言gRPC协同**: Node.js + Python + Rust跨语言通信
 - **纯Windows本地部署**: 零容器化，规避虚拟化风险
@@ -626,6 +627,13 @@ edu-ai-platform-web/
 - 🚀 [QUICK-START.md](QUICK-START.md) - 快速启动指南
 - 🔧 [README-SERVICES.md](README-SERVICES.md) - 服务管理指南
 
+### 毕业设计与竞赛文档
+
+- 📝 [docs/开题报告.md](docs/开题报告.md) - 毕业设计开题报告
+- 📄 [docs/毕业设计论文.md](docs/毕业设计论文.md) - 毕业设计论文（含 FEN-SAFE 附录 A）
+- 🏗️ [docs/architecture.md](docs/architecture.md) - 系统架构文档（含加密算法说明）
+- 🔐 [docs/加密算法_权威测试报告.md](docs/加密算法_权威测试报告.md) - FEN-SAFE v1.1 加密算法权威测试报告（SAC雪崩/S盒/NIST SP800-22随机性/KAT/性能对标）
+
 ### API文档
 
 - 📡 [API接口文档](docs/API-DOCUMENTATION.md) - 完整的API接口说明
@@ -899,6 +907,7 @@ npx playwright install chromium
 - ✅ **XSS防护**: 输入验证和转义
 - ✅ **API速率限制**: 防止滥用（严格/中等/宽松三级）
 - ✅ **密码加密**: bcrypt哈希存储
+- ✅ **人脸特征加密**: AES-256-GCM（生产主算法）+ FEN-SAFE v1.1 自研轻量分组密码（移动端低算力对照方案，完整权威测试报告见 [docs/加密算法_权威测试报告.md](docs/加密算法_权威测试报告.md)）
 
 ---
 
